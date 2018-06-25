@@ -2,20 +2,22 @@ package aco_flow_shop
 
 import kotlin.math.max
 
-fun duration(storageSize: Number, jobsList: List<Job>) {
-    var jobs = jobsList.sortedBy { it.durationMachineOne }
-    var machineOne: List<Job> = emptyList()
-    val machineTwo: List<Job> = emptyList()
-    
+fun duration(jobsList: List<Job>, storageSize: Int): Int {
+    val jobs = jobsList.sortedByDescending { it.durationMachineOne }
+    var jobOrder = mutableListOf<Job>()
+    for(job in jobs) {
+        jobOrder = findBestOrderForNextJob(jobOrder, job, storageSize).toMutableList()
+    }
+    return calculatefastestScheduleWithOrder(jobOrder, storageSize)
 }
 
-fun findBestOrderForJobOne(machineList: List<Job>, jobToAdd: Job, storageSize: Int): List<Job>{
+fun findBestOrderForNextJob(machineList: List<Job>, jobToAdd: Job, storageSize: Int): List<Job>{
     if(machineList.isEmpty()) {
         return listOf(jobToAdd)
     }
     var shortestList = machineList.toMutableList()
     shortestList.add(jobToAdd)
-    var shortestSum = calculatefastestSchedule(shortestList, storageSize)
+    var shortestSum = calculatefastestScheduleWithOrder(shortestList, storageSize)
 
     for(i in 0..machineList.size-1) {
         val left = machineList.subList(0, i)
@@ -23,7 +25,7 @@ fun findBestOrderForJobOne(machineList: List<Job>, jobToAdd: Job, storageSize: I
         val currentList = left.toMutableList()
         currentList.add(jobToAdd)
         currentList.addAll(right)
-        val currentLength = calculatefastestSchedule(currentList, storageSize)
+        val currentLength = calculatefastestScheduleWithOrder(currentList, storageSize)
         if(currentLength < shortestSum) {
             shortestSum = currentLength
             shortestList = currentList
@@ -32,7 +34,7 @@ fun findBestOrderForJobOne(machineList: List<Job>, jobToAdd: Job, storageSize: I
     return shortestList
 }
 
-fun calculatefastestSchedule(jobList: List<Job>, storageSize: Int): Int {
+fun calculatefastestScheduleWithOrder(jobList: List<Job>, storageSize: Int): Int {
     var currentlyUsedMemory = 0
     val machineOne: MutableList<Schedule> = mutableListOf()
     val machineTwo: MutableList<Schedule> = mutableListOf()
