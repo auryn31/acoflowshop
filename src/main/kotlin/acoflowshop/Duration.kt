@@ -35,6 +35,11 @@ fun findBestOrderForNextJob(machineList: List<Job>, jobToAdd: Job, storageSize: 
 }
 
 fun calculatefastestScheduleWithOrder(jobList: List<Job>, storageSize: Int): Int {
+    val schedule = getShortestSchedulePair(jobList, storageSize)
+    return schedule.second.last().job.durationMachineTwo + schedule.second.last().start
+}
+
+fun getShortestSchedulePair(jobList: List<Job>, storageSize: Int): Pair<List<Schedule>, List<Schedule>> {
     var currentlyUsedMemory = 0
     val machineOne = mutableListOf<Schedule>()
     val machineTwo = mutableListOf<Schedule>()
@@ -52,7 +57,7 @@ fun calculatefastestScheduleWithOrder(jobList: List<Job>, storageSize: Int): Int
             currentlyUsedMemory += jobList[i].storageSize
         }
     }
-    return machineTwo.last().job.durationMachineTwo + machineTwo.last().start
+    return Pair(machineOne, machineTwo)
 }
 
 class Schedule(val job: Job, val start: Int){
