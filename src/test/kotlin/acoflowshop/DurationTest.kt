@@ -1,4 +1,4 @@
-package aco_flow_shop
+package acoflowshop
 
 import org.junit.Test
 import kotlin.test.assertEquals

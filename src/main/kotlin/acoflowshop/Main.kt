@@ -1,4 +1,4 @@
-package aco_flow_shop
+package acoflowshop
 
 fun main(args: Array<String>) {
     println("Hello, World")

@@ -1,4 +1,4 @@
-package aco_flow_shop
+package acoflowshop
 
 
 class Job(val durationMachineOne: Int, val durationMachineTwo: Int, val storageSize: Int){

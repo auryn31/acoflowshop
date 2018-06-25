@@ -1,9 +1,9 @@
-package aco_flow_shop
+package acoflowshop
 
 import kotlin.math.max
 
 fun duration(jobsList: List<Job>, storageSize: Int): Int {
-    val jobs = jobsList.sortedByDescending { it.durationMachineOne }
+    val jobs = jobsList.sortedByDescending { it.durationMachineOne + it.durationMachineTwo }
     var jobOrder = mutableListOf<Job>()
     for(job in jobs) {
         jobOrder = findBestOrderForNextJob(jobOrder, job, storageSize).toMutableList()
@@ -36,8 +36,8 @@ fun findBestOrderForNextJob(machineList: List<Job>, jobToAdd: Job, storageSize: 
 
 fun calculatefastestScheduleWithOrder(jobList: List<Job>, storageSize: Int): Int {
     var currentlyUsedMemory = 0
-    val machineOne: MutableList<Schedule> = mutableListOf()
-    val machineTwo: MutableList<Schedule> = mutableListOf()
+    val machineOne = mutableListOf<Schedule>()
+    val machineTwo = mutableListOf<Schedule>()
     for(i in 0..jobList.size-1) {
         var startIndexOne = if (i == 0) 0 else jobList.subList(0, i).map { it.durationMachineOne }.reduceRight { j, acc -> j + acc }
         if(currentlyUsedMemory + jobList[i].storageSize > storageSize) {
