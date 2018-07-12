@@ -39,15 +39,17 @@ fun calculatefastestScheduleWithOrder(jobList: List<Job>, storageSize: Int): Int
     return schedule.second.last().job.durationMachineTwo + schedule.second.last().start
 }
 
-fun getShortestSchedulePair(jobList: List<Job>, storageSize: Int): Pair<List<Schedule>, List<Schedule>> {
+fun getShortestSchedulePair(jobList: List<Job>, storageSize: Int): Triple<List<Schedule>, List<Schedule>, List<Memory>> {
     var currentlyUsedMemory = 0
     val machineOne = mutableListOf<Schedule>()
     val machineTwo = mutableListOf<Schedule>()
+    val memory = mutableListOf<Memory>()
     for(i in 0..jobList.size-1) {
         var startIndexOne = if (i == 0) 0 else jobList.subList(0, i).map { it.durationMachineOne }.reduceRight { j, acc -> j + acc }
         if(currentlyUsedMemory + jobList[i].storageSize > storageSize) {
             startIndexOne = machineTwo[machineTwo.size-2].start + machineTwo[machineTwo.size-2].job.durationMachineTwo
             currentlyUsedMemory -= machineTwo.last().job.storageSize
+            memory.last().end = machineOne.last().start + machineOne.last().job.durationMachineOne
         }
         machineOne.add(Schedule(jobList[i], startIndexOne))
         val startIndexTwoAfterOne = startIndexOne + jobList[i].durationMachineOne
@@ -55,11 +57,19 @@ fun getShortestSchedulePair(jobList: List<Job>, storageSize: Int): Pair<List<Sch
         machineTwo.add(Schedule(jobList[i], max(startIndexTwoAfterOne, startIndexTwoAfterTwo)))
         if(machineTwo.last().start > machineOne.last().job.durationMachineOne + machineOne.last().start) {
             currentlyUsedMemory += jobList[i].storageSize
+            memory.add(Memory(currentlyUsedMemory, machineOne.last().job.durationMachineOne + machineOne.last().start, null))
         }
     }
-    return Pair(machineOne, machineTwo)
+    if(!memory.isEmpty()) {
+        memory.last().end = machineTwo.last().start
+    }
+    return Triple(machineOne, machineTwo, memory)
 }
 
 class Schedule(val job: Job, val start: Int){
+
+}
+
+class Memory(val inUse: Int, val start: Int, var end: Int?) {
 
 }
