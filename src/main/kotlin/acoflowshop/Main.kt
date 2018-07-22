@@ -1,7 +1,7 @@
 package acoflowshop
 
 import aco.Ant
-
+import kotlin.math.sign
 
 private val c = 1.0
 private val alpha = 1.0
@@ -14,14 +14,14 @@ private val iterations = 1000
 private val STORAGE_SIZE = 2
 
 private val jobList: List<Job> = listOf(
-        Job(1,1,1),
-        Job(2,2,2),
-        Job(4,1,1)
+        Job(1,1,1, 0),
+        Job(2,2,2, 1),
+        Job(4,1,1,2)
 )
 private val numberOfJobs = jobList.size
 private val numberOfAnts = (numberOfJobs * antFactor).toInt()
 private val ants = (0..numberOfAnts).map { i -> Ant() }
-private val pheromone: MutableList<MutableList<Double>> = initEmptyPheromonMatrix(numberOfJobs, 0.0)
+private val pheromone: MutableList<MutableList<Double>> = initEmptyPheromonMatrix(numberOfJobs)
 
 fun main(args: Array<String>) {
 
@@ -53,10 +53,30 @@ fun findBestAnt(ants: List<Ant>): Ant? {
 }
 
 
-fun initEmptyPheromonMatrix(size: Int, pheromonValue: Double): MutableList<MutableList<Double>> {
+fun initEmptyPheromonMatrix(size: Int): MutableList<MutableList<Double>> {
+    val pheromonValue = 1.0/size.toDouble()
     return (0..size-1).map { (0..size-1).map { pheromonValue }.toMutableList() }.toMutableList()
 }
 
-fun updatePheromoneForAnt(ant: Ant, pheromonMatrix: MutableList<MutableList<Double>>) {
-    
+fun updatePheromoneForAnt(ant: Ant, pheromonMatrix: MutableList<MutableList<Double>>): MutableList<MutableList<Double>> {
+    val pheromonValue = 1.0 / pheromonMatrix.size * evaporation
+    for (i in 0..pheromonMatrix.size-1) {
+        for (j in 0..pheromonMatrix[i].size-1) {
+            if(followJobJJobI(ant, i, j)) {
+                pheromonMatrix[i][j] += pheromonValue * (pheromonMatrix.size-1)
+            } else {
+                pheromonMatrix[i][j] -= pheromonValue
+            }
+        }
+    }
+    return pheromonMatrix
+}
+
+fun followJobJJobI(ant: Ant, i: Int, j:Int):Boolean {
+    for(k in 0..ant.jobQue.size-2){
+        if(ant.jobQue[k].id == i && ant.jobQue[k+1].id == j) {
+            return true
+        }
+    }
+    return false
 }

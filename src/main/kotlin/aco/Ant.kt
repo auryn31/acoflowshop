@@ -18,6 +18,10 @@ class Ant {
     }
 
     fun calculateDuration(storageSize: Int){
-        duration = acoflowshop.duration(jobQue, storageSize)
+        duration = acoflowshop.calculatefastestScheduleWithOrder(jobQue, storageSize)
+    }
+
+    fun calculateDurationWithNEH(storageSize: Int): Int {
+        return acoflowshop.duration(jobQue, storageSize)
     }
 }
