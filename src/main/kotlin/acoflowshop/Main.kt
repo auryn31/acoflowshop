@@ -35,7 +35,7 @@ fun optimize(){
 
         for(i in 0..numberOfJobs-1) {
             ants.forEach {
-                it.selectNextJob()
+//                it.selectNextJob()
             }
         }
         ants.forEach { it.calculateDuration(STORAGE_SIZE) }

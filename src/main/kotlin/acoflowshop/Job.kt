@@ -10,4 +10,8 @@ class Job(val durationMachineOne: Int, val durationMachineTwo: Int, val storageS
             return false
         }
     }
+
+    override fun toString(): String {
+        return "Job with id: ${this.id}"
+    }
 }
