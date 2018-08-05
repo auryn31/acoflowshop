@@ -57,8 +57,8 @@ class MainTest {
                 Job(1,2,1, 0),
                 Job(2,1,1, 1)
         )
-        val newMatrix = updatePheromoneForAnt(ant, mutableListOf(mutableListOf(0.5, 0.5), mutableListOf(0.5, 0.5)))
-        assertEquals(mutableListOf(mutableListOf(0.25, 0.75), mutableListOf(0.25, 0.25)), newMatrix)
+        val newMatrix = updatePheromoneForAnt(ant, mutableListOf(mutableListOf(0.5, 0.5), mutableListOf(0.5, 0.5)), 0.05)
+        assertEquals(mutableListOf(mutableListOf(0.525, 0.475), mutableListOf(0.475, 0.525)), newMatrix)
     }
 
     @Test
@@ -72,11 +72,12 @@ class MainTest {
         val matrix = initEmptyPheromonMatrix(3)
         val newMatrix = updatePheromoneForAnt(
                 ant,
-                matrix
+                matrix,
+                0.5
         )
         val expected = mutableListOf(
+                mutableListOf(0.6666666666666666, 0.16666666666666666, 0.16666666666666666),
                 mutableListOf(0.16666666666666666, 0.16666666666666666, 0.6666666666666666),
-                mutableListOf(0.16666666666666666, 0.16666666666666666, 0.16666666666666666),
                 mutableListOf(0.16666666666666666, 0.6666666666666666, 0.16666666666666666)
         )
         assertEquals(expected, newMatrix)

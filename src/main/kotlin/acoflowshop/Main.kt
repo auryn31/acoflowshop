@@ -58,11 +58,11 @@ fun initEmptyPheromonMatrix(size: Int): MutableList<MutableList<Double>> {
     return (0..size-1).map { (0..size-1).map { pheromonValue }.toMutableList() }.toMutableList()
 }
 
-fun updatePheromoneForAnt(ant: Ant, pheromonMatrix: MutableList<MutableList<Double>>): MutableList<MutableList<Double>> {
+fun updatePheromoneForAnt(ant: Ant, pheromonMatrix: MutableList<MutableList<Double>>, evaporation: Double): MutableList<MutableList<Double>> {
     val pheromonValue = 1.0 / pheromonMatrix.size * evaporation
     for (i in 0..pheromonMatrix.size-1) {
         for (j in 0..pheromonMatrix[i].size-1) {
-            if(followJobJJobI(ant, i, j)) {
+            if(ant.jobQue[i].id==j) {
                 pheromonMatrix[i][j] += pheromonValue * (pheromonMatrix.size-1)
             } else {
                 pheromonMatrix[i][j] -= pheromonValue
