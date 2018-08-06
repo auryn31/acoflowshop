@@ -3,6 +3,8 @@ package acoflowshop
 import aco.Ant
 import org.junit.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class AntTest {
 
@@ -39,5 +41,28 @@ class AntTest {
                 Pair(0.30000000000000004, Job(1,1,1, 1))
         )
         assertEquals(solutionMap, hashMap)
+    }
+
+    @Test
+    fun scheduledNotScheduledTest(){
+        val ant = Ant()
+        val job = Job(1,1,1, 2)
+        ant.jobQue = mutableListOf(
+                Job(1,1,1, 0),
+                Job(1,1,1, 1)
+        )
+        assertFalse(ant.scheduled(job))
+    }
+
+    @Test
+    fun scheduledScheduledTest(){
+        val ant = Ant()
+        val job = Job(1,1,1, 2)
+        ant.jobQue = mutableListOf(
+                Job(1,1,1, 0),
+                Job(1,1,1, 1),
+                job
+        )
+        assertTrue(ant.scheduled(job))
     }
 }

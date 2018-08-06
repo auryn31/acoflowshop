@@ -35,6 +35,9 @@ fun findBestOrderForNextJob(machineList: List<Job>, jobToAdd: Job, storageSize: 
 }
 
 fun calculatefastestScheduleWithOrder(jobList: List<Job>, storageSize: Int): Int {
+    if(jobList.size == 0) {
+        return 0
+    }
     val schedule = getShortestSchedulePair(jobList, storageSize)
     return schedule.second.last().job.durationMachineTwo + schedule.second.last().start
 }
