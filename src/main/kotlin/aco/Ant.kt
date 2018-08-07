@@ -36,10 +36,20 @@ class Ant {
         val nexPos = jobQue.size
         val jobMap = hashMapOf<Double, Job>()
         var pheromonValue = 1.0
-        for (i in 0..jobs.size - 1) {
+        var pheromonSum = 0.0
+
+        // Summe der noch übrigen Gesamtmenge an Pheromonen für die noch zu wählenden Jobs berechnen
+        for(i in 0 until jobs.size) {
+            if (!scheduled(jobs[i])) {
+                pheromonSum += pheromonMatrix[i][nexPos]
+            }
+        }
+
+        // hinzufügen der restlichen Jobs zur Hashmap mit Anteilen an ihren Pheromonen
+        for (i in 0 until jobs.size) {
             if (!scheduled(jobs[i])) {
                 jobMap[pheromonValue] = jobs[i]
-                pheromonValue -= pheromonMatrix[i][nexPos]
+                pheromonValue -= pheromonMatrix[i][nexPos]/pheromonSum
             }
         }
         return jobMap
