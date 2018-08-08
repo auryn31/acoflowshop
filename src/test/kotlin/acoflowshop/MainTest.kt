@@ -10,7 +10,7 @@ class MainTest {
 
     @Test
     fun initPheromonMatrixTest(){
-        val matrix = initEmptyPheromonMatrix(2)
+        val matrix = ACO.initEmptyPheromonMatrix(2)
         assertEquals(mutableListOf(mutableListOf(0.5, 0.5), mutableListOf(0.5, 0.5)), matrix)
     }
 
@@ -25,7 +25,7 @@ class MainTest {
         )
         ant2.calculateDuration(1)
         val ants = listOf(ant1, ant2)
-        val best = findBestAnt(ants)
+        val best = ACO.findBestAnt(ants)
         assertEquals(4, best!!.duration!!)
     }
 
@@ -36,7 +36,7 @@ class MainTest {
                 Job(1,2,1, 0),
                 Job(2,1,1, 1)
         )
-        assertTrue(followJobJJobI(ant, 0, 1))
+        assertTrue(ACO.followJobJJobI(ant, 0, 1))
     }
 
     @Test
@@ -47,7 +47,7 @@ class MainTest {
                 Job(2,1,1, 1),
                 Job(2,1,1, 2)
         )
-        assertFalse(followJobJJobI(ant, 2, 1))
+        assertFalse(ACO.followJobJJobI(ant, 2, 1))
     }
 
     @Test
@@ -57,7 +57,7 @@ class MainTest {
                 Job(1,2,1, 0),
                 Job(2,1,1, 1)
         )
-        val newMatrix = updatePheromoneForAnt(ant, mutableListOf(mutableListOf(0.5, 0.5), mutableListOf(0.5, 0.5)), 0.05)
+        val newMatrix = ACO.updatePheromoneForAnt(ant, mutableListOf(mutableListOf(0.5, 0.5), mutableListOf(0.5, 0.5)), 0.05)
         assertEquals(mutableListOf(mutableListOf(0.525, 0.475), mutableListOf(0.475, 0.525)), newMatrix)
     }
 
@@ -69,8 +69,8 @@ class MainTest {
                 Job(2,1,1, 2),
                 Job(2,1,1, 1)
         )
-        val matrix = initEmptyPheromonMatrix(3)
-        val newMatrix = updatePheromoneForAnt(
+        val matrix = ACO.initEmptyPheromonMatrix(3)
+        val newMatrix = ACO.updatePheromoneForAnt(
                 ant,
                 matrix,
                 0.5
