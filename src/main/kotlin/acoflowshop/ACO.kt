@@ -43,7 +43,7 @@ class ACO {
 
                     bestGlobalAnt.calculateDuration(storageSize)
                     updateGlobalBestAnt(bestGlobalAnt, bestAnt, storageSize)
-                    pheromone = updatePheromoneForAnt(bestGlobalAnt, pheromone, evaporation)
+//                    pheromone = updatePheromoneForAnt(bestGlobalAnt, pheromone, evaporation * 0.8)
                 }
                 logger.info { pheromone }
 
@@ -74,6 +74,9 @@ class ACO {
             return (0 until size).map { (0 until size).map { pheromonValue }.toMutableList() }.toMutableList()
         }
 
+        /**
+         * start mit einer vorinitialisierten matrix die nicht überall gleich ist, sondern mit dem neh startete
+         */
         fun initWithSeed(size: Int, seedList: List<Job>, evaporation: Double): MutableList<MutableList<Double>> {
             var emtpyList = initEmptyPheromonMatrix(size)
             val ant = Ant()

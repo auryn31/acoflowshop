@@ -8,13 +8,13 @@ import mu.KotlinLogging
 //private val c = 1.0
 //private val alpha = 1.0
 //private val beta = 5.0
-private val evaporation = 0.04 //0.05 war gut
-//private val Q = 500.0
-private val antFactor = 0.4
-private val STORAGE_SIZE = 10
+private val evaporation = 0.1 //0.05 war gut
+private val Q = 500
+private val antFactor = 1
+private val STORAGE_SIZE = 20
 private val logger = KotlinLogging.logger {}
 
-private val jobList: List<Job> = createRandomJobList(100)
+private val jobList: List<Job> = createRandomJobList(40)
 //        listOf(
 //        Job(1, 1, 1, 0),
 //        Job(2, 2, 2, 1),
@@ -42,8 +42,8 @@ fun main(args: Array<String>) = runBlocking<Unit> {
     val duration = System.currentTimeMillis() - start
 
     CsvLogging.createLoggingFile()
-    val bestACODuration = ACO.optimize(ants, jobList, STORAGE_SIZE, evaporation,500, ant1.jobQue)
-    CsvLogging.appendCSVEntry(1001, length, duration)
+    val bestACODuration = ACO.optimize(ants, jobList, STORAGE_SIZE, evaporation,Q, ant1.jobQue)
+    CsvLogging.appendCSVEntry(Q+1, length, duration)
 
     logger.warn { "NEH/ACO = ${length.toDouble() / bestACODuration.toDouble()} " }
 }

@@ -1,20 +1,21 @@
 ResultMatrix <- read.csv(file="current.csv", header=FALSE, sep=",")
 
 iteration <- c(ResultMatrix[1]$V1)
-bestSolution <- c(ResultMatrix[2]$V2)
-duration <- c(ResultMatrix[3]$V3)
+bestSolutionACO <- c(ResultMatrix[2]$V2[1:length(iteration)-1])
+durationACO <- c(ResultMatrix[3]$V3[1:length(iteration)-1])/1000
 
+bestSolutionNEH <- c(ResultMatrix[2]$V2)[length(iteration):length(iteration)]
+durationNEH <- c(ResultMatrix[3]$V3)[length(iteration):length(iteration)]/1000
 jpeg('current.jpg')
-# p_range <- range(bestSolution, duration)
+range <- range(bestSolutionNEH, bestSolutionACO)
 
 #duration <- lapply(duration, as.numeric)
-plot(iteration, bestSolution, type="l", xaxt = "n", col="blue", ann=FALSE) # 
+plot(durationACO, bestSolutionACO, type="l", ylim=range, col="blue", ann=FALSE)#, xaxt = "n"
 
-axis(1, at=1:length(duration), lab=duration)
+lines(durationNEH, bestSolutionNEH, type="p", col="green")
+# axis(1, at=1:length(durationACO), lab=durationACO)
 
 box()
-
-# lines(duration, type="l", col="green")
 
 title(main="ACO Flow Shop", col.main="red", font.main=4)
 title(xlab="Dauer in s")
