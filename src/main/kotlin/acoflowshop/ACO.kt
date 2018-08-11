@@ -38,7 +38,7 @@ class ACO {
 
                 val bestAnt = findBestAnt(ants)
                 if (bestAnt != null) {
-                    pheromone = updatePheromoneForAnt(bestAnt, pheromone, evaporation)
+                    pheromone = updateJobPosPheromoneForAnt(bestAnt, pheromone, evaporation)
 //                    println(bestAnt.jobQue)
 
                     bestGlobalAnt.calculateDuration(storageSize)
@@ -52,6 +52,38 @@ class ACO {
                 logger.info { "best ant: ${bestGlobalAnt.jobQue} with length: ${bestGlobalAnt.duration}" }
                 logger.info { "TIME ${System.currentTimeMillis() - start}" }
 
+                CsvLogging.appendCSVEntry(solutionNumber, bestGlobalAnt.duration!!, (System.currentTimeMillis() - start))
+            }
+            return bestGlobalAnt.duration!!
+        }
+
+
+        fun optimizeJobJob(ants: MutableList<Ant>, jobList: List<Job>, storageSize: Int, evaporation: Double, iterations: Int, seedList: List<Job>): Int {
+            var pheromone: MutableList<MutableList<Double>> = ACO.initEmptyPheromonMatrix(jobList.size)
+            var solutionNumber = 0
+            val bestGlobalAnt = Ant()
+            val start = System.currentTimeMillis()
+
+            while (solutionNumber < iterations) {
+
+                for (i in 0 until jobList.size) {
+                    ants.forEach {
+                        it.selectNextJobAndAddToJobQue(jobList, pheromone)
+                    }
+                }
+                ants.forEach { it.calculateDuration(storageSize) }
+
+                val bestAnt = findBestAnt(ants)
+                if (bestAnt != null) {
+                    pheromone = updateJobJobPheromoneForAnt(bestAnt, pheromone, evaporation)
+
+                    bestGlobalAnt.calculateDuration(storageSize)
+                    updateGlobalBestAnt(bestGlobalAnt, bestAnt, storageSize)
+                }
+                logger.info { pheromone }
+
+                ants.forEach { it.reset() }
+                solutionNumber++
                 CsvLogging.appendCSVEntry(solutionNumber, bestGlobalAnt.duration!!, (System.currentTimeMillis() - start))
             }
             return bestGlobalAnt.duration!!
@@ -82,15 +114,16 @@ class ACO {
             val ant = Ant()
             ant.jobQue = seedList.toMutableList()
             for (i in 0 until 10) {
-                emtpyList = updatePheromoneForAnt(ant, emtpyList, evaporation)
+                emtpyList = updateJobPosPheromoneForAnt(ant, emtpyList, evaporation)
             }
             return emtpyList
         }
 
         /**
+         * Job x Position
          * Verdunsten der Pheromone und hinzufügen der Gesamtmenge an verdunsteten Pheromonen zum passenden Job
          */
-        fun updatePheromoneForAnt(ant: Ant, pheromonMatrix: MutableList<MutableList<Double>>, evaporation: Double): MutableList<MutableList<Double>> {
+        fun updateJobPosPheromoneForAnt(ant: Ant, pheromonMatrix: MutableList<MutableList<Double>>, evaporation: Double): MutableList<MutableList<Double>> {
             for (i in 0 until pheromonMatrix.size) {
                 var evaporatedValue = 0.0
                 for (j in 0 until pheromonMatrix[i].size) {
@@ -99,6 +132,30 @@ class ACO {
                     evaporatedValue += evaporationValue
                 }
                 pheromonMatrix[i][ant.jobQue[i].id] += evaporatedValue
+            }
+            return pheromonMatrix
+        }
+
+        /**
+         * Job x Job
+         * Verdunsten der Pheromone und hinzufügen der Gesamtmenge an verdunsteten Pheromonen zum passenden Job
+         */
+        fun updateJobJobPheromoneForAnt(ant: Ant, pheromonMatrix: MutableList<MutableList<Double>>, evaporation: Double): MutableList<MutableList<Double>> {
+            for (i in 0 until pheromonMatrix.size) {
+                var evaporatedValue = 0.0
+                for (j in 0 until pheromonMatrix[i].size) {
+                    val evaporationValue = pheromonMatrix[i][j] * evaporation
+                    pheromonMatrix[i][j] -= evaporationValue
+                    evaporatedValue += evaporationValue
+                }
+                for (j in 0 until ant.jobQue.size) {
+                    if (ant.jobQue[j].id == i) {
+                        if(j+1 != pheromonMatrix.size)
+                            pheromonMatrix[i][ant.jobQue[j+1].id] += evaporatedValue
+                        else
+                            pheromonMatrix[i][ant.jobQue[0].id] += evaporatedValue
+                    }
+                }
             }
             return pheromonMatrix
         }

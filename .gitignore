@@ -1,5 +1,6 @@
 current.csv
 current.jpg 
+*.jpg
 
 # Eclipse
 .classpath
