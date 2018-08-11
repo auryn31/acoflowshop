@@ -1,8 +1,10 @@
 package acoflowshop
 
+import mu.KotlinLogging
 import java.io.File
 
 private val FILE_NAME = "current"
+private val logger = KotlinLogging.logger {}
 
 class CsvLogging {
 
@@ -19,6 +21,7 @@ class CsvLogging {
          * schreiben der iteration in ein csv
          */
         fun appendCSVEntry(iteration: Int, currentLength: Int, durationInMs: Long) {
+            logger.warn { "${iteration} - ${currentLength} - ${durationInMs}" }
             File("${FILE_NAME}.csv").appendText("${iteration},${currentLength},${durationInMs}\n")
         }
     }

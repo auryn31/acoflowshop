@@ -12,15 +12,16 @@ class ACO {
         /**
          * optimieren der ameisen
          */
-        suspend fun optimize(ants: MutableList<Ant>, jobList: List<Job>, storageSize: Int, evaporation: Double, iterations: Int) {
+        suspend fun optimize(ants: MutableList<Ant>, jobList: List<Job>, storageSize: Int, evaporation: Double, iterations: Int, seedList: List<Job>): Int {
             var pheromone: MutableList<MutableList<Double>> = ACO.initEmptyPheromonMatrix(jobList.size)
+//            var pheromone: MutableList<MutableList<Double>> = ACO.initWithSeed(jobList.size, seedList, evaporation)
             var solutionNumber = 0
             val bestGlobalAnt = Ant()
             val start = System.currentTimeMillis()
 
             while (solutionNumber < iterations) {
 
-        logger.info {"################### - iteration: ${solutionNumber} - ###################"}
+                logger.info { "################### - iteration: ${solutionNumber} - ###################" }
                 //linear --> ist schneller
                 for (i in 0 until jobList.size) {
                     ants.forEach {
@@ -42,16 +43,18 @@ class ACO {
 
                     bestGlobalAnt.calculateDuration(storageSize)
                     updateGlobalBestAnt(bestGlobalAnt, bestAnt, storageSize)
+                    pheromone = updatePheromoneForAnt(bestGlobalAnt, pheromone, evaporation)
                 }
-                logger.info {pheromone}
+                logger.info { pheromone }
 
                 ants.forEach { it.reset() }
                 solutionNumber++
-                logger.info {"best ant: ${bestGlobalAnt.jobQue} with length: ${bestGlobalAnt.duration}"}
-                logger.info {"TIME ${System.currentTimeMillis() - start}"}
+                logger.info { "best ant: ${bestGlobalAnt.jobQue} with length: ${bestGlobalAnt.duration}" }
+                logger.info { "TIME ${System.currentTimeMillis() - start}" }
 
                 CsvLogging.appendCSVEntry(solutionNumber, bestGlobalAnt.duration!!, (System.currentTimeMillis() - start))
             }
+            return bestGlobalAnt.duration!!
         }
 
 
@@ -69,6 +72,16 @@ class ACO {
         fun initEmptyPheromonMatrix(size: Int): MutableList<MutableList<Double>> {
             val pheromonValue = 1.0 / size.toDouble()
             return (0 until size).map { (0 until size).map { pheromonValue }.toMutableList() }.toMutableList()
+        }
+
+        fun initWithSeed(size: Int, seedList: List<Job>, evaporation: Double): MutableList<MutableList<Double>> {
+            var emtpyList = initEmptyPheromonMatrix(size)
+            val ant = Ant()
+            ant.jobQue = seedList.toMutableList()
+            for (i in 0 until 10) {
+                emtpyList = updatePheromoneForAnt(ant, emtpyList, evaporation)
+            }
+            return emtpyList
         }
 
         /**

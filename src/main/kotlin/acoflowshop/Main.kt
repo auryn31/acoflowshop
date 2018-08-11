@@ -3,19 +3,18 @@ package acoflowshop
 import aco.Ant
 import java.util.*
 import kotlinx.coroutines.experimental.*
+import mu.KotlinLogging
 
-private val c = 1.0
-private val alpha = 1.0
-private val beta = 5.0
-private val evaporation = 0.005
-private val Q = 500.0
-private val antFactor = 0.1
-private val randomFactor = 0.01
-private val iterations = 1000
-private val STORAGE_SIZE = 20
+//private val c = 1.0
+//private val alpha = 1.0
+//private val beta = 5.0
+private val evaporation = 0.04 //0.05 war gut
+//private val Q = 500.0
+private val antFactor = 0.4
+private val STORAGE_SIZE = 10
+private val logger = KotlinLogging.logger {}
 
-
-private val jobList: List<Job> = createRandomJobList(10)
+private val jobList: List<Job> = createRandomJobList(100)
 //        listOf(
 //        Job(1, 1, 1, 0),
 //        Job(2, 2, 2, 1),
@@ -36,9 +35,17 @@ private var ants: MutableList<Ant> = (0..numberOfAnts).map { i -> Ant() }.toMuta
 
 fun main(args: Array<String>) = runBlocking<Unit> {
 
-    CsvLogging.createLoggingFile()
-    ACO.optimize(ants, jobList, STORAGE_SIZE, evaporation,100)
+    val start = System.currentTimeMillis()
+    val ant1 = Ant()
+    ant1.jobQue = jobList.toMutableList()
+    val length = ant1.calculateDurationWithNEH(STORAGE_SIZE)
+    val duration = System.currentTimeMillis() - start
 
+    CsvLogging.createLoggingFile()
+    val bestACODuration = ACO.optimize(ants, jobList, STORAGE_SIZE, evaporation,500, ant1.jobQue)
+    CsvLogging.appendCSVEntry(1001, length, duration)
+
+    logger.warn { "NEH/ACO = ${length.toDouble() / bestACODuration.toDouble()} " }
 }
 
 /**
@@ -51,7 +58,7 @@ fun createRandomJobList(length: Int): List<Job> {
     for (i in 0 until length) {
         val maschineOne = Random().nextInt(100)
         val maschineTwo = Random().nextInt(100)
-        val storage = Random().nextInt(10) + 1
+        val storage = Random().nextInt(10)
         jobList.add(Job(maschineOne, maschineTwo, storage, i))
     }
 
