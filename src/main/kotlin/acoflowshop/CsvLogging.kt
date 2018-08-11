@@ -21,7 +21,7 @@ class CsvLogging {
          * schreiben der iteration in ein csv
          */
         fun appendCSVEntry(iteration: Int, currentLength: Int, durationInMs: Long) {
-            logger.warn { "${iteration} - ${currentLength} - ${durationInMs}" }
+            logger.info { "${iteration} - ${currentLength} - ${durationInMs}" }
             File("${FILE_NAME}.csv").appendText("${iteration},${currentLength},${durationInMs}\n")
         }
     }

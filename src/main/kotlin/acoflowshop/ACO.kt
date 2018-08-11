@@ -12,7 +12,7 @@ class ACO {
         /**
          * optimieren der ameisen
          */
-        suspend fun optimize(ants: MutableList<Ant>, jobList: List<Job>, storageSize: Int, evaporation: Double, iterations: Int, seedList: List<Job>): Int {
+        fun optimize(ants: MutableList<Ant>, jobList: List<Job>, storageSize: Int, evaporation: Double, iterations: Int, seedList: List<Job>): Int {
             var pheromone: MutableList<MutableList<Double>> = ACO.initEmptyPheromonMatrix(jobList.size)
 //            var pheromone: MutableList<MutableList<Double>> = ACO.initWithSeed(jobList.size, seedList, evaporation)
             var solutionNumber = 0
@@ -75,10 +75,11 @@ class ACO {
 
                 val bestAnt = findBestAnt(ants)
                 if (bestAnt != null) {
-                    pheromone = updateJobJobPheromoneForAnt(bestAnt, pheromone, evaporation)
+                    pheromone = updateJobJobPheromoneForAnt(bestAnt, pheromone, evaporation * 0.75)
 
                     bestGlobalAnt.calculateDuration(storageSize)
                     updateGlobalBestAnt(bestGlobalAnt, bestAnt, storageSize)
+                    pheromone = updateJobJobPheromoneForAnt(bestGlobalAnt, pheromone, evaporation * 0.25)
                 }
                 logger.info { pheromone }
 

@@ -8,13 +8,13 @@ import mu.KotlinLogging
 //private val c = 1.0
 //private val alpha = 1.0
 //private val beta = 5.0
-private val evaporation = 0.01 //0.05 war gut
-private val Q = 1000
-private val antFactor = 0.8
-private val STORAGE_SIZE = 20
+private val evaporation = 0.01 //0.05 bei job x pos
+private val Q = 2000 // 1000 bei job x pos
+private val antFactor = 0.5 //0.6 bei job x pos
+private val STORAGE_SIZE = 10
 private val logger = KotlinLogging.logger {}
 
-private val jobList: List<Job> = createRandomJobList(30)
+private val jobList: List<Job> = createRandomJobList(50) //bis 25 bei job x pos gegen neh
 //        listOf(
 //        Job(1, 1, 1, 0),
 //        Job(2, 2, 2, 1),

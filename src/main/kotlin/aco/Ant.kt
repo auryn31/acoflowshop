@@ -26,7 +26,7 @@ class Ant {
 
     fun selectNextJob(jobs: List<Job>, pheromonMatrix: List<List<Double>>): Job {
         val jobMap = createHashmap(jobs, pheromonMatrix)
-        val pheromonList = jobMap.map { entry -> entry.key }.sorted()
+        val pheromonList = jobMap.keys.sorted().toList()
         val random = Random().nextDouble()
         val key = findKey(random, pheromonList)
         return jobMap.getOrDefault(key, Job(1, 1, 1))

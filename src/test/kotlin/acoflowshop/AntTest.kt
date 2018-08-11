@@ -65,4 +65,29 @@ class AntTest {
         )
         assertTrue(ant.scheduled(job))
     }
+
+    @Test
+    fun findKeyTest(){
+        val ant = Ant()
+        val hashMap = hashMapOf<Double, Job>(
+                Pair(1.0, Job(1,1,1,0)),
+                Pair(0.5, Job(1,1,1,1))
+        )
+        val pheromonList = listOf(1.0, 0.5)
+        val nextJob = hashMap[ant.findKey(0.4, pheromonList)]
+        assertEquals(0, nextJob!!.id)
+    }
+
+    @Test
+    fun findKeyTestLaterJob(){
+        val ant = Ant()
+        val hashMap = hashMapOf<Double, Job>(
+                Pair(1.0, Job(1,1,1,0)),
+                Pair(0.312412, Job(1,1,1,1)),
+                Pair(0.12523521, Job(1,1,1,2))
+        )
+        val pheromonList = hashMap.keys.sorted().toList()
+        val nextJob = hashMap[ant.findKey(0.3111, pheromonList)]
+        assertEquals(1, nextJob!!.id)
+    }
 }
