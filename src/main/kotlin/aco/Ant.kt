@@ -17,7 +17,7 @@ class Ant {
     }
 
     fun scheduled(job: Job): Boolean {
-        return jobQue.filter { it.id == job.id }.size != 0
+        return jobQue.filter { it.id == job.id }.isNotEmpty()
     }
 
     fun selectNextJobAndAddToJobQue(jobs: List<Job>, pheromonMatrix: List<List<Double>>) {
@@ -29,7 +29,7 @@ class Ant {
         val pheromonList = jobMap.keys.sorted().toList()
         val random = Random().nextDouble()
         val key = findKey(random, pheromonList)
-        return jobMap.getOrDefault(key, Job(1, 1, 1))
+        return jobMap.getOrDefault(key, Job(1, 1, 1,0))
     }
 
     fun createHashmap(jobs: List<Job>, pheromonMatrix: List<List<Double>>): HashMap<Double, Job> {
@@ -56,7 +56,7 @@ class Ant {
     }
 
     fun findKey(pheromon: Double, pheromonList: List<Double>): Double {
-        for (i in 0..pheromonList.size - 1) {
+        for (i in 0 until pheromonList.size) {
             if (pheromon < pheromonList[i]) {
                 return pheromonList[i]
             }

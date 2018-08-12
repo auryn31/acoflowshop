@@ -20,8 +20,8 @@ class MainTest {
         ant1.duration = 5
         val ant2 = Ant()
         ant2.jobQue = mutableListOf(
-                Job(1,2,1),
-                Job(2,1,1)
+                Job(1,2,1, 0),
+                Job(2,1,1, 1)
         )
         ant2.calculateDuration(1)
         val ants = listOf(ant1, ant2)

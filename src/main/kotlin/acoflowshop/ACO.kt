@@ -12,7 +12,7 @@ class ACO {
         /**
          * optimieren der ameisen
          */
-        fun optimize(ants: MutableList<Ant>, jobList: List<Job>, storageSize: Int, evaporation: Double, iterations: Int, seedList: List<Job>): Int {
+        fun optimize(ants: MutableList<Ant>, jobList: List<Job>, storageSize: Int, evaporation: Double, iterations: Int, seedList: List<Job>): Ant {
             var pheromone: MutableList<MutableList<Double>> = ACO.initEmptyPheromonMatrix(jobList.size)
 //            var pheromone: MutableList<MutableList<Double>> = ACO.initWithSeed(jobList.size, seedList, evaporation)
             var solutionNumber = 0
@@ -54,17 +54,18 @@ class ACO {
 
                 CsvLogging.appendCSVEntry(solutionNumber, bestGlobalAnt.duration!!, (System.currentTimeMillis() - start))
             }
-            return bestGlobalAnt.duration!!
+            return bestGlobalAnt
         }
 
 
-        fun optimizeJobJob(ants: MutableList<Ant>, jobList: List<Job>, storageSize: Int, evaporation: Double, iterations: Int, seedList: List<Job>): Int {
+        fun optimizeJobJob(ants: MutableList<Ant>, jobList: List<Job>, storageSize: Int, evaporation: Double, iterations: Int, seedList: List<Job>): Ant {
             var pheromone: MutableList<MutableList<Double>> = ACO.initEmptyPheromonMatrix(jobList.size)
             var solutionNumber = 0
             val bestGlobalAnt = Ant()
             val start = System.currentTimeMillis()
 
             while (solutionNumber < iterations) {
+                logger.info{ "Iteration: ${solutionNumber}" }
 
                 for (i in 0 until jobList.size) {
                     ants.forEach {
@@ -87,7 +88,7 @@ class ACO {
                 solutionNumber++
                 CsvLogging.appendCSVEntry(solutionNumber, bestGlobalAnt.duration!!, (System.currentTimeMillis() - start))
             }
-            return bestGlobalAnt.duration!!
+            return bestGlobalAnt
         }
 
 

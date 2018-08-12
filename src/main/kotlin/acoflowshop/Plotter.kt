@@ -46,7 +46,8 @@ object Plotter {
                 ig2.drawRect(shiftRight + results.second[i].start * factor, 60, results.second[i].job.durationMachineTwo * factor, height)
                 ig2.fillRect(shiftRight + results.second[i].start * factor, 60, results.second[i].job.durationMachineTwo * factor, height)
 
-                val message = "${i + 1}"
+//                val message = "${i + 1}"
+                val message = "${results.first[i].job.id}"
 
                 ig2.setPaint(Color.black)
                 ig2.drawString(message, shiftRight + results.first[i].start * factor + results.first[i].job.durationMachineOne * factor / 2, height)
