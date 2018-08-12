@@ -8,13 +8,13 @@ import mu.KotlinLogging
 //private val c = 1.0
 //private val alpha = 1.0
 //private val beta = 5.0
-private val evaporation = 0.05 //0.05 bei job x pos
+private val evaporation = 0.01 //0.05 bei job x pos
 private val Q = 1000 // 1000 bei job x pos
-private val antFactor = 0.5 //0.6 bei job x pos
+private val antFactor = 0.6 //0.6 bei job x pos
 private val STORAGE_SIZE = 10
 private val logger = KotlinLogging.logger {}
 
-private val jobList: List<Job> = createRandomJobList(50) //bis 25 bei job x pos gegen neh
+private val jobList: List<Job> = createRandomJobList(30) //bis 25 bei job x pos gegen neh
 //        listOf(
 //        Job(1, 1, 1, 0),
 //        Job(2, 2, 2, 1),
@@ -42,7 +42,7 @@ fun main(args: Array<String>) = runBlocking<Unit> {
     val duration = System.currentTimeMillis() - start
 
     CsvLogging.createLoggingFile()
-    val bestACO = ACO.optimize(ants, jobList, STORAGE_SIZE, evaporation,Q, ant1.jobQue)
+    val bestACO = ACO.optimizeJobJob(ants, jobList, STORAGE_SIZE, evaporation,Q, ant1.jobQue)
     CsvLogging.appendCSVEntry(Q+1, length, duration)
 
     logger.info { bestACO.jobQue }
