@@ -71,4 +71,8 @@ class Ant {
     fun calculateDurationWithNEH(storageSize: Int): Int {
         return acoflowshop.duration(jobQue, storageSize)
     }
+
+    fun calculateDurationWithNEHASC(storageSize: Int): Int {
+        return acoflowshop.durationNEHASC(jobQue, storageSize)
+    }
 }

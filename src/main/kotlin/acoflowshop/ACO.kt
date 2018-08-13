@@ -39,11 +39,11 @@ class ACO {
                 val bestAnt = findBestAnt(ants)
                 if (bestAnt != null) {
                     pheromone = updateJobPosPheromoneForAnt(bestAnt, pheromone, evaporation)
-//                    println(bestAnt.jobQue)
+//                    pheromone = updateAllAnts(ants, bestAnt, pheromone, evaporation)
 
                     bestGlobalAnt.calculateDuration(storageSize)
                     updateGlobalBestAnt(bestGlobalAnt, bestAnt, storageSize)
-//                    pheromone = updatePheromoneForAnt(bestGlobalAnt, pheromone, evaporation * 0.8)
+//                    pheromone = updateJobPosPheromoneForAnt(bestGlobalAnt, pheromone, evaporation * 0.2)
                 }
                 logger.info { pheromone }
 
@@ -55,6 +55,16 @@ class ACO {
                 CsvLogging.appendCSVEntry(solutionNumber, bestGlobalAnt.duration!!, (System.currentTimeMillis() - start))
             }
             return bestGlobalAnt
+        }
+
+        // update all ants
+        private fun updateAllAnts(ants: MutableList<Ant>, bestAnt: Ant, pheromone: MutableList<MutableList<Double>>, evaporation: Double): MutableList<MutableList<Double>> {
+            var newPheromonList = pheromone
+            val bestAnts = ants.filter { it.duration == bestAnt.duration }
+            bestAnts.forEach {
+                newPheromonList = updateJobPosPheromoneForAnt(it, newPheromonList, evaporation)
+        }
+            return newPheromonList
         }
 
 
@@ -115,7 +125,7 @@ class ACO {
             var emtpyList = initEmptyPheromonMatrix(size)
             val ant = Ant()
             ant.jobQue = seedList.toMutableList()
-            for (i in 0 until 10) {
+            for (i in 0 until 400) {
                 emtpyList = updateJobPosPheromoneForAnt(ant, emtpyList, evaporation)
             }
             return emtpyList

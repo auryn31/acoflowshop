@@ -12,6 +12,6 @@ class Job(val durationMachineOne: Int, val durationMachineTwo: Int, val storageS
     }
 
     override fun toString(): String {
-        return "Job with id: ${this.id}"
+        return "Job(${durationMachineOne}, ${durationMachineTwo}, ${storageSize}, ${this.id})"
     }
 }
