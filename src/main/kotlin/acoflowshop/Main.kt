@@ -49,9 +49,9 @@ fun main(args: Array<String>) = runBlocking<Unit> {
     CsvLogging.appendCSVEntry(Q+1, length, duration)
 
     logger.info { bestACO.jobQue }
-    logger.info { getShortestSchedulePair(bestACO.jobQue, STORAGE_SIZE) }
+    logger.info { getShortestSchedule(bestACO.jobQue, STORAGE_SIZE) }
 
-//    Plotter.plotResults(getShortestSchedulePair(bestACO.jobQue, STORAGE_SIZE), "TEST")
+//    Plotter.plotResults(getShortestSchedule(bestACO.jobQue, STORAGE_SIZE), "TEST")
 
     logger.warn { "NEH/ACO = ${length.toDouble() / bestACO.duration!!.toDouble()} " }
 }

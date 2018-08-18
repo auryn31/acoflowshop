@@ -9,7 +9,7 @@ class PlotterTest {
     @Test
     fun plotFirstJob(){
         val fileName = "realDataTestPlot"
-        val pairs = getShortestSchedulePair(listOf<Job>(
+        val pairs = getShortestSchedule(listOf<Job>(
                 Job(1,2,1,0),
                 Job(3,1,1,1),
                 Job(3,1,1,2)
@@ -23,7 +23,7 @@ class PlotterTest {
     @Test
     fun plotSecondJob(){
         val fileName = "realDataTestPlot"
-        val pairs = getShortestSchedulePair(listOf<Job>(
+        val pairs = getShortestSchedule(listOf<Job>(
                 Job(1,2,1,0),
                 Job(7,1,1,1),
                 Job(7,1,1,2),

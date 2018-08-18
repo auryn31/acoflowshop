@@ -1,7 +1,6 @@
 package acoflowshop
 
 import java.util.*
-import kotlin.math.max
 
 fun duration(jobsList: List<Job>, storageSize: Int): Int {
     val jobs = jobsList.sortedByDescending { it.durationMachineOne + it.durationMachineTwo }
@@ -48,11 +47,11 @@ fun calculatefastestScheduleWithOrder(jobList: List<Job>, storageSize: Int): Int
     if (jobList.isEmpty()) {
         return 0
     }
-    val schedule = getShortestSchedulePair(jobList, storageSize)
+    val schedule = getShortestSchedule(jobList, storageSize)
     return schedule.second.last().job.durationMachineTwo + schedule.second.last().start
 }
 
-fun getShortestSchedulePair(jobList: List<Job>, storageSize: Int): Triple<List<Schedule>, List<Schedule>, List<Memory>> {
+fun getShortestSchedule(jobList: List<Job>, storageSize: Int): Triple<List<Schedule>, List<Schedule>, List<Memory>> {
     var currentlyUsedStorage = 0
     val machineOneStack = LinkedList<Job>()
     machineOneStack.addAll(jobList)
