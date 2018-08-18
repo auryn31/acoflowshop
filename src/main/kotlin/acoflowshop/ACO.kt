@@ -53,7 +53,9 @@ class ACO {
                 logger.info { "TIME ${System.currentTimeMillis() - start}" }
 
                 CsvLogging.appendCSVEntry(solutionNumber, bestGlobalAnt.duration!!, (System.currentTimeMillis() - start))
+                PheromonLogger.writeEntryIntoDB(solutionNumber, pheromone)
             }
+//            PheromonLogger.endLogging()
             return bestGlobalAnt
         }
 

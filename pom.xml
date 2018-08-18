@@ -49,6 +49,13 @@
             <version>1.7.5</version>
         </dependency>
 
+        <!-- MongoDB -->
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongo-java-driver</artifactId>
+            <version>3.8.0</version>
+        </dependency>
+
         <!--Test-->
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
