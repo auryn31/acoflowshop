@@ -139,59 +139,62 @@ private fun addNextJobToMachineOne(machineOne: MutableList<Schedule>, machineOne
     machineOne.add(Schedule(machineOneStack.remove(), counter))
 }
 
-/*
-fun calculateDurationForAICA(){
+
+fun calculateDurationForAICA(jobs: MutableList<Job>, randomFactor: Double): Double{
     var t1 = 0
     var t2 = 0
-    var startSequence = mutableListOf<Job>()
-    var scheduledJobs = mutableListOf<Job>()
-    var T1 = t1 // max(t1j)
-    var T2 = t2 // max(t2j)
-    var T = T2 - T1
+    var currentAverage = 0.0
 
-    while(startSequence.isNotEmpty()) {
-        for (i in 0 until startSequence.size) {
-            if(i==0){
-                t1+=1 // setuptime für job 1 auf maschine 1
-                t2+=1 // setuptime für job 1 auf maschine 2
-            } else {
-                if(startSequence[i].durationMachineOne - T >= 0) {
-                    t1j += startSequence[i].durationMachineOne
-                    var random = Random().nextDouble()%1
-                    while(random <= 0) { // Prel,j --> die wahrscheinlichkeit, dass der job auf maschine 1 wiederholt werden muss
-                        t1j += startSequence[i].durationMachineOne // die nacharbeitskosten hinzurechnen
-                        random = Random().nextDouble()%1
-                    }
-                    t1j += 1 // vorbereitungskosten für den nächsten job auf maschine 1
-                    t2j += startSequence[i].durationMachineTwo
+    for (i in 0 until jobs.size+1) {
+        if(i==0){
+            t1+=jobs[i].setupTime // setuptime für job 1 auf maschine 1
+            t2+=jobs[i].setupTime // setuptime für job 1 auf maschine 2
+        } else {
+            if(jobs[i-1].durationMachineOne - (t2 - t1) >= 0) {
+                t1 += jobs[i-1].durationMachineOne
+                var random = Random().nextDouble()%1
+                while(random <= randomFactor) { // Prel,j --> die wahrscheinlichkeit, dass der job auf maschine 1 wiederholt werden muss
+                    t1 += jobs[i-1].durationMachineOne // die nacharbeitskosten hinzurechnen
                     random = Random().nextDouble()%1
-                    while(random <= 0) { // Prel,j --> die wahrscheinlichkeit, dass der job auf maschine 1 wiederholt werden muss
-                        t2j += startSequence[i].durationMachineTwo // die nacharbeitskosten hinzurechnen
-                        random = Random().nextDouble()%1
-                    }
-                    t2j += 1 // vorbereitungskosten für den nächsten job auf maschine 2
-                } else {
-                    t1j = t2j
-                    var random = Random().nextDouble()%1
-                    while(random <= 0) { // Prel,j --> die wahrscheinlichkeit, dass der job auf maschine 1 wiederholt werden muss
-                        t1j += startSequence[i].durationMachineTwo // die nacharbeitskosten hinzurechnen
-                        random = Random().nextDouble()%1
-                    }
-                    t1j += 1 //setupzeit maschine 1
-                    t2j += startSequence[i].durationMachineTwo
-                    while(random <= 0) { // Prel,j --> die wahrscheinlichkeit, dass der job auf maschine 1 wiederholt werden muss
-                        t2j += startSequence[i].durationMachineTwo // die nacharbeitskosten hinzurechnen
-                        random = Random().nextDouble()%1
-                    }
-                    t2j += 1 // vorbereitungskosten für den nächsten job auf maschine 2
                 }
+                if(i < jobs.size) {
+                    t1 += jobs[i].setupTime // vorbereitungskosten für den nächsten job auf maschine 1
+                }
+                t2 = t1 + jobs[i-1].durationMachineTwo
+                random = Random().nextDouble()%1
+                while(random <= randomFactor) { // Prel,j --> die wahrscheinlichkeit, dass der job auf maschine 1 wiederholt werden muss
+                    t2 += jobs[i-1].durationMachineTwo // die nacharbeitskosten hinzurechnen
+                    random = Random().nextDouble()%1
+                }
+                if(i < jobs.size) {
+                    t2 += jobs[i].setupTime // vorbereitungskosten für den nächsten job auf maschine 2
+                }
+                currentAverage += t2
+            } else { // ist die pause lange genug (die zeiger weit genug auseinander) kann der job direkt ausgeführt werden
+                t1 = t2
+                var random = Random().nextDouble()%1
+                while(random <= randomFactor) { // Prel,j --> die wahrscheinlichkeit, dass der job auf maschine 1 wiederholt werden muss
+                    t1 += jobs[i-1].durationMachineTwo // die nacharbeitskosten hinzurechnen
+                    random = Random().nextDouble()%1
+                }
+                if(i < jobs.size) {
+                    t1 += jobs[i].setupTime // vorbereitungskosten für den nächsten job auf maschine 1
+                }
+                t2 = t1 + jobs[i-1].durationMachineTwo
+                while(random <= randomFactor) { // Prel,j --> die wahrscheinlichkeit, dass der job auf maschine 1 wiederholt werden muss
+                    t2 += jobs[i-1].durationMachineTwo // die nacharbeitskosten hinzurechnen
+                    random = Random().nextDouble()%1
+                }
+                if(i < jobs.size) {
+                    t2 += jobs[i].setupTime // vorbereitungskosten für den nächsten job auf maschine 2
+                }
+                currentAverage += t2
             }
         }
-        scheduledJobs.add(startSequence.last())
-        startSequence.removeAt(startSequence.size-1)
     }
+    return currentAverage/jobs.size
 }
-*/
+
 class Schedule(val job: Job, val start: Int) {
 
     override fun toString(): String {

@@ -1,7 +1,7 @@
 package acoflowshop
 
 
-class Job(val durationMachineOne: Int, val durationMachineTwo: Int, val storageSize: Int, val id: Int){
+class Job(val durationMachineOne: Int, val durationMachineTwo: Int, val storageSize: Int, val id: Int, val setupTime: Int = 0){
 
     override fun equals(other: Any?): Boolean {
         if(other is Job) {

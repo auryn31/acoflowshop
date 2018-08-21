@@ -131,4 +131,45 @@ class DurationTest{
         assertEquals(9, shortestSchedule)
     }
 
+    @Test
+    fun calculateDurationForAICATest(){
+        val jobs = mutableListOf<Job>(
+                Job(1,3,1,0)
+        )
+        val shortestSchedule = calculateDurationForAICA(jobs, 0.0)
+        assertEquals(4.0, shortestSchedule)
+    }
+
+    @Test
+    fun calculateDurationForAICATestWithTwoJobs(){
+        val jobs = mutableListOf<Job>(
+                Job(1,3,1,0),
+                Job(2,2,1,1)
+        )
+        val shortestSchedule = calculateDurationForAICA(jobs, 0.0)
+        assertEquals(5.0, shortestSchedule)
+    }
+
+    @Test
+    fun calculateDurationForAICATestWithTwoJobs2(){
+        val jobs = mutableListOf<Job>(
+                Job(1,1,1,0),
+                Job(3,1,1,1)
+        )
+        val shortestSchedule = calculateDurationForAICA(jobs, 0.0)
+        assertEquals(3.5, shortestSchedule)
+    }
+
+    @Test
+    fun calculateDurationForAICATestWithManyJobs(){
+        val jobs = mutableListOf<Job>(
+                Job(1,3,1,0),
+                Job(2,2,1,1),
+                Job(1,2,1,2),
+                Job(4,1,1,3)
+        )
+        val shortestSchedule = calculateDurationForAICA(jobs, 0.0)
+        assertEquals(7.25, shortestSchedule)
+    }
+
 }
