@@ -3,7 +3,6 @@ package acoflowshop
 import aco.Ant
 import kotlinx.coroutines.experimental.channels.produce
 import mu.KotlinLogging
-import java.util.logging.Logger
 
 private val logger = KotlinLogging.logger {}
 
@@ -59,6 +58,40 @@ class ACO {
             return bestGlobalAnt
         }
 
+        // MTC = Mean Completion Time --> Durchschnittliche Fertigstellungszeit
+        fun optimizeForMCT(ants: MutableList<Ant>, jobList: List<Job>, evaporation: Double, iterations: Int): Ant {
+            var pheromone: MutableList<MutableList<Double>> = ACO.initEmptyPheromonMatrix(jobList.size)
+            var solutionNumber = 0
+            val bestGlobalAnt = Ant()
+            val start = System.currentTimeMillis()
+
+            while (solutionNumber < iterations) {
+
+                logger.info { "################### - iteration: ${solutionNumber} - ###################" }
+                for (i in 0 until jobList.size) {
+                    ants.forEach {
+                        it.selectNextJobAndAddToJobQue(jobList, pheromone)
+                    }
+                }
+                ants.forEach { it.calculateDurationWithMCT() }
+                val bestAnt = findBestAntForMCT(ants)
+                if (bestAnt != null) {
+                    pheromone = updateJobPosPheromoneForAnt(bestAnt, pheromone, evaporation)
+                    bestGlobalAnt.calculateDurationWithMCT()
+                    updateGlobalBestAntForACIS(bestGlobalAnt, bestAnt)
+                }
+                logger.info { pheromone }
+
+                ants.forEach { it.reset() }
+                solutionNumber++
+                logger.info { "best ant: ${bestGlobalAnt.jobQue} with length: ${bestGlobalAnt.duration}" }
+                logger.info { "TIME ${System.currentTimeMillis() - start}" }
+                CsvLogging.appendCSVEntry(solutionNumber, bestGlobalAnt.durationForMCT!!, (System.currentTimeMillis() - start))
+                PheromonLogger.writeEntryIntoDB(solutionNumber, pheromone)
+            }
+            return bestGlobalAnt
+        }
+
         // update all ants
         private fun updateAllAnts(ants: MutableList<Ant>, bestAnt: Ant, pheromone: MutableList<MutableList<Double>>, evaporation: Double): MutableList<MutableList<Double>> {
             var newPheromonList = pheromone
@@ -110,6 +143,10 @@ class ACO {
 
         fun findBestAnt(ants: List<Ant>): Ant? {
             return ants.sortedBy { it.duration }.firstOrNull()
+        }
+
+        fun findBestAntForMCT(ants: List<Ant>): Ant? {
+            return ants.sortedBy { it.durationForMCT }.firstOrNull()
         }
 
         /**
@@ -192,6 +229,21 @@ class ACO {
             if (bestGlobalAnt.jobQue.size == 0) {
                 bestGlobalAnt.jobQue = bestAnt.jobQue
                 bestGlobalAnt.calculateDuration(storageSize)
+            } else {
+                if (currentDuration != null && globalDuration != null) {
+                    if (currentDuration < globalDuration) {
+                        bestGlobalAnt.jobQue = bestAnt.jobQue
+                    }
+                }
+            }
+        }
+
+        private fun updateGlobalBestAntForACIS(bestGlobalAnt: Ant, bestAnt: Ant) {
+            val currentDuration = bestAnt.durationForMCT
+            val globalDuration = bestGlobalAnt.durationForMCT
+            if (bestGlobalAnt.jobQue.size == 0) {
+                bestGlobalAnt.jobQue = bestAnt.jobQue
+                bestGlobalAnt.calculateDurationWithMCT()
             } else {
                 if (currentDuration != null && globalDuration != null) {
                     if (currentDuration < globalDuration) {

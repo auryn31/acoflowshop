@@ -9,8 +9,8 @@ import mu.KotlinLogging
 //private val alpha = 1.0
 //private val beta = 5.0
 private val evaporation = 0.05 //0.05 bei job x pos
-private val Q = 200 // 1000 bei job x pos
-private val antFactor = 1 //0.6 bei job x pos
+private val Q = 1000 // 1000 bei job x pos
+private val antFactor = 0.2 //0.6 bei job x pos
 private val STORAGE_SIZE = 5
 private val logger = KotlinLogging.logger {}
 
@@ -37,6 +37,10 @@ private var ants: MutableList<Ant> = (0..numberOfAnts).map { i -> Ant() }.toMuta
 
 fun main(args: Array<String>) = runBlocking<Unit> {
 
+    calculateWithMeanCompletionTime()
+}
+
+fun calculateWithMakespan(){
     val start = System.currentTimeMillis()
     val ant1 = Ant()
     ant1.jobQue = jobList.toMutableList()
@@ -54,6 +58,19 @@ fun main(args: Array<String>) = runBlocking<Unit> {
 //    Plotter.plotResults(getShortestSchedule(bestACO.jobQue, STORAGE_SIZE), "TEST")
 
     logger.warn { "NEH/ACO = ${length.toDouble() / bestACO.duration!!.toDouble()} " }
+}
+
+fun calculateWithMeanCompletionTime(){
+    val start = System.currentTimeMillis()
+    val ant1 = Ant()
+    ant1.jobQue = jobList.toMutableList()
+
+    CsvLogging.createLoggingFile()
+    PheromonLogger.initDB()
+    val bestACO = ACO.optimizeForMCT(ants, jobList, evaporation,Q)
+
+    logger.info { bestACO.jobQue }
+    logger.info { getShortestSchedule(bestACO.jobQue, STORAGE_SIZE) }
 }
 
 /**

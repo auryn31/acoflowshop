@@ -140,7 +140,10 @@ private fun addNextJobToMachineOne(machineOne: MutableList<Schedule>, machineOne
 }
 
 
-fun calculateDurationForAICA(jobs: MutableList<Job>, randomFactor: Double): Double{
+fun calculateDurationForMCT(jobs: MutableList<Job>, randomFactor: Double): Double {
+    if (jobs.isEmpty()) {
+        return 0.0
+    }
     var t1 = 0
     var t2 = 0
     var currentAverage = 0.0

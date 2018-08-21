@@ -9,6 +9,7 @@ class Ant {
     var jobQue: MutableList<Job> = mutableListOf()
 
     var duration: Int? = null
+    var durationForMCT: Double? = null
 
 
     fun reset() {
@@ -74,5 +75,9 @@ class Ant {
 
     fun calculateDurationWithNEHASC(storageSize: Int): Int {
         return acoflowshop.durationNEHASC(jobQue, storageSize)
+    }
+
+    fun calculateDurationWithMCT() {
+        this.durationForMCT = acoflowshop.calculateDurationForMCT(jobQue, 0.0)
     }
 }

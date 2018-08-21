@@ -24,5 +24,10 @@ class CsvLogging {
             logger.info { "${iteration} - ${currentLength} - ${durationInMs}" }
             File("${FILE_NAME}.csv").appendText("${iteration},${currentLength},${durationInMs}\n")
         }
+
+        fun appendCSVEntry(iteration: Int, currentLength: Double, durationInMs: Long) {
+            logger.info { "${iteration} - ${currentLength} - ${durationInMs}" }
+            File("${FILE_NAME}.csv").appendText("${iteration},${currentLength},${durationInMs}\n")
+        }
     }
 }
