@@ -1,16 +1,20 @@
 package acoflowshop
 
 import aco.Ant
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.KotlinModule
+import global.Config
 import java.util.*
 import kotlinx.coroutines.experimental.*
 import mu.KotlinLogging
+import java.io.File
 
 //private val c = 1.0
 //private val alpha = 1.0
 //private val beta = 5.0
-private val evaporation = 0.05 //0.05 bei job x pos
-private val Q = 1000 // 1000 bei job x pos
-private val antFactor = 0.2 //0.6 bei job x pos
+//private val evaporation = 0.05 //0.05 bei job x pos
+//private val Q = 1000 // 1000 bei job x pos
+//private val antFactor = 0.2 //0.6 bei job x pos
 private val STORAGE_SIZE = 5
 private val logger = KotlinLogging.logger {}
 
@@ -29,18 +33,22 @@ private val jobList: List<Job> = listOf(Job(279, 279, 5, 0), Job(828, 828, 2, 1)
 //        Job(4, 1, 1, 8),
 //        Job(8, 1, 1, 9)
 //)
-private val numberOfJobs = jobList.size
-private val numberOfAnts = (numberOfJobs * antFactor).toInt()
-private var ants: MutableList<Ant> = (0..numberOfAnts).map { i -> Ant() }.toMutableList()
+//private val numberOfJobs = jobList.size
+//private val numberOfAnts = (numberOfJobs * antFactor).toInt()
+//private var ants: MutableList<Ant> = (0..numberOfAnts).map { i -> Ant() }.toMutableList()
 
 
 
 fun main(args: Array<String>) = runBlocking<Unit> {
-
-    calculateWithMeanCompletionTime()
+    val mapper = ObjectMapper().registerModule(KotlinModule())
+    val config = mapper.readValue(File("src/test/resources/TestConfig.json"), Config::class.java)
+    if (config !== null) {
+        calculateWithMeanCompletionTime(config)
+    }
 }
 
-fun calculateWithMakespan(){
+fun calculateWithMakespan(config: Config){
+    val ants: MutableList<Ant> = (0..(config.antFactor* jobList.size).toInt()).map { i -> Ant() }.toMutableList()
     val start = System.currentTimeMillis()
     val ant1 = Ant()
     ant1.jobQue = jobList.toMutableList()
@@ -49,8 +57,8 @@ fun calculateWithMakespan(){
 
     CsvLogging.createLoggingFile()
     PheromonLogger.initDB()
-    val bestACO = ACO.optimize(ants, jobList, STORAGE_SIZE, evaporation,Q, ant1.jobQue)
-    CsvLogging.appendCSVEntry(Q+1, length, duration)
+    val bestACO = ACO.optimize(ants, jobList, STORAGE_SIZE, config.evaporation, config.Q, ant1.jobQue)
+    CsvLogging.appendCSVEntry(config.Q+1, length, duration)
 
     logger.info { bestACO.jobQue }
     logger.info { getShortestSchedule(bestACO.jobQue, STORAGE_SIZE) }
@@ -60,14 +68,14 @@ fun calculateWithMakespan(){
     logger.warn { "NEH/ACO = ${length.toDouble() / bestACO.duration!!.toDouble()} " }
 }
 
-fun calculateWithMeanCompletionTime(){
-    val start = System.currentTimeMillis()
+fun calculateWithMeanCompletionTime(config: Config){
+    val ants: MutableList<Ant> = (0..(config.antFactor* jobList.size).toInt()).map { i -> Ant() }.toMutableList()
     val ant1 = Ant()
     ant1.jobQue = jobList.toMutableList()
 
     CsvLogging.createLoggingFile()
     PheromonLogger.initDB()
-    val bestACO = ACO.optimizeForMCT(ants, jobList, evaporation,Q)
+    val bestACO = ACO.optimizeForMCT(ants, jobList, config.evaporation,config.Q)
 
     logger.info { bestACO.jobQue }
     logger.info { getShortestSchedule(bestACO.jobQue, STORAGE_SIZE) }
