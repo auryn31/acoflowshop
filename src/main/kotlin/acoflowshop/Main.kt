@@ -1,5 +1,6 @@
 package acoflowshop
 
+import aco.ACO
 import aco.Ant
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
@@ -54,7 +55,6 @@ fun calculateWithMeanCompletionTime(config: Config){
     val bestACO = ACO.optimizeForMCT(ants, jobList, config.evaporation, config.Q)
 
     logger.info { bestACO.jobQue }
-    logger.info { getShortestSchedule(bestACO.jobQue, STORAGE_SIZE) }
 }
 
 /**

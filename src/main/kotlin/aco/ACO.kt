@@ -1,7 +1,8 @@
-package acoflowshop
+package aco
 
-import aco.Ant
-import kotlinx.coroutines.experimental.channels.produce
+import acoflowshop.CsvLogging
+import acoflowshop.Job
+import acoflowshop.PheromonLogger
 import mu.KotlinLogging
 
 private val logger = KotlinLogging.logger {}
@@ -12,7 +13,7 @@ class ACO {
          * optimieren der ameisen
          */
         fun optimize(ants: MutableList<Ant>, jobList: List<Job>, storageSize: Int, evaporation: Double, iterations: Int, seedList: List<Job>? = null): Ant {
-            var pheromone: MutableList<MutableList<Double>> = ACO.initEmptyPheromonMatrix(jobList.size)
+            var pheromone: MutableList<MutableList<Double>> = initEmptyPheromonMatrix(jobList.size)
             var solutionNumber = 0
             val bestGlobalAnt = Ant()
             val start = System.currentTimeMillis()
@@ -53,7 +54,7 @@ class ACO {
 
         // MTC = Mean Completion Time --> Durchschnittliche Fertigstellungszeit
         fun optimizeForMCT(ants: MutableList<Ant>, jobList: List<Job>, evaporation: Double, iterations: Int): Ant {
-            var pheromone: MutableList<MutableList<Double>> = ACO.initEmptyPheromonMatrix(jobList.size)
+            var pheromone: MutableList<MutableList<Double>> = initEmptyPheromonMatrix(jobList.size)
             var solutionNumber = 0
             val bestGlobalAnt = Ant()
             val start = System.currentTimeMillis()
@@ -97,7 +98,7 @@ class ACO {
 
 
         fun optimizeJobJob(ants: MutableList<Ant>, jobList: List<Job>, storageSize: Int, evaporation: Double, iterations: Int, seedList: List<Job>): Ant {
-            var pheromone: MutableList<MutableList<Double>> = ACO.initEmptyPheromonMatrix(jobList.size)
+            var pheromone: MutableList<MutableList<Double>> = initEmptyPheromonMatrix(jobList.size)
             var solutionNumber = 0
             val bestGlobalAnt = Ant()
             val start = System.currentTimeMillis()
