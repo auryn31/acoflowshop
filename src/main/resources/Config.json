@@ -1,5 +1,5 @@
 {"evaporation": 0.05,
-  "Q": 1000,
-  "antFactor": 0.01,
+  "Q": 500,
+  "antFactor": 1.0,
   "dbLogging": false,
-  "fileLogging" : false}
+  "fileLogging" : true}

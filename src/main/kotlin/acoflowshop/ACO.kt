@@ -11,9 +11,8 @@ class ACO {
         /**
          * optimieren der ameisen
          */
-        fun optimize(ants: MutableList<Ant>, jobList: List<Job>, storageSize: Int, evaporation: Double, iterations: Int, seedList: List<Job>): Ant {
+        fun optimize(ants: MutableList<Ant>, jobList: List<Job>, storageSize: Int, evaporation: Double, iterations: Int, seedList: List<Job>? = null): Ant {
             var pheromone: MutableList<MutableList<Double>> = ACO.initEmptyPheromonMatrix(jobList.size)
-//            var pheromone: MutableList<MutableList<Double>> = ACO.initWithSeed(jobList.size, seedList, evaporation)
             var solutionNumber = 0
             val bestGlobalAnt = Ant()
             val start = System.currentTimeMillis()
@@ -29,11 +28,6 @@ class ACO {
                 }
                 ants.forEach { it.calculateDuration(storageSize) }
 
-                //parallel
-//        val newAntList = mutableListOf<Ant>()
-//        selectJobsAsync(ants, jobList, pheromone, numberOfJobs).consumeEach { newAntList.add(it) }
-//
-//        ants = newAntList
 
                 val bestAnt = findBestAnt(ants)
                 if (bestAnt != null) {
@@ -54,7 +48,6 @@ class ACO {
                 CsvLogging.appendCSVEntry(solutionNumber, bestGlobalAnt.duration!!, (System.currentTimeMillis() - start))
                 PheromonLogger.writeEntryIntoDB(solutionNumber, pheromone)
             }
-//            PheromonLogger.endLogging()
             return bestGlobalAnt
         }
 
@@ -250,20 +243,6 @@ class ACO {
                         bestGlobalAnt.jobQue = bestAnt.jobQue
                     }
                 }
-            }
-        }
-
-        /**
-         * Jobwahl asynchron
-         */
-        fun selectJobsAsync(ants: List<Ant>, jobList: List<Job>, storageSize: Int, pheromonMatrix: MutableList<MutableList<Double>>, numberOfJobs: Int) = produce<Ant> {
-            ants.forEach {
-                val ant = Ant()
-                for (i in 0 until numberOfJobs) {
-                    ant.selectNextJobAndAddToJobQue(jobList, pheromonMatrix)
-                }
-                ant.calculateDuration(storageSize)
-                send(ant)
             }
         }
     }

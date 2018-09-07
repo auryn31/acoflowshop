@@ -1,41 +1,53 @@
 package acoflowshop
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.mongodb.MongoClient
+import global.Config
 import mu.KotlinLogging
 import org.bson.Document
 import java.io.File
 
-private val FILE_NAME = "pheromon"
-private val logger = KotlinLogging.logger {}
+private const val FILE_NAME = "pheromon"
 
 class PheromonLogger {
     companion object {
         val mongo = MongoClient()
         val db = mongo.getDatabase("pheromon")
         val collection = db.getCollection("pheromonValues")
+        val mapper = ObjectMapper().registerModule(KotlinModule())
+        val config = mapper.readValue(File("src/main/resources/Config.json"), Config::class.java)
         /**
          * löschen des Logs der letzten iteration und erstellen eines neuen Files
          */
         fun createLoggingFile() {
-            File("${FILE_NAME}.json").delete()
-            File("${FILE_NAME}.json").createNewFile()
-            File("${FILE_NAME}.json").appendText("[")
+            if(config !== null && config.dbLogging) {
+                File("${FILE_NAME}.json").delete()
+                File("${FILE_NAME}.json").createNewFile()
+                File("${FILE_NAME}.json").appendText("[")
+            }
         }
 
         fun endLogging(){
-            File("${FILE_NAME}.json").appendText("]")
+            if(config !== null && config.dbLogging) {
+                File("${FILE_NAME}.json").appendText("]")
+            }
         }
 
         fun writeEntryIntoDB(iteration: Int, pheromonList: MutableList<MutableList<Double>>){
-            val document = Document()
-            document.put("_id", iteration)
-            document.put("pheromon", pheromonList.map { it.map { (it*100).toInt() } })
-            collection.insertOne(document)
+            if(config !== null && config.dbLogging) {
+                val document = Document()
+                document.put("_id", iteration)
+                document.put("pheromon", pheromonList.map { it.map { (it*100).toInt() } })
+                collection.insertOne(document)
+            }
 
         }
 
         fun initDB(){
-            collection.drop()
+            if(config !== null && config.dbLogging) {
+                collection.drop()
+            }
         }
 
         /**
