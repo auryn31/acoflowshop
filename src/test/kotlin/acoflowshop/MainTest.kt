@@ -51,4 +51,14 @@ class MainTest {
         assertFalse(ACO.followJobJJobI(ant, 2, 1))
     }
 
+    @Test
+    fun testFak6(){
+        assertEquals(6, fak(3))
+    }
+
+    @Test
+    fun testFak24(){
+        assertEquals(24, fak(4))
+    }
+
 }

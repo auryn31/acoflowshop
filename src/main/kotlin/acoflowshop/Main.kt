@@ -35,7 +35,7 @@ fun calculateWithMakespan(config: Config){
     CsvLogging.createLoggingFile()
     PheromonLogger.initDB()
     val bestACO = ACO.optimize(ants, jobList, STORAGE_SIZE, config.evaporation, config.Q, ant1.jobQue)
-    CsvLogging.appendCSVEntry(config.Q+1, length, duration)
+    CsvLogging.appendCSVEntry(config.Q+1, length, duration, fak(jobList.size))
 
     logger.info { bestACO.jobQue }
     logger.info { getShortestSchedule(bestACO.jobQue, STORAGE_SIZE) }
@@ -43,6 +43,14 @@ fun calculateWithMakespan(config: Config){
 //    Plotter.plotResults(getShortestSchedule(bestACO.jobQue, STORAGE_SIZE), "TEST")
 
     logger.warn { "NEH/ACO = ${length.toDouble() / bestACO.duration!!.toDouble()} " }
+}
+
+fun fak(num: Int): Int {
+    var result = 1
+    for(n in 1 until num+1) {
+        result *= n
+    }
+    return result
 }
 
 fun calculateWithMeanCompletionTime(config: Config){

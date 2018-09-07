@@ -19,25 +19,25 @@ class CsvLogging {
          */
         fun createLoggingFile() {
             if(config !== null && config.fileLogging) {
-                File("${FILE_NAME}.csv").delete()
-                File("${FILE_NAME}.csv").createNewFile()
+                File("$FILE_NAME.csv").delete()
+                File("$FILE_NAME.csv").createNewFile()
             }
         }
 
         /**
          * schreiben der iteration in ein csv
          */
-        fun appendCSVEntry(iteration: Int, currentLength: Int, durationInMs: Long) {
+        fun appendCSVEntry(iteration: Int, currentLength: Int, durationInMs: Long, evaluationIteration: Int) {
             logger.info { "${iteration} - ${currentLength} - ${durationInMs}" }
             if(config !== null && config.fileLogging) {
-                File("${FILE_NAME}.csv").appendText("${iteration},${currentLength},${durationInMs}\n")
+                File("$FILE_NAME.csv").appendText("$iteration,$currentLength, $durationInMs,$evaluationIteration\n")
             }
         }
 
-        fun appendCSVEntry(iteration: Int, currentLength: Double, durationInMs: Long) {
+        fun appendCSVEntry(iteration: Int, currentLength: Double, durationInMs: Long, evaluationIteration: Int) {
             logger.info { "${iteration} - ${currentLength} - ${durationInMs}" }
             if(config !== null && config.fileLogging) {
-                File("${FILE_NAME}.csv").appendText("${iteration},${currentLength},${durationInMs}\n")
+                File("$FILE_NAME.csv").appendText("$iteration,$currentLength,$durationInMs,$evaluationIteration\n")
             }
         }
     }
