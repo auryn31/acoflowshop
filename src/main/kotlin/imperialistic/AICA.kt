@@ -9,10 +9,10 @@ class AICA {
 
         }
 
-        fun createCountries(): MutableList<Country>{
-            val k = 10 // number of countries
-            val r = 5 // number of processors
-            val n = 3 // number of tasks
+        fun createCountries(k: Int): MutableList<Country>{
+//            val k = 10 // number of countries
+//            val r = 5 // number of processors
+//            val n = 3 // number of tasks
             val jobList = createRandomJobList(k)
 
             val countries = mutableListOf<Country>()
@@ -47,7 +47,7 @@ class AICA {
         fun assimilate(empires: List<Empire>): List<Empire> {
             for(empire in empires) {
                 val empireRepresentation = empire.emperor
-                val colonies: List<Country> = empire.colonies.toList()
+                val colonies = empire.getColonies()
                 for(colony in colonies) {
                     val colonyRepresentation = colony.getRepresentation()
                     val assimilationRate = 3.0/7.0
@@ -70,14 +70,14 @@ class AICA {
                         if(candidatesArray[i] == 1) {
                             val current = assimilationList[i]
                             for(j in 0 until assimilationList.size) {
-                                if(assimilationList[j].id == empireRepresentation.jobList[i].id) {
+                                if(assimilationList[j].id == empireRepresentation.getRepresentation()[i].id) {
                                     assimilationList[j] = current
                                 }
                             }
-                            assimilationList[i] = empireRepresentation.jobList[i]
+                            assimilationList[i] = empireRepresentation.getRepresentation()[i]
                         }
                     }
-                    empire.colonies.add(Country(assimilationList))
+                    empire.addColony(Country(assimilationList))
                 }
             }
             return empires
@@ -85,18 +85,22 @@ class AICA {
 
         fun exchangePositions(empires: List<Empire>): List<Empire> {
             for (empire in empires) {
-                empire.colonies.sortBy { it.getCost() }
-                if(empire.colonies[0].getCost() < empire.emperor.getCost()) {
-                    empire.colonies.add(empire.emperor)
-                    empire.emperor = empire.colonies[0]
-                    empire.colonies.removeAt(0)
+                val colonies = empire.getColonies().sortedBy { it.getCost() }
+                if(colonies[0].getCost() < empire.emperor.getCost()) {
+                    empire.addColony(empire.emperor)
+                    empire.emperor = empire.getColony(0)
+                    empire.removeColony(0)
                 }
             }
             return empires
         }
 
-        fun revolution(empires: List<Empire>) {
+        fun imperialisticCompetition(empires: List<Empire>) {
+            val weakestEmpire = empires.sortedByDescending { it.costs }.first()
+            val weakestColony = weakestEmpire.getColonies().sortedByDescending { it.getCost() }[0]
+            weakestEmpire.removeColony(weakestColony)
 
+            //fight um die colony
         }
     }
 }

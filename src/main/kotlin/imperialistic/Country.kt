@@ -6,13 +6,11 @@ import acoflowshop.calculateDurationForMCT
 
 class Country {
 
-    var jobList: List<Job>
-    var duration: Double
-//    var colonies: MutableList<Country>
+    private var jobList: List<Job>
+    private var duration: Double
 
     constructor(representation: List<Job>) {
         this.jobList = representation
-//        this.colonies = mutableListOf()
         this.duration = this.calculateCost()
     }
 

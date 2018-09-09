@@ -1,9 +1,11 @@
 package imperialistic
 
+import kotlin.math.cos
+
 class Empire {
 
     var emperor: Country
-    var colonies: MutableList<Country>
+    private var colonies: MutableList<Country>
     var costs: Double
 
     constructor(emperor: Country) {
@@ -26,8 +28,14 @@ class Empire {
         this.calculateCost()
     }
 
-    fun getCost(): Double {
-        return this.costs
+    fun getTotalCost(zeta: Double): Double {
+        val a = cos(this.emperor.getCost())
+        val b = if(this.colonies.size > 0) zeta * this.colonies.map { cos(it.getCost()) }.reduce { acc, d ->  acc+d}.toDouble()/this.colonies.size.toDouble() else 0.0
+        return a+b
+    }
+
+    fun setColony(colonies: List<Country>) {
+        this.colonies = colonies.toMutableList()
     }
 
     fun addColony(county: Country) {
@@ -40,12 +48,21 @@ class Empire {
         this.calculateCost()
     }
 
+    fun removeColony(colony: Country) {
+        this.colonies.remove(colony)
+        this.calculateCost()
+    }
+
     fun getNumerOfColonies(): Int {
         return this.colonies.size
     }
 
     fun getColony(index: Int): Country {
         return this.colonies[index]
+    }
+
+    fun getColonies(): List<Country> {
+        return this.colonies.toList()
     }
 
 }
