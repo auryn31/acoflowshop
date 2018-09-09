@@ -78,6 +78,6 @@ class Ant {
     }
 
     fun calculateDurationWithMCT() {
-        this.durationForMCT = acoflowshop.calculateDurationForMCT(jobQue, 0.0)
+        this.durationForMCT = acoflowshop.calculateDurationForMCT(jobQue, 0.1)
     }
 }

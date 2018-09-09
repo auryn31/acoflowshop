@@ -233,30 +233,23 @@ class ACO {
             if (bestGlobalAnt.jobQue.size == 0) {
                 bestGlobalAnt.jobQue = bestAnt.jobQue
                 bestGlobalAnt.calculateDuration(storageSize)
-            } else {
-                if (currentDuration != null && globalDuration != null) {
-                    if (currentDuration < globalDuration) {
-                        bestGlobalAnt.jobQue = bestAnt.jobQue
-                    }
-                }
+            } else if (currentDuration != null && globalDuration != null && currentDuration < globalDuration) {
+                bestGlobalAnt.jobQue = bestAnt.jobQue
             }
         }
 
         private fun updateGlobalBestAntForACIS(bestGlobalAnt: Ant, bestAnt: Ant): Boolean {
             val currentDuration = bestAnt.durationForMCT
             val globalDuration = bestGlobalAnt.durationForMCT
+            var calculatedDuration = false
             if (bestGlobalAnt.jobQue.size == 0) {
                 bestGlobalAnt.jobQue = bestAnt.jobQue
                 bestGlobalAnt.calculateDurationWithMCT()
-                return true
-            } else {
-                if (currentDuration != null && globalDuration != null) {
-                    if (currentDuration < globalDuration) {
-                        bestGlobalAnt.jobQue = bestAnt.jobQue
-                    }
-                }
-                return false
+                calculatedDuration = true
+            } else if (currentDuration != null && globalDuration != null && currentDuration < globalDuration) {
+                bestGlobalAnt.jobQue = bestAnt.jobQue
             }
+            return  calculatedDuration
         }
     }
 }

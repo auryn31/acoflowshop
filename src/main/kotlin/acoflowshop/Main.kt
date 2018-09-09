@@ -13,7 +13,7 @@ import java.io.File
 private const val STORAGE_SIZE = 5
 private val logger = KotlinLogging.logger {}
 
-private val jobList: List<Job> = createRandomJobList(10)
+private val jobList: List<Job> = createRandomJobList(50)
 
 
 fun main(args: Array<String>) {
