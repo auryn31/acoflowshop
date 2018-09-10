@@ -129,4 +129,36 @@ class AICATest {
 
         assertEquals(0, newEmpires.filter { it == empire1 }[0].getColonies().size)
     }
+
+    @Test
+    fun eliminatingPowerlessEmpiresTest(){
+        val jobList1 = mutableListOf(
+                Job(1,3,1,0),
+                Job(3,1,1,1),
+                Job(2,1,1,2))
+        val jobList2 = mutableListOf(
+                Job(3,1,1,0),
+                Job(1,3,1,1),
+                Job(2,1,1,2))
+        val empireList = mutableListOf(
+                Job(1,3,1,1),
+                Job(3,1,1,0),
+                Job(2,1,1,2))
+        val country = Country(empireList)
+        val empire1 = Empire(country)
+        empire1.setColony(mutableListOf(Country(jobList1)))
+        val empire2 = Empire(country)
+        empire2.setColony(mutableListOf(Country(jobList2)))
+        val empire3 = Empire(Country(jobList2))
+        val empires = mutableListOf(
+                empire1,
+                empire2,
+                empire3
+        )
+        val newEmpires = AICA.eliminatingPowerlessEmpires(empires)
+
+        assertEquals(2, newEmpires.size)
+        assertEquals(2, newEmpires.sortedByDescending { it.getNumerOfColonies() }[0].getNumerOfColonies())
+        assertEquals(1, newEmpires.sortedByDescending { it.getNumerOfColonies() }[1].getNumerOfColonies())
+    }
 }
