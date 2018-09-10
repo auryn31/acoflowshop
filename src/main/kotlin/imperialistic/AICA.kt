@@ -101,7 +101,7 @@ class AICA {
             weakestEmpire.removeColony(weakestColony)
 
             //fight um die colony
-            return Helper.distributeColonyWithRoulette(empires.filter { it.getColonies().isNotEmpty() }, weakestColony)
+            return Helper.distributeColonyWithRoulette(empires, weakestColony)
         }
 
         fun eliminatingPowerlessEmpires(empires: List<Empire>): List<Empire> {
