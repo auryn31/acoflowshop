@@ -112,6 +112,10 @@ class AICA {
             }
             return newEmpires
         }
+
+        fun stoppingCriteriaIsReached(empires: List<Empire>, iteration: Int, maxIterations: Int): Boolean{
+            return empires.size == 1 || iteration >= maxIterations
+        }
     }
 }
 

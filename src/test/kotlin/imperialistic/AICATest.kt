@@ -3,7 +3,9 @@ package imperialistic
 import acoflowshop.Job
 import org.junit.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
+import kotlin.test.assertTrue
 
 class AICATest {
 
@@ -160,5 +162,52 @@ class AICATest {
         assertEquals(2, newEmpires.size)
         assertEquals(2, newEmpires.sortedByDescending { it.getNumerOfColonies() }[0].getNumerOfColonies())
         assertEquals(1, newEmpires.sortedByDescending { it.getNumerOfColonies() }[1].getNumerOfColonies())
+    }
+
+    @Test
+    fun stoppingCriteriaIsReachedTest(){
+        val empireList = mutableListOf(
+                Job(1,3,1,1),
+                Job(3,1,1,0),
+                Job(2,1,1,2))
+        val country = Country(empireList)
+        val empire = Empire(country)
+        assertTrue(AICA.stoppingCriteriaIsReached(mutableListOf(empire), 1, 100))
+    }
+
+    @Test
+    fun stoppingCriteriaIsReachedTest2(){
+        val empireList = mutableListOf(
+                Job(1,3,1,1),
+                Job(3,1,1,0),
+                Job(2,1,1,2))
+        val country = Country(empireList)
+        val empire = Empire(country)
+        val empire2 = Empire(country)
+        assertTrue(AICA.stoppingCriteriaIsReached(mutableListOf(empire, empire2), 100, 100))
+    }
+
+    @Test
+    fun stoppingCriteriaIsReachedTest3(){
+        val empireList = mutableListOf(
+                Job(1,3,1,1),
+                Job(3,1,1,0),
+                Job(2,1,1,2))
+        val country = Country(empireList)
+        val empire = Empire(country)
+        val empire2 = Empire(country)
+        assertTrue(AICA.stoppingCriteriaIsReached(mutableListOf(empire, empire2), 101, 100))
+    }
+
+    @Test
+    fun stoppingCriteriaIsReachedTest4(){
+        val empireList = mutableListOf(
+                Job(1,3,1,1),
+                Job(3,1,1,0),
+                Job(2,1,1,2))
+        val country = Country(empireList)
+        val empire = Empire(country)
+        val empire2 = Empire(country)
+        assertFalse(AICA.stoppingCriteriaIsReached(mutableListOf(empire, empire2), 99, 100))
     }
 }
