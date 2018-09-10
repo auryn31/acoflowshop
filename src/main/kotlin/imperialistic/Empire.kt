@@ -50,7 +50,11 @@ class Empire {
 
     fun removeColony(colony: Country) {
         this.colonies.remove(colony)
-        this.calculateCost()
+        if(this.colonies.isEmpty()) {
+            this.costs = 0.0
+        } else {
+            this.calculateCost()
+        }
     }
 
     fun getNumerOfColonies(): Int {

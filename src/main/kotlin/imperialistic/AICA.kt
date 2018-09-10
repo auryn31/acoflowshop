@@ -95,12 +95,13 @@ class AICA {
             return empires
         }
 
-        fun imperialisticCompetition(empires: List<Empire>) {
+        fun imperialisticCompetition(empires: List<Empire>): List<Empire> {
             val weakestEmpire = empires.sortedByDescending { it.costs }.first()
             val weakestColony = weakestEmpire.getColonies().sortedByDescending { it.getCost() }[0]
             weakestEmpire.removeColony(weakestColony)
 
             //fight um die colony
+            return Helper.distributeColonyWithRoulette(empires, weakestColony)
         }
     }
 }

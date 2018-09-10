@@ -98,4 +98,35 @@ class AICATest {
         assertEquals(2, empires.size)
         assertEquals(8, empires.map { it.getColonies().size }.reduce { acc, i ->  acc + i})
     }
+
+    @Test
+    fun imperialisticCompetitionTest(){
+        val jobList1 = mutableListOf(
+                Job(1,3,1,0),
+                Job(3,1,1,1),
+                Job(2,1,1,2))
+        val jobList2 = mutableListOf(
+                Job(3,1,1,0),
+                Job(1,3,1,1),
+                Job(2,1,1,2))
+        val empireList = mutableListOf(
+                Job(1,3,1,1),
+                Job(3,1,1,0),
+                Job(2,1,1,2))
+        val country = Country(empireList)
+        val empire1 = Empire(country)
+        empire1.setColony(mutableListOf(Country(jobList1)))
+        val empire2 = Empire(country)
+        empire2.setColony(mutableListOf(Country(jobList2)))
+        val empire3 = Empire(country)
+        empire3.setColony(mutableListOf(Country(jobList2)))
+        val empires = mutableListOf(
+                empire1,
+                empire2,
+                empire3
+        )
+        val newEmpires = AICA.imperialisticCompetition(empires)
+
+        assertEquals(0, newEmpires.filter { it == empire1 }[0].getColonies().size)
+    }
 }
