@@ -9,7 +9,7 @@ class Ant {
     var jobQue: MutableList<Job> = mutableListOf()
 
     var duration: Int? = null
-    var durationForMCT: Double? = null
+    private var durationForMCT: Double? = null
 
 
     fun reset() {
@@ -77,7 +77,18 @@ class Ant {
         return acoflowshop.durationNEHASC(jobQue, storageSize)
     }
 
+    fun getDurationForMCT(): Double? {
+        if(this.durationForMCT == null && this.jobQue.isNotEmpty()) {
+            this.calculateDurationWithMCT()
+        }
+        return this.durationForMCT
+    }
+
+    fun setDurationForMCT(duration: Double) {
+        this.durationForMCT = duration
+    }
+
     fun calculateDurationWithMCT() {
-        this.durationForMCT = acoflowshop.calculateDurationForMCT(jobQue, 0.1)
+        this.durationForMCT = acoflowshop.calculateDurationForMCT(jobQue, 0.05)
     }
 }

@@ -74,7 +74,7 @@ class ACO {
                 val bestAnt = findBestAntForMCT(ants)
                 if (bestAnt != null) {
                     pheromone = updateJobPosPheromoneForAnt(bestAnt, pheromone, evaporation)
-                    bestGlobalAnt.calculateDurationWithMCT()
+//                    bestGlobalAnt.calculateDurationWithMCT()
                     val updated = updateGlobalBestAntForACIS(bestGlobalAnt, bestAnt)
                     if (updated) {
                         evaluationIteration++
@@ -88,7 +88,7 @@ class ACO {
                 evaluationIteration += jobList.size
                 logger.info { "best ant: ${bestGlobalAnt.jobQue} with length: ${bestGlobalAnt.duration}" }
                 logger.info { "TIME ${System.currentTimeMillis() - start}" }
-                CsvLogging.appendCSVEntry(solutionNumber, bestGlobalAnt.durationForMCT!!, (System.currentTimeMillis() - start), evaluationIteration)
+                CsvLogging.appendCSVEntry(solutionNumber, bestGlobalAnt.getDurationForMCT()!!, (System.currentTimeMillis() - start), evaluationIteration)
                 PheromonLogger.writeEntryIntoDB(solutionNumber, pheromone)
             }
             return bestGlobalAnt
@@ -149,8 +149,8 @@ class ACO {
             return ants.sortedBy { it.duration }.firstOrNull()
         }
 
-        fun findBestAntForMCT(ants: List<Ant>): Ant? {
-            return ants.sortedBy { it.durationForMCT }.firstOrNull()
+        private fun findBestAntForMCT(ants: List<Ant>): Ant? {
+            return ants.sortedBy { it.getDurationForMCT() }.firstOrNull()
         }
 
         /**
@@ -239,15 +239,16 @@ class ACO {
         }
 
         private fun updateGlobalBestAntForACIS(bestGlobalAnt: Ant, bestAnt: Ant): Boolean {
-            val currentDuration = bestAnt.durationForMCT
-            val globalDuration = bestGlobalAnt.durationForMCT
+            val currentDuration = bestAnt.getDurationForMCT()
+            val globalDuration = bestGlobalAnt.getDurationForMCT()
             var calculatedDuration = false
             if (bestGlobalAnt.jobQue.size == 0) {
                 bestGlobalAnt.jobQue = bestAnt.jobQue
-                bestGlobalAnt.calculateDurationWithMCT()
+                bestGlobalAnt.getDurationForMCT()
                 calculatedDuration = true
             } else if (currentDuration != null && globalDuration != null && currentDuration < globalDuration) {
                 bestGlobalAnt.jobQue = bestAnt.jobQue
+                bestGlobalAnt.setDurationForMCT(currentDuration)
             }
             return  calculatedDuration
         }
