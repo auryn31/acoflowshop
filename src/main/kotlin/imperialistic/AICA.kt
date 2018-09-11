@@ -135,8 +135,8 @@ fun createRandomJobList(length: Int): List<Job> {
         val durationM2 = Random().nextInt(30)
         val setupM1 = Random().nextInt(30)
         val setupM2 = Random().nextInt(30)
-        val reworkM1 = (Random().nextDouble() * durationM1).toInt()
-        val reworkM2 = (Random().nextDouble() * durationM2).toInt()
+        val reworkM1 = ((0.3 * Random().nextDouble() + 0.3) * durationM1).toInt()
+        val reworkM2 = ((0.3 * Random().nextDouble() + 0.3) * durationM2).toInt()
         jobList.add(
                 Job(
                         id = i,
