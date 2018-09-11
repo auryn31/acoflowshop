@@ -8,23 +8,23 @@ import kotlin.test.assertEquals
 class ACOTest {
 
     @Test
-    fun updatePheromoneForAntTestForTwo(){
+    fun updatePheromoneForAntTestForTwo() {
         val ant = Ant()
         ant.jobQue = mutableListOf(
-                Job(1,2,1, 0),
-                Job(2,1,1, 1)
+                Job(1, 2, 1, 0),
+                Job(2, 1, 1, 1)
         )
         val newMatrix = ACO.updateJobPosPheromoneForAnt(ant, mutableListOf(mutableListOf(0.5, 0.5), mutableListOf(0.5, 0.5)), 0.05)
         assertEquals(mutableListOf(mutableListOf(0.525, 0.475), mutableListOf(0.475, 0.525)), newMatrix)
     }
 
     @Test
-    fun updatePheromoneForAntTestForThree(){
+    fun updatePheromoneForAntTestForThree() {
         val ant = Ant()
         ant.jobQue = mutableListOf(
-                Job(1,2,1, 0),
-                Job(2,1,1, 2),
-                Job(2,1,1, 1)
+                Job(1, 2, 1, 0),
+                Job(2, 1, 1, 2),
+                Job(2, 1, 1, 1)
         )
         val matrix = ACO.initEmptyPheromonMatrix(3)
         val newMatrix = ACO.updateJobPosPheromoneForAnt(
@@ -41,12 +41,12 @@ class ACOTest {
     }
 
     @Test
-    fun updatePheromoneForJobJob(){
+    fun updatePheromoneForJobJob() {
         val ant = Ant()
         ant.jobQue = mutableListOf(
-                Job(1,2,1, 0),
-                Job(2,1,1, 2),
-                Job(2,1,1, 1)
+                Job(1, 2, 1, 0),
+                Job(2, 1, 1, 2),
+                Job(2, 1, 1, 1)
         )
         val matrix = ACO.initEmptyPheromonMatrix(3)
         val newMatrix = ACO.updateJobJobPheromoneForAnt(
@@ -63,11 +63,11 @@ class ACOTest {
     }
 
     @Test
-    fun updatePheromoneForAntJobJobTestForTwo(){
+    fun updatePheromoneForAntJobJobTestForTwo() {
         val ant = Ant()
         ant.jobQue = mutableListOf(
-                Job(1,2,1, 0),
-                Job(2,1,1, 1)
+                Job(1, 2, 1, 0),
+                Job(2, 1, 1, 1)
         )
         val newMatrix = ACO.updateJobJobPheromoneForAnt(ant, mutableListOf(mutableListOf(0.5, 0.5), mutableListOf(0.5, 0.5)), 0.05)
         assertEquals(mutableListOf(mutableListOf(0.475, 0.525), mutableListOf(0.525, 0.475)), newMatrix)

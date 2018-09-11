@@ -11,34 +11,32 @@ private val logger = KotlinLogging.logger {}
 private val mapper = ObjectMapper().registerModule(KotlinModule())
 private val config = mapper.readValue(File("src/main/resources/Config.json"), Config::class.java)
 
-class CsvLogging {
+object CsvLogging {
 
-    companion object {
-        /**
-         * löschen des Logs der letzten iteration und erstellen eines neuen Files
-         */
-        fun createLoggingFile() {
-            if(config !== null && config.fileLogging) {
-                File("$FILE_NAME.csv").delete()
-                File("$FILE_NAME.csv").createNewFile()
-            }
+    /**
+     * löschen des Logs der letzten iteration und erstellen eines neuen Files
+     */
+    fun createLoggingFile() {
+        if (config !== null && config.fileLogging) {
+            File("$FILE_NAME.csv").delete()
+            File("$FILE_NAME.csv").createNewFile()
         }
+    }
 
-        /**
-         * schreiben der iteration in ein csv
-         */
-        fun appendCSVEntry(iteration: Int, currentLength: Int, durationInMs: Long, evaluationIteration: Int) {
-            logger.info { "${iteration} - ${currentLength} - ${durationInMs}" }
-            if(config !== null && config.fileLogging) {
-                File("$FILE_NAME.csv").appendText("$iteration,$currentLength, $durationInMs,$evaluationIteration\n")
-            }
+    /**
+     * schreiben der iteration in ein csv
+     */
+    fun appendCSVEntry(iteration: Int, currentLength: Int, durationInMs: Long, evaluationIteration: Int) {
+        logger.info { "${iteration} - ${currentLength} - ${durationInMs}" }
+        if (config !== null && config.fileLogging) {
+            File("$FILE_NAME.csv").appendText("$iteration,$currentLength, $durationInMs,$evaluationIteration\n")
         }
+    }
 
-        fun appendCSVEntry(iteration: Int, currentLength: Double, durationInMs: Long, evaluationIteration: Int) {
-            logger.info { "${iteration} - ${currentLength} - ${durationInMs}" }
-            if(config !== null && config.fileLogging) {
-                File("$FILE_NAME.csv").appendText("$iteration,$currentLength,$durationInMs,$evaluationIteration\n")
-            }
+    fun appendCSVEntry(iteration: Int, currentLength: Double, durationInMs: Long, evaluationIteration: Int) {
+        logger.info { "${iteration} - ${currentLength} - ${durationInMs}" }
+        if (config !== null && config.fileLogging) {
+            File("$FILE_NAME.csv").appendText("$iteration,$currentLength,$durationInMs,$evaluationIteration\n")
         }
     }
 }

@@ -5,9 +5,9 @@ import aco.Ant
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import global.Config
-import java.util.*
 import mu.KotlinLogging
 import java.io.File
+import java.util.*
 
 
 private const val STORAGE_SIZE = 5
@@ -24,8 +24,8 @@ fun main(args: Array<String>) {
     }
 }
 
-fun calculateWithMakespan(config: Config){
-    val ants: MutableList<Ant> = (0..(config.antFactor* jobList.size).toInt()).map { i -> Ant() }.toMutableList()
+fun calculateWithMakespan(config: Config) {
+    val ants: MutableList<Ant> = (0..(config.antFactor * jobList.size).toInt()).map { i -> Ant() }.toMutableList()
     val start = System.currentTimeMillis()
     val ant1 = Ant()
     ant1.jobQue = jobList.toMutableList()
@@ -35,7 +35,7 @@ fun calculateWithMakespan(config: Config){
     CsvLogging.createLoggingFile()
     PheromonLogger.initDB()
     val bestACO = ACO.optimize(ants, jobList, STORAGE_SIZE, config.evaporation, config.Q, ant1.jobQue)
-    CsvLogging.appendCSVEntry(config.Q+1, length, duration, fak(jobList.size))
+    CsvLogging.appendCSVEntry(config.Q + 1, length, duration, fak(jobList.size))
 
     logger.info { bestACO.jobQue }
     logger.info { getShortestSchedule(bestACO.jobQue, STORAGE_SIZE) }
@@ -47,14 +47,14 @@ fun calculateWithMakespan(config: Config){
 
 fun fak(num: Int): Int {
     var result = 1
-    for(n in 1 until num+1) {
+    for (n in 1 until num + 1) {
         result *= n
     }
     return result
 }
 
-fun calculateWithMeanCompletionTime(config: Config){
-    val ants: MutableList<Ant> = (0..(config.antFactor* jobList.size).toInt()).map { i -> Ant() }.toMutableList()
+fun calculateWithMeanCompletionTime(config: Config) {
+    val ants: MutableList<Ant> = (0..(config.antFactor * jobList.size).toInt()).map { i -> Ant() }.toMutableList()
     val ant1 = Ant()
     ant1.jobQue = jobList.toMutableList()
 
@@ -81,13 +81,13 @@ fun createRandomJobList(length: Int): List<Job> {
         val reworkM2 = ((0.3 * Random().nextDouble() + 0.3) * durationM2).toInt()
         jobList.add(
                 Job(
-                    id = i,
-                    durationMachineOne = durationM1,
-                    durationMachineTwo = durationM2,
-                    setupTimeMachineOne = setupM1,
-                    setupTimeMachineTwo = setupM2,
-                    reworktimeMachineOne = reworkM1,
-                    reworktimeMachineTwo = reworkM2
+                        id = i,
+                        durationMachineOne = durationM1,
+                        durationMachineTwo = durationM2,
+                        setupTimeMachineOne = setupM1,
+                        setupTimeMachineTwo = setupM2,
+                        reworktimeMachineOne = reworkM1,
+                        reworktimeMachineTwo = reworkM2
                 )
         )
     }

@@ -10,14 +10,14 @@ class Job(
         val setupTimeMachineTwo: Int = 0,
         val reworktimeMachineOne: Int = 0,
         val reworktimeMachineTwo: Int = 0
-){
+) {
 
     override fun equals(other: Any?): Boolean {
-        if(other is Job) {
-            return this.durationMachineOne == other.durationMachineOne && this.durationMachineTwo == other.durationMachineTwo && this.storageSize == other.storageSize
-        } else {
-            return false
+        var returnValue = false
+        if (other is Job) {
+            returnValue = this.id == other.id
         }
+        return returnValue
     }
 
     override fun toString(): String {

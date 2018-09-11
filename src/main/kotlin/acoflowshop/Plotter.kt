@@ -1,12 +1,11 @@
 package acoflowshop
 
-import java.awt.*
+import java.awt.Color
+import java.awt.Font
 import java.awt.image.BufferedImage
 import java.io.File
 import java.io.IOException
 import javax.imageio.ImageIO
-import kotlin.math.log
-import kotlin.math.log10
 
 object Plotter {
     fun plotResults(results: Triple<List<Schedule>, List<Schedule>, List<Memory>>, imageName: String) {

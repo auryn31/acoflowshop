@@ -2,7 +2,6 @@ package aco
 
 import acoflowshop.Job
 import java.util.*
-import kotlin.collections.HashMap
 
 class Ant {
 
@@ -30,7 +29,7 @@ class Ant {
         val pheromonList = jobMap.keys.sorted().toList()
         val random = Random().nextDouble()
         val key = findKey(random, pheromonList)
-        return jobMap.getOrDefault(key, Job(1, 1, 1,0))
+        return jobMap.getOrDefault(key, Job(1, 1, 1, 0))
     }
 
     fun createHashmap(jobs: List<Job>, pheromonMatrix: List<List<Double>>): HashMap<Double, Job> {
@@ -40,7 +39,7 @@ class Ant {
         var pheromonSum = 0.0
 
         // Summe der noch übrigen Gesamtmenge an Pheromonen für die noch zu wählenden Jobs berechnen
-        for(i in 0 until jobs.size) {
+        for (i in 0 until jobs.size) {
             if (!scheduled(jobs[i])) {
                 pheromonSum += pheromonMatrix[i][nexPos]
             }
@@ -50,7 +49,7 @@ class Ant {
         for (i in 0 until jobs.size) {
             if (!scheduled(jobs[i])) {
                 jobMap[pheromonValue] = jobs[i]
-                pheromonValue -= pheromonMatrix[i][nexPos]/pheromonSum
+                pheromonValue -= pheromonMatrix[i][nexPos] / pheromonSum
             }
         }
         return jobMap
@@ -78,7 +77,7 @@ class Ant {
     }
 
     fun getDurationForMCT(): Double? {
-        if(this.durationForMCT == null && this.jobQue.isNotEmpty()) {
+        if (this.durationForMCT == null && this.jobQue.isNotEmpty()) {
             this.calculateDurationWithMCT()
         }
         return this.durationForMCT

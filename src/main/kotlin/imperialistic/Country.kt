@@ -1,6 +1,5 @@
 package imperialistic
 
-import aco.ACO
 import acoflowshop.Job
 import acoflowshop.calculateDurationForMCT
 
@@ -23,7 +22,7 @@ class Country {
         return !isColony()
     }
 
-    fun getRepresentation(): List<Job>{
+    fun getRepresentation(): List<Job> {
         return jobList
     }
 

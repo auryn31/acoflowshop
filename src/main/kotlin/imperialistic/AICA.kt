@@ -9,7 +9,7 @@ class AICA {
 
         }
 
-        fun createCountries(k: Int): MutableList<Country>{
+        fun createCountries(k: Int): MutableList<Country> {
 //            val k = 10 // number of countries
 //            val r = 5 // number of processors
 //            val n = 3 // number of tasks
@@ -17,7 +17,7 @@ class AICA {
 
             val countries = mutableListOf<Country>()
 
-            for(i in 0 until k) {
+            for (i in 0 until k) {
                 val candidate = Country(generator(jobList))
                 countries.add(candidate)
             }
@@ -45,12 +45,12 @@ class AICA {
         }
 
         fun assimilate(empires: List<Empire>): List<Empire> {
-            for(empire in empires) {
+            for (empire in empires) {
                 val empireRepresentation = empire.emperor
                 val colonies = empire.getColonies()
-                for(colony in colonies) {
+                for (colony in colonies) {
                     val colonyRepresentation = colony.getRepresentation()
-                    val assimilationRate = 3.0/7.0
+                    val assimilationRate = 3.0 / 7.0
 
                     val numberOfTasks = (colonyRepresentation.size.toDouble() * assimilationRate).toInt()
                     val candidatesArray = colonyRepresentation.map { 0 }.toMutableList()
@@ -58,7 +58,7 @@ class AICA {
                     var numberOfOnes = 0
                     while (numberOfTasks > numberOfOnes) {
                         val indexToSetOne = Random().nextInt(colonyRepresentation.size - 1)
-                        if(candidatesArray[indexToSetOne] == 0) {
+                        if (candidatesArray[indexToSetOne] == 0) {
                             candidatesArray[indexToSetOne] = 1
                             numberOfOnes++
                         }
@@ -66,11 +66,11 @@ class AICA {
 
                     val assimilationList = colonyRepresentation.toMutableList()
                     // neues Land finden
-                    for(i in 0 until candidatesArray.size) {
-                        if(candidatesArray[i] == 1) {
+                    for (i in 0 until candidatesArray.size) {
+                        if (candidatesArray[i] == 1) {
                             val current = assimilationList[i]
-                            for(j in 0 until assimilationList.size) {
-                                if(assimilationList[j].id == empireRepresentation.getRepresentation()[i].id) {
+                            for (j in 0 until assimilationList.size) {
+                                if (assimilationList[j].id == empireRepresentation.getRepresentation()[i].id) {
                                     assimilationList[j] = current
                                 }
                             }
@@ -86,7 +86,7 @@ class AICA {
         fun exchangePositions(empires: List<Empire>): List<Empire> {
             for (empire in empires) {
                 val colonies = empire.getColonies().sortedBy { it.getCost() }
-                if(colonies[0].getCost() < empire.emperor.getCost()) {
+                if (colonies[0].getCost() < empire.emperor.getCost()) {
                     empire.addColony(empire.emperor)
                     empire.emperor = empire.getColony(0)
                     empire.removeColony(0)
@@ -107,18 +107,17 @@ class AICA {
         fun eliminatingPowerlessEmpires(empires: List<Empire>): List<Empire> {
             var newEmpires = empires.filter { it.getColonies().isNotEmpty() }
             val powerlessEmpires = empires.filter { it.getColonies().isEmpty() }
-            for(powerlessEmpire in powerlessEmpires) {
+            for (powerlessEmpire in powerlessEmpires) {
                 newEmpires = Helper.distributeColonyWithRoulette(newEmpires, powerlessEmpire.emperor)
             }
             return newEmpires
         }
 
-        fun stoppingCriteriaIsReached(empires: List<Empire>, iteration: Int, maxIterations: Int): Boolean{
+        fun stoppingCriteriaIsReached(empires: List<Empire>, iteration: Int, maxIterations: Int): Boolean {
             return empires.size == 1 || iteration >= maxIterations
         }
     }
 }
-
 
 
 fun generator(jobs: List<Job>): List<Job> {

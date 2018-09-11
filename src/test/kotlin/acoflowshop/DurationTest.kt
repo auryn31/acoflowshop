@@ -172,4 +172,11 @@ class DurationTest{
         assertEquals(7.25, shortestSchedule)
     }
 
+    @Test
+    fun testSchedule(){
+        val job = Job(1,3,1,0)
+        val schedule = Schedule(job, 1)
+        assertEquals("ID: ${job.id} START: 1 DURATION_ONE: ${job.durationMachineOne} DURATION_TWO: ${job.durationMachineTwo}", schedule.toString())
+    }
+
 }
