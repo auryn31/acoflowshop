@@ -149,7 +149,7 @@ class ACO {
             return ants.sortedBy { it.duration }.firstOrNull()
         }
 
-        private fun findBestAntForMCT(ants: List<Ant>): Ant? {
+        internal fun findBestAntForMCT(ants: List<Ant>): Ant? {
             return ants.sortedBy { it.getDurationForMCT() }.firstOrNull()
         }
 
@@ -165,13 +165,13 @@ class ACO {
          * start mit einer vorinitialisierten matrix die nicht überall gleich ist, sondern mit dem neh startete
          */
         fun initWithSeed(size: Int, seedList: List<Job>, evaporation: Double): MutableList<MutableList<Double>> {
-            var emtpyList = initEmptyPheromonMatrix(size)
+            var emptyList = initEmptyPheromonMatrix(size)
             val ant = Ant()
             ant.jobQue = seedList.toMutableList()
             for (i in 0 until 400) {
-                emtpyList = updateJobPosPheromoneForAnt(ant, emtpyList, evaporation)
+                emptyList = updateJobPosPheromoneForAnt(ant, emptyList, evaporation)
             }
-            return emtpyList
+            return emptyList
         }
 
         /**

@@ -1,9 +1,11 @@
 package acoflowshop
 
+import aco.ACO
 import aco.Ant
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class AntTest {
@@ -89,5 +91,24 @@ class AntTest {
         val pheromonList = hashMap.keys.sorted().toList()
         val nextJob = hashMap[ant.findKey(0.3111, pheromonList)]
         assertEquals(1, nextJob!!.id)
+    }
+
+    @Test
+    fun testFindBestAntForMCT(){
+        val ant = Ant()
+        val jobList = listOf(
+                Job(1,1,1, 0),
+                Job(1,1,1, 1)
+        )
+        ant.jobQue = jobList.toMutableList()
+
+        val bestAnt = ACO.findBestAntForMCT(listOf(ant))
+        assertEquals(ant, bestAnt)
+    }
+
+    @Test
+    fun testFindNoBestAntForMCT(){
+        val bestAnt = ACO.findBestAntForMCT(listOf())
+        assertNull(bestAnt)
     }
 }
