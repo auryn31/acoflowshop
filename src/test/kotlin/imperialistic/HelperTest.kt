@@ -55,4 +55,34 @@ class HelperTest {
         assertEquals(jobList, newEmpires.filter { it.getColonies().isNotEmpty() }[0].getColony(0).getRepresentation())
         assertEquals(1, newEmpires.filter { it.getColonies().isNotEmpty() }.size)
     }
+
+    @Test
+    fun testCreateHashMap(){
+        val empireList = mutableListOf(
+                Job(1,3,1,1),
+                Job(3,1,1,0),
+                Job(2,1,1,2))
+        val country = Country(empireList)
+        val empire1 = Empire(country)
+        val empires = mutableListOf(
+                empire1
+        )
+        assertEquals(hashMapOf(Pair(1.0, empire1)), Helper.createHashMap(empires))
+    }
+
+    @Test
+    fun testCreateHashMap2(){
+        val empireList = mutableListOf(
+                Job(1,3,1,1),
+                Job(3,1,1,0),
+                Job(2,1,1,2))
+        val country = Country(empireList)
+        val empire1 = Empire(country)
+        val empire2 = Empire(country)
+        val empires = mutableListOf(
+                empire1,
+                empire2
+        )
+        assertEquals(hashMapOf(Pair(1.0, empire1), Pair(0.5, empire2)), Helper.createHashMap(empires))
+    }
 }

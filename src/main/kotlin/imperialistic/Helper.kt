@@ -15,7 +15,7 @@ object Helper {
     }
 
 
-    private fun createHashMap(empires: List<Empire>): HashMap<Double, Empire> {
+    internal fun createHashMap(empires: List<Empire>): HashMap<Double, Empire> {
         val empiresMap = hashMapOf<Double, Empire>()
         var restStrength = 1.0
         val zeta = 0.1

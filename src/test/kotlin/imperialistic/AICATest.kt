@@ -1,7 +1,10 @@
 package imperialistic
 
 import acoflowshop.Job
+import io.mockk.every
+import io.mockk.mockkObject
 import org.junit.Test
+import org.mockito.Mockito
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
@@ -27,6 +30,43 @@ class AICATest {
         )
         val newEmpires = AICA.assimilate(empires)
         assertEquals(2, newEmpires[0].getNumerOfColonies())
+    }
+
+    @Test
+    fun assimilateTest2() {
+
+        mockkObject(AICA)
+        every { AICA.createNewCandidateArray(any(), any()) } returns listOf(0,1,1,0,0,0)
+
+        val empireList = mutableListOf(
+                Job(1, 1, 1, 4),
+                Job(1, 1, 1, 5),
+                Job(1, 1, 1, 1),
+                Job(1, 1, 1, 2),
+                Job(1, 1, 1, 6),
+                Job(1, 1, 1, 3))
+        val jobList = mutableListOf(
+                Job(1, 1, 1, 1),
+                Job(1, 1, 1, 3),
+                Job(1, 1, 1, 6),
+                Job(1, 1, 1, 5),
+                Job(1, 1, 1, 4),
+                Job(1, 1, 1, 2))
+        val resultList = mutableListOf(
+                Job(1, 1, 1, 3),
+                Job(1, 1, 1, 5),
+                Job(1, 1, 1, 1),
+                Job(1, 1, 1, 6),
+                Job(1, 1, 1, 4),
+                Job(1, 1, 1, 2))
+        val country = Country(empireList)
+        val empire = Empire(country)
+        empire.setColony(listOf(Country(jobList)))
+        val empires = mutableListOf(
+                empire
+        )
+        val newEmpires = AICA.assimilate(empires)
+        assertEquals(resultList, newEmpires[0].getColony(1).getRepresentation())
     }
 
 

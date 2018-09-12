@@ -53,34 +53,46 @@ class AICA {
                     val assimilationRate = 3.0 / 7.0
 
                     val numberOfTasks = (colonyRepresentation.size.toDouble() * assimilationRate).toInt()
-                    val candidatesArray = colonyRepresentation.map { 0 }.toMutableList()
+                    val candidatesArray = createNewCandidateArray(colonyRepresentation, numberOfTasks)
 
-                    var numberOfOnes = 0
-                    while (numberOfTasks > numberOfOnes) {
-                        val indexToSetOne = Random().nextInt(colonyRepresentation.size - 1)
-                        if (candidatesArray[indexToSetOne] == 0) {
-                            candidatesArray[indexToSetOne] = 1
-                            numberOfOnes++
-                        }
-                    }
-
-                    val assimilationList = colonyRepresentation.toMutableList()
+//                    val assimilationList = colonyRepresentation.toMutableList()
+                    val newColony: MutableList<Job?> = colonyRepresentation.map { null }.toMutableList()
                     // neues Land finden
                     for (i in 0 until candidatesArray.size) {
                         if (candidatesArray[i] == 1) {
-                            val current = assimilationList[i]
-                            for (j in 0 until assimilationList.size) {
-                                if (assimilationList[j].id == empireRepresentation.getRepresentation()[i].id) {
-                                    assimilationList[j] = current
-                                }
-                            }
-                            assimilationList[i] = empireRepresentation.getRepresentation()[i]
+                            newColony[i] = empireRepresentation.getRepresentation()[i]
                         }
                     }
-                    empire.addColony(Country(assimilationList))
+                    for(i in 0 until candidatesArray.size) {
+                        if(candidatesArray[i] == 0 && !newColony.contains(colonyRepresentation[i])) {
+                            newColony[i] = colonyRepresentation[i]
+                        }
+                    }
+                    val notSetCountries = colonyRepresentation.filter { !newColony.contains(it) }.toMutableList()
+                    for(i in 0 until candidatesArray.size) {
+                        if(newColony[i] == null) {
+                            newColony[i] = notSetCountries.first()
+                            notSetCountries.removeAt(0)
+                        }
+                    }
+                    empire.addColony(Country(newColony.map { it!! }.toMutableList()))
                 }
             }
             return empires
+        }
+
+        internal fun createNewCandidateArray(colonyRepresentation: List<Job>, numberOfTasks: Int): List<Int> {
+            val candidatesArray = colonyRepresentation.map { 0 }.toMutableList()
+
+            var numberOfOnes = 0
+            while (numberOfTasks > numberOfOnes) {
+                val indexToSetOne = Random().nextInt(colonyRepresentation.size - 1)
+                if (candidatesArray[indexToSetOne] == 0) {
+                    candidatesArray[indexToSetOne] = 1
+                    numberOfOnes++
+                }
+            }
+            return candidatesArray
         }
 
         fun exchangePositions(empires: List<Empire>): List<Empire> {
