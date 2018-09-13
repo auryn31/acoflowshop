@@ -94,13 +94,3 @@ fun createRandomJobList(length: Int): List<Job> {
     }
     return jobList
 }
-
-fun createRandomJobListWithSameLength(length: Int): List<Job> {
-    val jobList = mutableListOf<Job>()
-    for (i in 0 until length) {
-        val jobLength = Random().nextInt(1000)
-        val storage = Random().nextInt(10)
-        jobList.add(Job(jobLength, jobLength, storage, i))
-    }
-    return jobList
-}

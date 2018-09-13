@@ -33,6 +33,12 @@ class Empire(var emperor: Country) {
         this.calculateCost(this.zeta)
     }
 
+    fun exchangeColonies(countyToRemove: Country, countyToAdd: Country) {
+        this.colonies.remove(countyToRemove)
+        this.colonies.add(countyToAdd)
+        this.calculateCost(this.zeta)
+    }
+
     fun addColony(county: Country) {
         this.colonies.add(county)
         this.calculateCost(this.zeta)

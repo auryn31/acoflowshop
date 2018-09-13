@@ -129,23 +129,49 @@ object AICA {
     }
 
 
-    fun revolution(empires: List<Empire>, P_ir: Double) {
-        for(empire in empires) {
-            if(empire.getNumberOfColonies() > 0) {
-                val changesInEmpires = (empire.getNumberOfColonies().toDouble() * P_ir).toInt()
-                var imperialistMod: Country? = null
-                for(i in 0 until changesInEmpires) {
-                    val pos1 = Random().nextInt(empire.emperor.representation.size)
-                    val pos2 = Random().nextInt(empire.emperor.representation.size)
-                    val newRepresentation = empire.emperor.representation.toMutableList()
+    internal fun revolution(empires: List<Empire>, P_r: Double, P_ir: Double, P_cr: Double) {
+        empireRevolution(empires, P_r, P_ir)
+        colonyRevolution(empires, P_cr)
+    }
+
+    internal fun colonyRevolution(empires: List<Empire>, P_cr: Double){
+        for (empire in empires) {
+            for(colony in empire.getColonies()) {
+                val changes = (colony.representation.size * P_cr).toInt()
+                val newRepresentation = colony.representation.toMutableList()
+                for(i in 0 until changes) {
+                    val pos1 = Random().nextInt(newRepresentation.size)
+                    val pos2 = Random().nextInt(newRepresentation.size)
                     val cacheJob = newRepresentation[pos1]
                     newRepresentation[pos1] = newRepresentation[pos2]
                     newRepresentation[pos2] = cacheJob
-                    imperialistMod = Country(newRepresentation)
                 }
-                val badestColony = empire.getColonies().sortedBy { it.getCost() }.last()
-                empire.removeColony(badestColony)
-                empire.addColony(imperialistMod!!)
+                val newColony = Country(newRepresentation)
+                empire.exchangeColonies(colony, newColony)
+            }
+        }
+    }
+
+    internal fun empireRevolution(empires: List<Empire>, P_r: Double, P_ir: Double) {
+        for (empire in empires) {
+            if (empire.getNumberOfColonies() > 0) {
+                val changesInEmpires = (empire.getNumberOfColonies().toDouble() * P_ir).toInt()
+                val empiresChange = (empire.getNumberOfColonies().toDouble() * P_r).toInt()
+                for(j in 0 until empiresChange) {
+                    var imperialistMod: Country? = null
+                    for (i in 0 until changesInEmpires) {
+                        val pos1 = Random().nextInt(empire.emperor.representation.size)
+                        val pos2 = Random().nextInt(empire.emperor.representation.size)
+                        val newRepresentation = empire.emperor.representation.toMutableList()
+                        val cacheJob = newRepresentation[pos1]
+                        newRepresentation[pos1] = newRepresentation[pos2]
+                        newRepresentation[pos2] = cacheJob
+                        imperialistMod = Country(newRepresentation)
+                    }
+                    val badestColony = empire.getColonies().sortedBy { it.getCost() }.last()
+                    empire.removeColony(badestColony)
+                    empire.addColony(imperialistMod!!)
+                }
             }
         }
     }
