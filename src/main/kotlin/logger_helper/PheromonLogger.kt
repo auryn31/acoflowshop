@@ -1,4 +1,4 @@
-package acoflowshop
+package logger_helper
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
@@ -12,40 +12,40 @@ private const val FILE_NAME = "pheromon"
 object PheromonLogger {
 
     val mongo = MongoClient()
-    val db = mongo.getDatabase("pheromon")
-    val collection = db.getCollection("pheromonValues")
+    val db = PheromonLogger.mongo.getDatabase("pheromon")
+    val collection = PheromonLogger.db.getCollection("pheromonValues")
     val mapper = ObjectMapper().registerModule(KotlinModule())
-    val config = mapper.readValue(File("src/main/resources/Config.json"), Config::class.java)
+    val config = PheromonLogger.mapper.readValue(File("src/main/resources/Config.json"), Config::class.java)
     /**
      * löschen des Logs der letzten iteration und erstellen eines neuen Files
      */
     fun createLoggingFile() {
-        if (config !== null && config.dbLogging) {
-            File("${FILE_NAME}.json").delete()
-            File("${FILE_NAME}.json").createNewFile()
-            File("${FILE_NAME}.json").appendText("[")
+        if (PheromonLogger.config !== null && PheromonLogger.config.dbLogging) {
+            File("$FILE_NAME.json").delete()
+            File("$FILE_NAME.json").createNewFile()
+            File("$FILE_NAME.json").appendText("[")
         }
     }
 
     fun endLogging() {
-        if (config !== null && config.dbLogging) {
-            File("${FILE_NAME}.json").appendText("]")
+        if (PheromonLogger.config !== null && PheromonLogger.config.dbLogging) {
+            File("$FILE_NAME.json").appendText("]")
         }
     }
 
     fun writeEntryIntoDB(iteration: Int, pheromonList: MutableList<MutableList<Double>>) {
-        if (config !== null && config.dbLogging) {
+        if (PheromonLogger.config !== null && PheromonLogger.config.dbLogging) {
             val document = Document()
             document.put("_id", iteration)
             document.put("pheromon", pheromonList.map { it.map { (it * 100).toInt() } })
-            collection.insertOne(document)
+            PheromonLogger.collection.insertOne(document)
         }
 
     }
 
     fun initDB() {
-        if (config !== null && config.dbLogging) {
-            collection.drop()
+        if (PheromonLogger.config !== null && PheromonLogger.config.dbLogging) {
+            PheromonLogger.collection.drop()
         }
     }
 
@@ -59,7 +59,7 @@ object PheromonLogger {
         }
         json = json.subSequence(0, json.length - 1).toString()
         json += "],\n"
-        File("${FILE_NAME}.json").appendText(json)
+        File("$FILE_NAME.json").appendText(json)
 
     }
 }

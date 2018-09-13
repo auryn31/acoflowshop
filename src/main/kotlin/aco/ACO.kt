@@ -1,9 +1,8 @@
 package aco
 
-import acoflowshop.CsvLogging
 import acoflowshop.Job
-import acoflowshop.PheromonLogger
 import mu.KotlinLogging
+import logger_helper.*
 
 private val logger = KotlinLogging.logger {}
 

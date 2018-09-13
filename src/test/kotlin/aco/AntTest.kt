@@ -1,7 +1,6 @@
-package acoflowshop
+package aco
 
-import aco.ACO
-import aco.Ant
+import acoflowshop.Job
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
