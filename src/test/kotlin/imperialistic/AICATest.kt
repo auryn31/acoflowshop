@@ -28,7 +28,7 @@ class AICATest {
                 empire
         )
         val newEmpires = AICA.assimilate(empires)
-        assertEquals(2, newEmpires[0].getNumerOfColonies())
+        assertEquals(2, newEmpires[0].getNumberOfColonies())
     }
 
     @Test
@@ -156,11 +156,11 @@ class AICATest {
                 Job(2, 1, 1, 2))
         val country = Country(empireList)
         val empire1 = Empire(country)
-        empire1.setColony(mutableListOf(Country(jobList1)))
+        empire1.setColony(mutableListOf(Country(jobList2)))
         val empire2 = Empire(country)
-        empire2.setColony(mutableListOf(Country(jobList2)))
+        empire2.setColony(mutableListOf(Country(jobList1)))
         val empire3 = Empire(country)
-        empire3.setColony(mutableListOf(Country(jobList2)))
+        empire3.setColony(mutableListOf(Country(jobList1)))
         val empires = mutableListOf(
                 empire1,
                 empire2,
@@ -199,8 +199,8 @@ class AICATest {
         val newEmpires = AICA.eliminatingPowerlessEmpires(empires)
 
         assertEquals(2, newEmpires.size)
-        assertEquals(2, newEmpires.sortedByDescending { it.getNumerOfColonies() }[0].getNumerOfColonies())
-        assertEquals(1, newEmpires.sortedByDescending { it.getNumerOfColonies() }[1].getNumerOfColonies())
+        assertEquals(2, newEmpires.sortedByDescending { it.getNumberOfColonies() }[0].getNumberOfColonies())
+        assertEquals(1, newEmpires.sortedByDescending { it.getNumberOfColonies() }[1].getNumberOfColonies())
     }
 
     @Test
@@ -248,5 +248,41 @@ class AICATest {
         val empire = Empire(country)
         val empire2 = Empire(country)
         assertFalse(AICA.stoppingCriteriaIsReached(mutableListOf(empire, empire2), 99, 100))
+    }
+
+    @Test
+    fun revolutionTest() {
+        val jobListForEmpire = mutableListOf(
+                Job(1, 3, 1, 1),
+                Job(3, 1, 1, 0),
+                Job(2, 1, 1, 2))
+        val country = Country(jobListForEmpire)
+        val empire = Empire(country)
+        val empires = listOf(empire)
+        AICA.revolution(empires, 0.5)
+        assertEquals(empires , empires)
+    }
+
+    @Test
+    fun revolutionTest1() {
+        val jobList1 = mutableListOf(
+                Job(1, 3, 1, 0),
+                Job(3, 1, 1, 1),
+                Job(2, 1, 1, 2))
+        val jobList2 = mutableListOf(
+                Job(3, 1, 1, 0),
+                Job(1, 3, 1, 1),
+                Job(2, 1, 1, 2))
+        val jobListForEmpire = mutableListOf(
+                Job(1, 3, 1, 1),
+                Job(3, 1, 1, 0),
+                Job(2, 1, 1, 2))
+        val country = Country(jobListForEmpire)
+        val empire = Empire(country)
+        val colonyList = listOf(Country(jobList1), Country(jobList2))
+        empire.setColony(colonyList)
+        val empires = listOf(empire)
+        AICA.revolution(empires, 0.5)
+        assertNotEquals(colonyList , empires[0].getColonies())
     }
 }
