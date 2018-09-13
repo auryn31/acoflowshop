@@ -26,7 +26,7 @@ fun findBestOrderForNextJob(machineList: List<Job>, jobToAdd: Job, storageSize: 
     }
     var shortestList = machineList.toMutableList()
     shortestList.add(jobToAdd)
-    var shortestSum = calculatefastestScheduleWithOrder(shortestList, storageSize)
+    var shortestSum = calculateDurationForMCT(shortestList, 0.1)
 
     for (i in 0..machineList.size - 1) {
         val left = machineList.subList(0, i)
@@ -34,7 +34,7 @@ fun findBestOrderForNextJob(machineList: List<Job>, jobToAdd: Job, storageSize: 
         val currentList = left.toMutableList()
         currentList.add(jobToAdd)
         currentList.addAll(right)
-        val currentLength = calculatefastestScheduleWithOrder(currentList, storageSize)
+        val currentLength = calculateDurationForMCT(currentList, 0.1)
         if (currentLength < shortestSum) {
             shortestSum = currentLength
             shortestList = currentList

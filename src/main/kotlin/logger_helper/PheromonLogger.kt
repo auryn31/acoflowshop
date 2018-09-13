@@ -3,6 +3,8 @@ package logger_helper
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.mongodb.MongoClient
+import com.mongodb.client.MongoCollection
+import com.mongodb.client.MongoDatabase
 import global.Config
 import org.bson.Document
 import java.io.File
@@ -11,16 +13,16 @@ private const val FILE_NAME = "pheromon"
 
 object PheromonLogger {
 
-    val mongo = MongoClient()
-    val db = PheromonLogger.mongo.getDatabase("pheromon")
-    val collection = PheromonLogger.db.getCollection("pheromonValues")
+    var mongo: MongoClient? = null
+    var db: MongoDatabase? = null
+    var collection: MongoCollection<Document>? = null
     val mapper = ObjectMapper().registerModule(KotlinModule())
-    val config = PheromonLogger.mapper.readValue(File("src/main/resources/Config.json"), Config::class.java)
+    val config = mapper.readValue(File("src/main/resources/Config.json"), Config::class.java)
     /**
      * löschen des Logs der letzten iteration und erstellen eines neuen Files
      */
     fun createLoggingFile() {
-        if (PheromonLogger.config !== null && PheromonLogger.config.dbLogging) {
+        if (config !== null && config.dbLogging) {
             File("$FILE_NAME.json").delete()
             File("$FILE_NAME.json").createNewFile()
             File("$FILE_NAME.json").appendText("[")
@@ -28,24 +30,27 @@ object PheromonLogger {
     }
 
     fun endLogging() {
-        if (PheromonLogger.config !== null && PheromonLogger.config.dbLogging) {
+        if (config !== null && config.dbLogging) {
             File("$FILE_NAME.json").appendText("]")
         }
     }
 
     fun writeEntryIntoDB(iteration: Int, pheromonList: MutableList<MutableList<Double>>) {
-        if (PheromonLogger.config !== null && PheromonLogger.config.dbLogging) {
+        if (config !== null && config.dbLogging) {
             val document = Document()
             document.put("_id", iteration)
             document.put("pheromon", pheromonList.map { it.map { (it * 100).toInt() } })
-            PheromonLogger.collection.insertOne(document)
+            collection!!.insertOne(document)
         }
 
     }
 
     fun initDB() {
-        if (PheromonLogger.config !== null && PheromonLogger.config.dbLogging) {
-            PheromonLogger.collection.drop()
+        if (config !== null && config.dbLogging) {
+            mongo = MongoClient()
+            db = mongo!!.getDatabase("pheromon")
+            collection = db!!.getCollection("pheromonValues")
+            collection!!.drop()
         }
     }
 

@@ -1,11 +1,32 @@
 package imperialistic
 
 import acoflowshop.Job
+import mu.KotlinLogging
 import java.util.*
 
-object AICA {
-    fun optimizeForMCT(jobList: List<Job>, iterations: Int) {
+private val logger = KotlinLogging.logger {}
 
+object AICA {
+    fun optimizeForMCT(jobList: List<Job>, iterations: Int, popSize: Int) {
+        val startCountries = (0 until popSize).map { Country(jobList.shuffled()) }
+        var empires = createEmpires(startCountries)
+        var i = 1
+        do {
+            empires = eliminatingPowerlessEmpires(empires)
+            empires = assimilate(empires)
+            revolution(empires, 0.2, 0.2, 0.2)
+            empires = exchangePositions(empires)
+            empires = imperialisticCompetition(empires)
+            empires = eliminatingPowerlessEmpires(empires)
+            i++
+
+            if (!stoppingCriteriaIsReached(empires, i, iterations)) {
+                empires = createEmpires(globalWar(empires, popSize))
+            }
+
+
+        } while (!stoppingCriteriaIsReached(empires, i, iterations))
+        logger.warn { " AICA: ${empires.sortedBy { it.emperor.getCost() }.first().emperor.getCost()}" }
     }
 
     fun createCountries(k: Int): MutableList<Country> {
@@ -134,12 +155,12 @@ object AICA {
         colonyRevolution(empires, P_cr)
     }
 
-    internal fun colonyRevolution(empires: List<Empire>, P_cr: Double){
+    internal fun colonyRevolution(empires: List<Empire>, P_cr: Double) {
         for (empire in empires) {
-            for(colony in empire.getColonies()) {
+            for (colony in empire.getColonies()) {
                 val changes = (colony.representation.size * P_cr).toInt()
                 val newRepresentation = colony.representation.toMutableList()
-                for(i in 0 until changes) {
+                for (i in 0 until changes) {
                     val pos1 = Random().nextInt(newRepresentation.size)
                     val pos2 = Random().nextInt(newRepresentation.size)
                     val cacheJob = newRepresentation[pos1]
@@ -157,7 +178,7 @@ object AICA {
             if (empire.getNumberOfColonies() > 0) {
                 val changesInEmpires = (empire.getNumberOfColonies().toDouble() * P_ir).toInt()
                 val empiresChange = (empire.getNumberOfColonies().toDouble() * P_r).toInt()
-                for(j in 0 until empiresChange) {
+                for (j in 0 until empiresChange) {
                     var imperialistMod: Country? = null
                     for (i in 0 until changesInEmpires) {
                         val pos1 = Random().nextInt(empire.emperor.representation.size)
@@ -174,6 +195,21 @@ object AICA {
                 }
             }
         }
+    }
+
+    internal fun globalWar(empires: List<Empire>, popSize: Int): List<Country> {
+
+        val listOfJobs = empires.first().emperor.representation
+        val emperoList = empires.map { it.emperor }
+        val newColonies = empires.map { it.getColonies() }.flatMap { it }.toMutableList()
+        newColonies.addAll(emperoList)
+        for (i in 0 until popSize) {
+            newColonies.add(Country(listOfJobs.shuffled()))
+        }
+
+        newColonies.sortBy { it.getCost() }
+
+        return newColonies.subList(0, popSize).toList()
     }
 }
 

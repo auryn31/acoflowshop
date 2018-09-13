@@ -5,16 +5,18 @@ import aco.Ant
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import global.Config
+import imperialistic.AICA
+import imperialistic.createRandomJobList
+import logger_helper.CsvLogging
+import logger_helper.PheromonLogger
 import mu.KotlinLogging
 import java.io.File
-import java.util.*
-import logger_helper.*
 
 
 private const val STORAGE_SIZE = 5
 private val logger = KotlinLogging.logger {}
 
-private val jobList: List<Job> = createRandomJobList(50)
+private val jobList: List<Job> = createRandomJobList(20)
 
 
 fun main(args: Array<String>) {
@@ -23,6 +25,8 @@ fun main(args: Array<String>) {
     if (config !== null) {
         calculateWithMeanCompletionTime(config)
     }
+
+    AICA.optimizeForMCT(jobList, 392, 152)
 }
 
 fun calculateWithMakespan(config: Config) {
@@ -63,34 +67,6 @@ fun calculateWithMeanCompletionTime(config: Config) {
     PheromonLogger.initDB()
     val bestACO = ACO.optimizeForMCT(ants, jobList, config.evaporation, config.Q)
 
+    logger.warn { " ACO: ${bestACO.getDurationForMCT()!!}" }
     logger.info { bestACO.jobQue }
-}
-
-/**
- * Jobliste zufällig erzeugen um damit zu rechnen
- */
-fun createRandomJobList(length: Int): List<Job> {
-
-    val jobList = mutableListOf<Job>()
-
-    for (i in 0 until length) {
-        val durationM1 = Random().nextInt(30)
-        val durationM2 = Random().nextInt(30)
-        val setupM1 = Random().nextInt(30)
-        val setupM2 = Random().nextInt(30)
-        val reworkM1 = ((0.3 * Random().nextDouble() + 0.3) * durationM1).toInt()
-        val reworkM2 = ((0.3 * Random().nextDouble() + 0.3) * durationM2).toInt()
-        jobList.add(
-                Job(
-                        id = i,
-                        durationMachineOne = durationM1,
-                        durationMachineTwo = durationM2,
-                        setupTimeMachineOne = setupM1,
-                        setupTimeMachineTwo = setupM2,
-                        reworktimeMachineOne = reworkM1,
-                        reworktimeMachineTwo = reworkM2
-                )
-        )
-    }
-    return jobList
 }

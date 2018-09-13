@@ -1,6 +1,7 @@
 package aco
 
 import acoflowshop.Job
+import acoflowshop.findBestOrderForNextJob
 import mu.KotlinLogging
 import logger_helper.*
 
@@ -55,7 +56,12 @@ object ACO {
 
     // MTC = Mean Completion Time --> Durchschnittliche Fertigstellungszeit
     fun optimizeForMCT(ants: MutableList<Ant>, jobList: List<Job>, evaporation: Double, iterations: Int): Ant {
-        var pheromone: MutableList<MutableList<Double>> = initEmptyPheromonMatrix(jobList.size)
+        val jobs = jobList.sortedBy { it.durationMachineOne + it.durationMachineTwo }
+        var nehList = mutableListOf<Job>()
+        for (job in jobs) {
+            nehList = findBestOrderForNextJob(nehList, job, 0).toMutableList()
+        }
+        var pheromone: MutableList<MutableList<Double>> = initWithSeed(jobList.size, nehList, evaporation)
         var solutionNumber = 0
         var evaluationIteration = 0
         val bestGlobalAnt = Ant()
