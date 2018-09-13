@@ -2,6 +2,7 @@ package aco
 
 import acoflowshop.Job
 import acoflowshop.findBestOrderForNextJob
+import global.LoggingParameter
 import mu.KotlinLogging
 import logger_helper.*
 
@@ -63,7 +64,6 @@ object ACO {
         }
         var pheromone: MutableList<MutableList<Double>> = initWithSeed(jobList.size, nehList, evaporation)
         var solutionNumber = 0
-        var evaluationIteration = 0
         val bestGlobalAnt = Ant()
         val start = System.currentTimeMillis()
 
@@ -80,20 +80,18 @@ object ACO {
             if (bestAnt != null) {
                 pheromone = updateJobPosPheromoneForAnt(bestAnt, pheromone, evaporation)
 //                    bestGlobalAnt.calculateDurationWithMCT()
-                val updated = updateGlobalBestAntForACIS(bestGlobalAnt, bestAnt)
-                if (updated) {
-                    evaluationIteration++
-                }
-                evaluationIteration++
+                updateGlobalBestAntForACIS(bestGlobalAnt, bestAnt)
             }
             logger.info { pheromone }
 
             ants.forEach { it.reset() }
             solutionNumber++
-            evaluationIteration += jobList.size
             logger.info { "best ant: ${bestGlobalAnt.jobQue} with length: ${bestGlobalAnt.duration}" }
             logger.info { "TIME ${System.currentTimeMillis() - start}" }
-            CsvLogging.appendCSVEntry(solutionNumber, bestGlobalAnt.getDurationForMCT()!!, (System.currentTimeMillis() - start), evaluationIteration)
+            LoggingParameter.iteration = solutionNumber
+            LoggingParameter.bestDuration = bestGlobalAnt.getDurationForMCT()!!
+            LoggingParameter.currentTime = System.currentTimeMillis() - start
+            CsvLogging.writeNextEntry()
             PheromonLogger.writeEntryIntoDB(solutionNumber, pheromone)
         }
         return bestGlobalAnt

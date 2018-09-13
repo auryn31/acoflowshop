@@ -1,6 +1,8 @@
 package imperialistic
 
 import acoflowshop.Job
+import global.LoggingParameter
+import logger_helper.CsvLogging
 import mu.KotlinLogging
 import java.util.*
 
@@ -8,9 +10,12 @@ private val logger = KotlinLogging.logger {}
 
 object AICA {
     fun optimizeForMCT(jobList: List<Job>, iterations: Int, popSize: Int) {
+        LoggingParameter.reset()
         val startCountries = (0 until popSize).map { Country(jobList.shuffled()) }
         var empires = createEmpires(startCountries)
         var i = 1
+        val startTime = System.currentTimeMillis()
+        var globalBestEmperor: Country? = null
         do {
             empires = eliminatingPowerlessEmpires(empires)
             empires = assimilate(empires)
@@ -18,15 +23,23 @@ object AICA {
             empires = exchangePositions(empires)
             empires = imperialisticCompetition(empires)
             empires = eliminatingPowerlessEmpires(empires)
+
+            val bestEmpireForIteration = empires.sortedBy { it.emperor.getCost() }.first().emperor
+            if(globalBestEmperor == null || bestEmpireForIteration.getCost() < globalBestEmperor.getCost()) {
+                globalBestEmperor = bestEmpireForIteration
+            }
+            LoggingParameter.iteration = i
+            LoggingParameter.currentTime = System.currentTimeMillis() - startTime
+            LoggingParameter.bestDuration = globalBestEmperor.getCost()
             i++
+            CsvLogging.writeNextEntry()
 
             if (!stoppingCriteriaIsReached(empires, i, iterations)) {
                 empires = createEmpires(globalWar(empires, popSize))
             }
 
-
         } while (!stoppingCriteriaIsReached(empires, i, iterations))
-        logger.warn { " AICA: ${empires.sortedBy { it.emperor.getCost() }.first().emperor.getCost()}" }
+        logger.warn { " AICA: ${empires.sortedBy { it.emperor.getCost() }.first().emperor.getCost()} with ${LoggingParameter.evaluationIteration} evaluations" }
     }
 
     fun createCountries(k: Int): MutableList<Country> {
@@ -46,7 +59,10 @@ object AICA {
     }
 
     fun createEmpires(countries: List<Country>): List<Empire> {
-        val numberOfEmpires = 2
+        var numberOfEmpires = (countries.size * 0.2).toInt()
+        if (numberOfEmpires == 0) {
+            numberOfEmpires = 1
+        }
         val newCountries = countries.sortedBy { it.getCost() }
         val candidateEmpires = newCountries.subList(0, numberOfEmpires)
         val candidateColonies = newCountries.subList(numberOfEmpires, newCountries.size)
@@ -128,7 +144,7 @@ object AICA {
     }
 
     fun imperialisticCompetition(empires: List<Empire>): List<Empire> {
-        val weakestEmpire = empires.sortedByDescending { it.costs }.first()
+        val weakestEmpire = empires.sortedByDescending { it.getTotalCost() }.first()
         val weakestColony = weakestEmpire.getColonies().sortedByDescending { it.getCost() }[0]
         weakestEmpire.removeColony(weakestColony)
 

@@ -12,7 +12,7 @@ class EmpireTest {
                 Job(1, 1, 1, 0))
         val country = Country(empireList)
         val empire = Empire(country)
-        assertEquals(-0.4161468365471424, empire.getTotalCost(0.3))
+        assertEquals(2.0, empire.getTotalCost())
     }
 
     @Test
@@ -23,18 +23,7 @@ class EmpireTest {
         val country = Country(empireList)
         val empire = Empire(country)
         empire.setColony(coloniesList)
-        assertEquals(-0.4993762038565709, empire.getTotalCost(0.2))
-    }
-
-    @Test
-    fun getTotalCostTestWithColoniesWithoutInfluence() {
-        val empireList = mutableListOf(
-                Job(1, 1, 1, 0))
-        val coloniesList = mutableListOf(Country(mutableListOf(Job(1, 1, 1, 0))))
-        val country = Country(empireList)
-        val empire = Empire(country)
-        empire.setColony(coloniesList)
-        assertEquals(-0.4161468365471424, empire.getTotalCost(0.0))
+        assertEquals(2.064, empire.getTotalCost())
     }
 
     @Test

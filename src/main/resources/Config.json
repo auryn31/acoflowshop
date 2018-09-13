@@ -1,7 +1,7 @@
 {
-  "evaporation": 0.05,
-  "Q": 1000,
-  "antFactor": 0.5,
+  "evaporation": 0.02,
+  "Q": 600,
+  "antFactor": 0.4,
   "dbLogging": false,
   "fileLogging": true
 }

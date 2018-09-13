@@ -5,6 +5,7 @@ import aco.Ant
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import global.Config
+import global.LoggingParameter
 import imperialistic.AICA
 import imperialistic.createRandomJobList
 import logger_helper.CsvLogging
@@ -16,17 +17,17 @@ import java.io.File
 private const val STORAGE_SIZE = 5
 private val logger = KotlinLogging.logger {}
 
-private val jobList: List<Job> = createRandomJobList(20)
+private val jobList: List<Job> = createRandomJobList(50)
 
 
 fun main(args: Array<String>) {
     val mapper = ObjectMapper().registerModule(KotlinModule())
     val config = mapper.readValue(File("src/main/resources/Config.json"), Config::class.java)
     if (config !== null) {
-        calculateWithMeanCompletionTime(config)
+        calculateWithMeanCompletionTimeForACO(config)
     }
 
-    AICA.optimizeForMCT(jobList, 392, 152)
+    AICA.optimizeForMCT(jobList, 576, 293)
 }
 
 fun calculateWithMakespan(config: Config) {
@@ -58,7 +59,7 @@ fun fak(num: Int): Int {
     return result
 }
 
-fun calculateWithMeanCompletionTime(config: Config) {
+fun calculateWithMeanCompletionTimeForACO(config: Config) {
     val ants: MutableList<Ant> = (0..(config.antFactor * jobList.size).toInt()).map { i -> Ant() }.toMutableList()
     val ant1 = Ant()
     ant1.jobQue = jobList.toMutableList()
@@ -67,6 +68,6 @@ fun calculateWithMeanCompletionTime(config: Config) {
     PheromonLogger.initDB()
     val bestACO = ACO.optimizeForMCT(ants, jobList, config.evaporation, config.Q)
 
-    logger.warn { " ACO: ${bestACO.getDurationForMCT()!!}" }
+    logger.warn { " ACO: ${bestACO.getDurationForMCT()!!} with ${LoggingParameter.evaluationIteration} evaluations" }
     logger.info { bestACO.jobQue }
 }

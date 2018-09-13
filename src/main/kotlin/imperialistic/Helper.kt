@@ -19,11 +19,11 @@ object Helper {
         val empiresMap = hashMapOf<Double, Empire>()
         var restStrength = 1.0
         val zeta = 0.1
-        val strengthSum = empires.map { it.costs }.reduce { acc, d -> acc + d }
+        val strengthSum = empires.map { it.getTotalCost() }.reduce { acc, d -> acc + d }
 
         for (empire in empires) {
             empiresMap[restStrength] = empire
-            restStrength -= empire.costs / strengthSum
+            restStrength -= empire.getTotalCost() / strengthSum
         }
         return empiresMap
     }

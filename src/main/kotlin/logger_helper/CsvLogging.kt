@@ -3,6 +3,7 @@ package logger_helper
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import global.Config
+import global.LoggingParameter
 import mu.KotlinLogging
 import java.io.File
 
@@ -12,14 +13,13 @@ private val mapper = ObjectMapper().registerModule(KotlinModule())
 private val config = mapper.readValue(File("src/main/resources/Config.json"), Config::class.java)
 
 object CsvLogging {
-
     /**
      * löschen des Logs der letzten iteration und erstellen eines neuen Files
      */
     fun createLoggingFile() {
-        if (logger_helper.config !== null && logger_helper.config.fileLogging) {
-            File("${logger_helper.FILE_NAME}.csv").delete()
-            File("${logger_helper.FILE_NAME}.csv").createNewFile()
+        if (config !== null && config.fileLogging) {
+            File("$FILE_NAME.csv").delete()
+            File("$FILE_NAME.csv").createNewFile()
         }
     }
 
@@ -28,15 +28,15 @@ object CsvLogging {
      */
     fun appendCSVEntry(iteration: Int, currentLength: Int, durationInMs: Long, evaluationIteration: Int) {
         LOGGER.info { "${iteration} - ${currentLength} - ${durationInMs}" }
-        if (logger_helper.config !== null && logger_helper.config.fileLogging) {
-            File("${logger_helper.FILE_NAME}.csv").appendText("$iteration,$currentLength, $durationInMs,$evaluationIteration\n")
+        if (config !== null && config.fileLogging) {
+            File("$FILE_NAME.csv").appendText("$iteration,$currentLength, $durationInMs,$evaluationIteration\n")
         }
     }
 
-    fun appendCSVEntry(iteration: Int, currentLength: Double, durationInMs: Long, evaluationIteration: Int) {
-        LOGGER.info { "${iteration} - ${currentLength} - ${durationInMs}" }
-        if (logger_helper.config !== null && logger_helper.config.fileLogging) {
-            File("${logger_helper.FILE_NAME}.csv").appendText("$iteration,$currentLength,$durationInMs,$evaluationIteration\n")
+    fun writeNextEntry() {
+        LOGGER.info { "${LoggingParameter.iteration} - ${LoggingParameter.bestDuration} - ${LoggingParameter.currentTime}" }
+        if (config !== null && config.fileLogging) {
+            File("$FILE_NAME.csv").appendText("${LoggingParameter.iteration},${LoggingParameter.bestDuration},${LoggingParameter.currentTime},${LoggingParameter.evaluationIteration}\n")
         }
     }
 }

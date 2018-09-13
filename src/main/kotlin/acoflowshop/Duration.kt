@@ -1,5 +1,6 @@
 package acoflowshop
 
+import global.LoggingParameter
 import java.util.*
 
 fun duration(jobsList: List<Job>, storageSize: Int): Int {
@@ -195,6 +196,7 @@ fun calculateDurationForMCT(jobs: MutableList<Job>, randomFactor: Double): Doubl
             }
         }
     }
+    LoggingParameter.evaluationIteration++
     return currentAverage/jobs.size
 }
 
