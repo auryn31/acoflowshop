@@ -65,7 +65,7 @@ class AICATest {
                 empire
         )
         val newEmpires = AICA.assimilate(empires)
-        assertEquals(resultList, newEmpires[0].getColony(1).getRepresentation())
+        assertEquals(resultList, newEmpires[0].getColony(1).representation)
     }
 
 
@@ -86,9 +86,9 @@ class AICATest {
                 empire
         )
         val newEmpires = AICA.exchangePositions(empires)
-        assertEquals(jobList, newEmpires[0].emperor.getRepresentation())
-        assertNotEquals(empireList, newEmpires[0].emperor.getRepresentation())
-        assertEquals(empireList, newEmpires[0].getColony(0).getRepresentation())
+        assertEquals(jobList, newEmpires[0].emperor.representation)
+        assertNotEquals(empireList, newEmpires[0].emperor.representation)
+        assertEquals(empireList, newEmpires[0].getColony(0).representation)
     }
 
     @Test
@@ -108,9 +108,9 @@ class AICATest {
                 empire
         )
         val newEmpires = AICA.exchangePositions(empires)
-        assertEquals(empireList, newEmpires[0].emperor.getRepresentation())
-        assertNotEquals(jobList, newEmpires[0].emperor.getRepresentation())
-        assertEquals(jobList, newEmpires[0].getColony(0).getRepresentation())
+        assertEquals(empireList, newEmpires[0].emperor.representation)
+        assertNotEquals(jobList, newEmpires[0].emperor.representation)
+        assertEquals(jobList, newEmpires[0].getColony(0).representation)
     }
 
     @Test

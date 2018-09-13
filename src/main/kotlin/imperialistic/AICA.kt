@@ -48,7 +48,7 @@ object AICA {
             val empireRepresentation = empire.emperor
             val colonies = empire.getColonies()
             for (colony in colonies) {
-                val colonyRepresentation = colony.getRepresentation()
+                val colonyRepresentation = colony.representation
                 val assimilationRate = 3.0 / 7.0
 
                 val numberOfTasks = (colonyRepresentation.size.toDouble() * assimilationRate).toInt()
@@ -59,7 +59,7 @@ object AICA {
                 // neues Land finden
                 for (i in 0 until candidatesArray.size) {
                     if (candidatesArray[i] == 1) {
-                        newColony[i] = empireRepresentation.getRepresentation()[i]
+                        newColony[i] = empireRepresentation.representation[i]
                     }
                 }
                 for (i in 0 until candidatesArray.size) {
@@ -133,19 +133,19 @@ object AICA {
         for(empire in empires) {
             if(empire.getNumberOfColonies() > 0) {
                 val changesInEmpires = (empire.getNumberOfColonies().toDouble() * P_ir).toInt()
-                val imperialistMod = empire.emperor
+                var imperialistMod: Country? = null
                 for(i in 0 until changesInEmpires) {
-                    val pos1 = Random().nextInt(imperialistMod.getRepresentation().size)
-                    val pos2 = Random().nextInt(imperialistMod.getRepresentation().size)
-                    val newRepresentation = imperialistMod.getRepresentation().toMutableList()
+                    val pos1 = Random().nextInt(empire.emperor.representation.size)
+                    val pos2 = Random().nextInt(empire.emperor.representation.size)
+                    val newRepresentation = empire.emperor.representation.toMutableList()
                     val cacheJob = newRepresentation[pos1]
                     newRepresentation[pos1] = newRepresentation[pos2]
                     newRepresentation[pos2] = cacheJob
-                    imperialistMod.setRepresentation(newRepresentation)
+                    imperialistMod = Country(newRepresentation)
                 }
                 val badestColony = empire.getColonies().sortedBy { it.getCost() }.last()
                 empire.removeColony(badestColony)
-                empire.addColony(imperialistMod)
+                empire.addColony(imperialistMod!!)
             }
         }
     }

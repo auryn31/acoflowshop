@@ -26,7 +26,7 @@ class HelperTest {
         )
         val newEmpires = Helper.distributeColonyWithRoulette(empires, newCountry)
 
-        assertEquals(jobList, newEmpires[0].getColony(0).getRepresentation())
+        assertEquals(jobList, newEmpires[0].getColony(0).representation)
     }
 
 
@@ -52,7 +52,7 @@ class HelperTest {
         )
         val newEmpires = Helper.distributeColonyWithRoulette(empires, newCountry)
 
-        assertEquals(jobList, newEmpires.filter { it.getColonies().isNotEmpty() }[0].getColony(0).getRepresentation())
+        assertEquals(jobList, newEmpires.filter { it.getColonies().isNotEmpty() }[0].getColony(0).representation)
         assertEquals(1, newEmpires.filter { it.getColonies().isNotEmpty() }.size)
     }
 
