@@ -6,11 +6,13 @@ object LoggingParameter {
     var bestDuration = 0.0
     var currentTime = 0L
     var evaluationIteration = 0
+    var reworkTimeInPercentage = 0.0
 
 
     fun reset(){
         this.iteration = 0
         this.bestDuration = 0.0
         this.currentTime = 0
+        this.reworkTimeInPercentage = 0.0
     }
 }

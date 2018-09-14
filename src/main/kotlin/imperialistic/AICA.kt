@@ -31,6 +31,7 @@ object AICA {
             LoggingParameter.iteration = i
             LoggingParameter.currentTime = System.currentTimeMillis() - startTime
             LoggingParameter.bestDuration = globalBestEmperor.getCost()
+            LoggingParameter.reworkTimeInPercentage = globalBestEmperor.getReworkTime()
             i++
             CsvLogging.writeNextEntry()
 

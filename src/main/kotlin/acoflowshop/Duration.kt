@@ -27,15 +27,15 @@ fun findBestOrderForNextJob(machineList: List<Job>, jobToAdd: Job, storageSize: 
     }
     var shortestList = machineList.toMutableList()
     shortestList.add(jobToAdd)
-    var shortestSum = calculateDurationForMCT(shortestList, 0.1)
+    var shortestSum = calculateDurationForMCT(shortestList, 0.1).first
 
-    for (i in 0..machineList.size - 1) {
+    for (i in 0 until machineList.size) {
         val left = machineList.subList(0, i)
         val right = machineList.subList(i, machineList.size)
         val currentList = left.toMutableList()
         currentList.add(jobToAdd)
         currentList.addAll(right)
-        val currentLength = calculateDurationForMCT(currentList, 0.1)
+        val currentLength = calculateDurationForMCT(currentList, 0.1).first
         if (currentLength < shortestSum) {
             shortestSum = currentLength
             shortestList = currentList
@@ -61,35 +61,35 @@ fun getShortestSchedule(jobList: List<Job>, storageSize: Int): Triple<List<Sched
     val machineOne = mutableListOf<Schedule>()
     val machineTwo = mutableListOf<Schedule>()
     val memory = mutableListOf<Memory>()
-    var currentlyInStorage= mutableListOf<Job>()
+    var currentlyInStorage = mutableListOf<Job>()
 
 
     var counter = 0
-    while(machineTwoStack.isNotEmpty()) {
+    while (machineTwoStack.isNotEmpty()) {
         // erste maschine ist leer
-        if(counter == 0) {
+        if (counter == 0) {
             addNextJobToMachineOne(machineOne, machineOneStack, counter)
         } else {
 
             // wenn der erste job der maschine 1 fertig ist
-            if(machineOne.first().start + machineOne.first().job.durationMachineOne <= counter) {
+            if (machineOne.first().start + machineOne.first().job.durationMachineOne <= counter) {
 
                 //zweite maschine ist leer
-                if(machineTwo.size == 0) {
+                if (machineTwo.size == 0) {
                     addNextJobToMachineTwo(machineTwo, machineTwoStack, counter)
                 } else {
                     // maschine 2 ist fertig
-                    if(machineTwo.last().job.durationMachineTwo+machineTwo.last().start <= counter) {
+                    if (machineTwo.last().job.durationMachineTwo + machineTwo.last().start <= counter) {
                         // ist nächster job auf maschine 1 fertig?
                         val nextJob = machineTwoStack.first
                         val nextJobOnMachineOne = machineOne.filter { it.job.id == nextJob.id }.firstOrNull()
-                        if(nextJobOnMachineOne != null) {
-                            if(nextJobOnMachineOne.start + nextJobOnMachineOne.job.durationMachineOne <= counter) {
+                        if (nextJobOnMachineOne != null) {
+                            if (nextJobOnMachineOne.start + nextJobOnMachineOne.job.durationMachineOne <= counter) {
                                 addNextJobToMachineTwo(machineTwo, machineTwoStack, counter)
 
                                 //neuen job aus dem memory nehmen
                                 val newJobOnMachineTwoWasInStorage = currentlyInStorage.filter { it.id == machineTwo.last().job.id }.isNotEmpty()
-                                if(newJobOnMachineTwoWasInStorage) {
+                                if (newJobOnMachineTwoWasInStorage) {
                                     currentlyInStorage = currentlyInStorage.filter { it.id != machineTwo.last().job.id }.toMutableList()
                                     currentlyUsedStorage -= machineTwo.last().job.storageSize
                                     memory.last().end = counter
@@ -103,17 +103,17 @@ fun getShortestSchedule(jobList: List<Job>, storageSize: Int): Triple<List<Sched
             }
 
             // maschine 1 ist fertig
-            if(machineOne.last().job.durationMachineOne + machineOne.last().start <= counter) {
+            if (machineOne.last().job.durationMachineOne + machineOne.last().start <= counter) {
 
                 // der letzte job von maschine 1 ist noch nicht auf maschine 2 und noch nicht im speicher
                 val nextJobIsNotInMemory = currentlyInStorage.filter { it.id == machineOne.last().job.id }.isEmpty()
                 val nextJobIsNotOnMachineTwo = machineOne.last().job.id != machineTwo.last().job.id
-                if(nextJobIsNotOnMachineTwo && nextJobIsNotInMemory) {
+                if (nextJobIsNotOnMachineTwo && nextJobIsNotInMemory) {
                     currentlyUsedStorage = addJobToStorage(currentlyUsedStorage, machineOne, currentlyInStorage, memory, counter)
                 }
 
                 // es gibt noch jobs für maschine 1
-                if(machineOneStack.isNotEmpty() && currentlyUsedStorage < storageSize){
+                if (machineOneStack.isNotEmpty() && currentlyUsedStorage < storageSize) {
                     addNextJobToMachineOne(machineOne, machineOneStack, counter)
                 }
             }
@@ -141,55 +141,63 @@ private fun addNextJobToMachineOne(machineOne: MutableList<Schedule>, machineOne
 }
 
 
-fun calculateDurationForMCT(jobs: MutableList<Job>, randomFactor: Double): Double {
+/**
+ * returns Pair of Double with Duration and Rework
+ */
+fun calculateDurationForMCT(jobs: MutableList<Job>, randomFactor: Double): Pair<Double, Double> {
     if (jobs.isEmpty()) {
-        return 0.0
+        return Pair(0.0, 0.0)
     }
     var t1 = 0
     var t2 = 0
     var currentAverage = 0.0
+    var completeRework = 0.0
 
-    for (i in 0 until jobs.size+1) {
-        if(i==0){
-            t1+=jobs[i].setupTimeMachineOne // setuptime für job 1 auf maschine 1
-            t2+=jobs[i].setupTimeMachineTwo // setuptime für job 1 auf maschine 2
+    for (i in 0 until jobs.size + 1) {
+        if (i == 0) {
+            t1 += jobs[i].setupTimeMachineOne // setuptime für job 1 auf maschine 1
+            t2 += jobs[i].setupTimeMachineTwo // setuptime für job 1 auf maschine 2
         } else {
-            if(jobs[i-1].durationMachineOne - (t2 - t1) >= 0) {
-                t1 += jobs[i-1].durationMachineOne
-                var random = Random().nextDouble()%1
-                while(random <= randomFactor) { // Prel,j --> die wahrscheinlichkeit, dass der job auf maschine 1 wiederholt werden muss
-                    t1 += jobs[i-1].reworktimeMachineOne // die nacharbeitskosten hinzurechnen
-                    random = Random().nextDouble()%1
+            if (jobs[i - 1].durationMachineOne - (t2 - t1) >= 0) {
+                t1 += jobs[i - 1].durationMachineOne
+                var random = Random().nextDouble() % 1
+                while (random <= randomFactor) { // Prel,j --> die wahrscheinlichkeit, dass der job auf maschine 1 wiederholt werden muss
+                    completeRework += jobs[i - 1].reworktimeMachineOne
+                    t1 += jobs[i - 1].reworktimeMachineOne // die nacharbeitskosten hinzurechnen
+                    random = Random().nextDouble() % 1
                 }
-                if(i < jobs.size) {
+                if (i < jobs.size) {
                     t1 += jobs[i].setupTimeMachineOne // vorbereitungskosten für den nächsten job auf maschine 1
                 }
-                t2 = t1 + jobs[i-1].durationMachineTwo
-                random = Random().nextDouble()%1
-                while(random <= randomFactor) { // Prel,j --> die wahrscheinlichkeit, dass der job auf maschine 1 wiederholt werden muss
-                    t2 += jobs[i-1].reworktimeMachineTwo // die nacharbeitskosten hinzurechnen
-                    random = Random().nextDouble()%1
+                t2 = t1 + jobs[i - 1].durationMachineTwo
+                random = Random().nextDouble() % 1
+                while (random <= randomFactor) { // Prel,j --> die wahrscheinlichkeit, dass der job auf maschine 1 wiederholt werden muss
+                    completeRework += jobs[i - 1].reworktimeMachineTwo
+                    t2 += jobs[i - 1].reworktimeMachineTwo // die nacharbeitskosten hinzurechnen
+                    random = Random().nextDouble() % 1
                 }
-                if(i < jobs.size) {
+                if (i < jobs.size) {
                     t2 += jobs[i].setupTimeMachineOne // vorbereitungskosten für den nächsten job auf maschine 2
                 }
                 currentAverage += t2
             } else { // ist die pause lange genug (die zeiger weit genug auseinander) kann der job direkt ausgeführt werden
                 t1 = t2
-                var random = Random().nextDouble()%1
-                while(random <= randomFactor) { // Prel,j --> die wahrscheinlichkeit, dass der job auf maschine 1 wiederholt werden muss
-                    t1 += jobs[i-1].reworktimeMachineOne // die nacharbeitskosten hinzurechnen
-                    random = Random().nextDouble()%1
+                var random = Random().nextDouble() % 1
+                while (random <= randomFactor) { // Prel,j --> die wahrscheinlichkeit, dass der job auf maschine 1 wiederholt werden muss
+                    completeRework += jobs[i - 1].reworktimeMachineOne
+                    t1 += jobs[i - 1].reworktimeMachineOne // die nacharbeitskosten hinzurechnen
+                    random = Random().nextDouble() % 1
                 }
-                if(i < jobs.size) {
+                if (i < jobs.size) {
                     t1 += jobs[i].setupTimeMachineOne // vorbereitungskosten für den nächsten job auf maschine 1
                 }
-                t2 = t1 + jobs[i-1].durationMachineTwo
-                while(random <= randomFactor) { // Prel,j --> die wahrscheinlichkeit, dass der job auf maschine 1 wiederholt werden muss
-                    t2 += jobs[i-1].reworktimeMachineTwo // die nacharbeitskosten hinzurechnen
-                    random = Random().nextDouble()%1
+                t2 = t1 + jobs[i - 1].durationMachineTwo
+                while (random <= randomFactor) { // Prel,j --> die wahrscheinlichkeit, dass der job auf maschine 1 wiederholt werden muss
+                    completeRework += jobs[i - 1].reworktimeMachineTwo
+                    t2 += jobs[i - 1].reworktimeMachineTwo // die nacharbeitskosten hinzurechnen
+                    random = Random().nextDouble() % 1
                 }
-                if(i < jobs.size) {
+                if (i < jobs.size) {
                     t2 += jobs[i].setupTimeMachineTwo // vorbereitungskosten für den nächsten job auf maschine 2
                 }
                 currentAverage += t2
@@ -197,7 +205,8 @@ fun calculateDurationForMCT(jobs: MutableList<Job>, randomFactor: Double): Doubl
         }
     }
     LoggingParameter.evaluationIteration++
-    return currentAverage/jobs.size
+    val reworkPercentage = completeRework / jobs.map { it.reworktimeMachineOne + it.reworktimeMachineTwo }.reduce { acc, i -> acc + i } * 100
+    return Pair(currentAverage / jobs.size, reworkPercentage)
 }
 
 class Schedule(val job: Job, val start: Int) {

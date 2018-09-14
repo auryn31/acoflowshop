@@ -9,6 +9,7 @@ class Ant {
 
     var duration: Int? = null
     private var durationForMCT: Double? = null
+    var reworkPercentage: Double? = null
 
 
     fun reset() {
@@ -83,11 +84,14 @@ class Ant {
         return this.durationForMCT
     }
 
-    fun setDurationForMCT(duration: Double) {
+    fun setDurationForMCT(duration: Double, reworkPercentage: Double) {
         this.durationForMCT = duration
+        this.reworkPercentage = reworkPercentage
     }
 
     fun calculateDurationWithMCT() {
-        this.durationForMCT = acoflowshop.calculateDurationForMCT(jobQue, 0.05)
+        val costPair = acoflowshop.calculateDurationForMCT(jobQue, 0.1)
+        this.durationForMCT = costPair.first
+        this.reworkPercentage = costPair.second
     }
 }

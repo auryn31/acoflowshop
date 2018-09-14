@@ -91,6 +91,7 @@ object ACO {
             LoggingParameter.iteration = solutionNumber
             LoggingParameter.bestDuration = bestGlobalAnt.getDurationForMCT()!!
             LoggingParameter.currentTime = System.currentTimeMillis() - start
+            LoggingParameter.reworkTimeInPercentage = bestGlobalAnt.reworkPercentage!!
             CsvLogging.writeNextEntry()
             PheromonLogger.writeEntryIntoDB(solutionNumber, pheromone)
         }
@@ -241,18 +242,15 @@ object ACO {
         }
     }
 
-    private fun updateGlobalBestAntForACIS(bestGlobalAnt: Ant, bestAnt: Ant): Boolean {
+    private fun updateGlobalBestAntForACIS(bestGlobalAnt: Ant, bestAnt: Ant) {
         val currentDuration = bestAnt.getDurationForMCT()
         val globalDuration = bestGlobalAnt.getDurationForMCT()
-        var calculatedDuration = false
         if (bestGlobalAnt.jobQue.size == 0) {
             bestGlobalAnt.jobQue = bestAnt.jobQue
             bestGlobalAnt.getDurationForMCT()
-            calculatedDuration = true
         } else if (currentDuration != null && globalDuration != null && currentDuration < globalDuration) {
             bestGlobalAnt.jobQue = bestAnt.jobQue
-            bestGlobalAnt.setDurationForMCT(currentDuration)
+            bestGlobalAnt.setDurationForMCT(currentDuration, bestAnt.reworkPercentage!!)
         }
-        return calculatedDuration
     }
 }

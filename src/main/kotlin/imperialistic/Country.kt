@@ -5,13 +5,19 @@ import acoflowshop.calculateDurationForMCT
 
 data class Country(val representation: List<Job>) {
 
-    private var duration = this.calculateCost()
+    private val costPair = this.calculateCost()
+    private val duration = costPair.first
+    private val reworkTime = costPair.second
 
     fun getCost(): Double {
-        return duration
+        return this.duration
     }
 
-    private fun calculateCost(): Double {
+    fun getReworkTime(): Double {
+        return this.reworkTime
+    }
+
+    private fun calculateCost(): Pair<Double, Double> {
         return calculateDurationForMCT(representation.toMutableList(), 0.1)
     }
 

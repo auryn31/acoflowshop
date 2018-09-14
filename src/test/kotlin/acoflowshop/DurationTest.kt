@@ -136,7 +136,7 @@ class DurationTest{
         val jobs = mutableListOf<Job>(
                 Job(1,3,1,0)
         )
-        val shortestSchedule = calculateDurationForMCT(jobs, 0.0)
+        val shortestSchedule = calculateDurationForMCT(jobs, 0.0).first
         assertEquals(4.0, shortestSchedule)
     }
 
@@ -146,7 +146,7 @@ class DurationTest{
                 Job(1,3,1,0),
                 Job(2,2,1,1)
         )
-        val shortestSchedule = calculateDurationForMCT(jobs, 0.0)
+        val shortestSchedule = calculateDurationForMCT(jobs, 0.0).first
         assertEquals(5.0, shortestSchedule)
     }
 
@@ -156,7 +156,7 @@ class DurationTest{
                 Job(1,1,1,0),
                 Job(3,1,1,1)
         )
-        val shortestSchedule = calculateDurationForMCT(jobs, 0.0)
+        val shortestSchedule = calculateDurationForMCT(jobs, 0.0).first
         assertEquals(3.5, shortestSchedule)
     }
 
@@ -168,7 +168,7 @@ class DurationTest{
                 Job(1,2,1,2),
                 Job(4,1,1,3)
         )
-        val shortestSchedule = calculateDurationForMCT(jobs, 0.0)
+        val shortestSchedule = calculateDurationForMCT(jobs, 0.0).first
         assertEquals(7.25, shortestSchedule)
     }
 
