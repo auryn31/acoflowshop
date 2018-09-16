@@ -21,13 +21,12 @@ private val logger = KotlinLogging.logger {}
 private val jobList: List<Job> = createRandomJobList(50)
 private val mapper = ObjectMapper().registerModule(KotlinModule())
 val acoConfig = mapper.readValue(File("src/main/resources/ACOConfig.json"), ACOConfig::class.java)!!
-
+private val aicaConfig = mapper.readValue(File("src/main/resources/AICAConfig.json"), AICAConfig::class.java)!!
 
 fun main(args: Array<String>) {
 
     calculateWithMeanCompletionTimeForACO()
 
-    val aicaConfig = mapper.readValue(File("src/main/resources/AICAConfig.json"), AICAConfig::class.java)!!
     val aica = AICA(aicaConfig)
     aica.optimizeForMCT(jobList)
 }
