@@ -1,5 +1,5 @@
 {"evaporation": 0.05,
-  "Q": 1000,
+  "maxIterations": 1000,
   "antFactor": 0.01,
   "dbLogging": false,
   "fileLogging" : false}

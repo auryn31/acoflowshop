@@ -1,6 +1,7 @@
 package aco
 
 import acoflowshop.Job
+import acoflowshop.acoConfig
 import acoflowshop.findBestOrderForNextJob
 import global.LoggingParameter
 import mu.KotlinLogging
@@ -56,18 +57,19 @@ object ACO {
     }
 
     // MTC = Mean Completion Time --> Durchschnittliche Fertigstellungszeit
-    fun optimizeForMCT(ants: MutableList<Ant>, jobList: List<Job>, evaporation: Double, iterations: Int): Ant {
+    fun optimizeForMCT(jobList: List<Job>): Ant {
+        val ants: MutableList<Ant> = (0..(acoConfig.antFactor * jobList.size).toInt()).map { i -> Ant() }.toMutableList()
         val jobs = jobList.sortedBy { it.durationMachineOne + it.durationMachineTwo }
         var nehList = mutableListOf<Job>()
         for (job in jobs) {
             nehList = findBestOrderForNextJob(nehList, job, 0).toMutableList()
         }
-        var pheromone: MutableList<MutableList<Double>> = initWithSeed(jobList.size, nehList, evaporation)
+        var pheromone: MutableList<MutableList<Double>> = initWithSeed(jobList.size, nehList, acoConfig.evaporation)
         var solutionNumber = 0
         val bestGlobalAnt = Ant()
         val start = System.currentTimeMillis()
 
-        while (solutionNumber < iterations) {
+        while (solutionNumber < acoConfig.maxIterations) {
 
             logger.info { "################### - iteration: ${solutionNumber} - ###################" }
             for (i in 0 until jobList.size) {
@@ -78,7 +80,7 @@ object ACO {
             ants.forEach { it.calculateDurationWithMCT() }
             val bestAnt = findBestAntForMCT(ants)
             if (bestAnt != null) {
-                pheromone = updateJobPosPheromoneForAnt(bestAnt, pheromone, evaporation)
+                pheromone = updateJobPosPheromoneForAnt(bestAnt, pheromone, acoConfig.evaporation)
 //                    bestGlobalAnt.calculateDurationWithMCT()
                 updateGlobalBestAntForACIS(bestGlobalAnt, bestAnt)
             }

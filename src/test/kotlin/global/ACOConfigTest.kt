@@ -9,13 +9,13 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 
-class ConfigTest {
+class ACOConfigTest {
     @Test
     fun testConfig() {
         val mapper = ObjectMapper().registerModule(KotlinModule())
         try {
-            val config = mapper.readValue(File("src/test/resources/TestConfig.json"), Config::class.java)
-            val expected = Config(0.05, 1000,0.01, false, false)
+            val config = mapper.readValue(File("src/test/resources/TestConfig.json"), ACOConfig::class.java)
+            val expected = ACOConfig(0.05, 1000,0.01, false, false)
             assertEquals(expected.toString(), config.toString())
         } catch (e: Exception) {
             e.printStackTrace()
@@ -27,9 +27,9 @@ class ConfigTest {
     fun testConfig2() {
         val mapper = ObjectMapper().registerModule(KotlinModule())
         try {
-            val config = mapper.readValue(File("src/test/resources/TestConfig.json"), Config::class.java)
+            val config = mapper.readValue(File("src/test/resources/TestConfig.json"), ACOConfig::class.java)
             assertEquals(0.05, config.evaporation)
-            assertEquals(1000, config.Q)
+            assertEquals(1000, config.maxIterations)
             assertEquals(0.01, config.antFactor)
             assertFalse(config.dbLogging)
             assertFalse(config.fileLogging)

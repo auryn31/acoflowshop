@@ -2,7 +2,7 @@ package logger_helper
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import global.Config
+import global.ACOConfig
 import global.LoggingParameter
 import mu.KotlinLogging
 import java.io.File
@@ -10,7 +10,7 @@ import java.io.File
 private const val FILE_NAME = "current"
 private val LOGGER = KotlinLogging.logger {}
 private val mapper = ObjectMapper().registerModule(KotlinModule())
-private val config = mapper.readValue(File("src/main/resources/Config.json"), Config::class.java)
+private val config = mapper.readValue(File("src/main/resources/ACOConfig.json"), ACOConfig::class.java)
 
 object CsvLogging {
     /**

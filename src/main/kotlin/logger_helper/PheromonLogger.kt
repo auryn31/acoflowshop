@@ -5,7 +5,7 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.mongodb.MongoClient
 import com.mongodb.client.MongoCollection
 import com.mongodb.client.MongoDatabase
-import global.Config
+import global.ACOConfig
 import org.bson.Document
 import java.io.File
 
@@ -17,7 +17,7 @@ object PheromonLogger {
     var db: MongoDatabase? = null
     var collection: MongoCollection<Document>? = null
     val mapper = ObjectMapper().registerModule(KotlinModule())
-    val config = mapper.readValue(File("src/main/resources/Config.json"), Config::class.java)
+    val config = mapper.readValue(File("src/main/resources/ACOConfig.json"), ACOConfig::class.java)
     /**
      * löschen des Logs der letzten iteration und erstellen eines neuen Files
      */

@@ -1,6 +1,6 @@
 {
   "evaporation": 0.02,
-  "Q": 600,
+  "maxIterations": 600,
   "antFactor": 0.4,
   "dbLogging": false,
   "fileLogging": true
