@@ -33,7 +33,7 @@ fun main(args: Array<String>) {
 }
 
 fun calculateWithMakespan() {
-    val ants: MutableList<Ant> = (0..(acoConfig.antFactor * jobList.size).toInt()).map { i -> Ant() }.toMutableList()
+    val ants: MutableList<Ant> = (0..(acoConfig.antFactor * jobList.size).toInt()).map { Ant() }.toMutableList()
     val start = System.currentTimeMillis()
     val ant1 = Ant()
     ant1.jobQue = jobList.toMutableList()

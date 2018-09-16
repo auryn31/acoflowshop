@@ -58,7 +58,7 @@ object ACO {
 
     // MTC = Mean Completion Time --> Durchschnittliche Fertigstellungszeit
     fun optimizeForMCT(jobList: List<Job>): Ant {
-        val ants: MutableList<Ant> = (0..(acoConfig.antFactor * jobList.size).toInt()).map { i -> Ant() }.toMutableList()
+        val ants: MutableList<Ant> = (0..(acoConfig.antFactor * jobList.size).toInt()).map { Ant() }.toMutableList()
         val jobs = jobList.sortedBy { it.durationMachineOne + it.durationMachineTwo }
         var nehList = mutableListOf<Job>()
         for (job in jobs) {
@@ -111,7 +111,7 @@ object ACO {
     }
 
 
-    fun optimizeJobJob(ants: MutableList<Ant>, jobList: List<Job>, storageSize: Int, evaporation: Double, iterations: Int, seedList: List<Job>): Ant {
+    fun optimizeJobJob(ants: MutableList<Ant>, jobList: List<Job>, storageSize: Int, evaporation: Double, iterations: Int): Ant {
         var pheromone: MutableList<MutableList<Double>> = initEmptyPheromonMatrix(jobList.size)
         var solutionNumber = 0
         val bestGlobalAnt = Ant()

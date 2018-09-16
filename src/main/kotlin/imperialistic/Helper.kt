@@ -18,7 +18,6 @@ object Helper {
     internal fun createHashMap(empires: List<Empire>): HashMap<Double, Empire> {
         val empiresMap = hashMapOf<Double, Empire>()
         var restStrength = 1.0
-        val zeta = 0.1
         val strengthSum = empires.map { it.getTotalCost() }.reduce { acc, d -> acc + d }
 
         for (empire in empires) {
