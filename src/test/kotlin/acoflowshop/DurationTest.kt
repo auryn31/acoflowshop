@@ -6,7 +6,7 @@ import kotlin.test.assertEquals
 class DurationTest{
     @Test
     fun findBestOrderForJobOneTest(){
-        val shortestList = findBestOrderForNextJob(emptyList(), Job(1,1,1,0), 1)
+        val shortestList = findBestOrderForNextJob(emptyList(), Job(1,1,1,0))
         assertEquals(listOf(Job(1,1,1,0)), shortestList)
     }
 
@@ -15,7 +15,7 @@ class DurationTest{
         val jobs = mutableListOf<Job>()
         jobs.add(Job(1,1,1,0))
         jobs.add(Job(3,2,1,1))
-        val shortestList = findBestOrderForNextJob(jobs, Job(2,3,1,2), 1)
+        val shortestList = findBestOrderForNextJob(jobs, Job(2,3,1,2))
         val targetList = mutableListOf<Job>()
         targetList.add(Job(1,1,1, 0))
         targetList.add(Job(2,3,1, 2))
@@ -46,7 +46,7 @@ class DurationTest{
         val jobs = mutableListOf<Job>()
         jobs.add(Job(1,1,1,0))
         jobs.add(Job(3,2,1,1))
-        val shortestList = findBestOrderForNextJob(jobs, Job(2,3,1,2), 1)
+        val shortestList = findBestOrderForNextJob(jobs, Job(2,3,1,2))
         assertEquals(8, calculatefastestScheduleWithOrder(shortestList, 1))
     }
 

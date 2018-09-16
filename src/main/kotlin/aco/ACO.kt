@@ -62,7 +62,7 @@ object ACO {
         val jobs = jobList.sortedBy { it.durationMachineOne + it.durationMachineTwo }
         var nehList = mutableListOf<Job>()
         for (job in jobs) {
-            nehList = findBestOrderForNextJob(nehList, job, 0).toMutableList()
+            nehList = findBestOrderForNextJob(nehList, job).toMutableList()
         }
         var pheromone: MutableList<MutableList<Double>> = initWithSeed(jobList.size, nehList, acoConfig.evaporation)
         var solutionNumber = 0
