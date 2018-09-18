@@ -23,7 +23,7 @@ class EmpireTest {
         val country = Country(empireList)
         val empire = Empire(country)
         empire.setColony(coloniesList)
-        assertEquals(2.064, empire.getTotalCost())
+        assertEquals(2.96, empire.getTotalCost())
     }
 
     @Test

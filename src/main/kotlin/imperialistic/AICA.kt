@@ -36,7 +36,7 @@ data class AICA(val config: AICAConfig) {
             i++
             CsvLogging.writeNextEntry()
 
-            if (!stoppingCriteriaIsReached(empires, i, config.maxIterations)) {
+            if (!stoppingCriteriaIsReached(empires, i, config.maxIterations) && i % config.I_gw == 0) {
                 empires = createEmpires(globalWar(empires, config.popSize))
             }
 
@@ -109,6 +109,7 @@ data class AICA(val config: AICAConfig) {
                         notSetCountries.removeAt(0)
                     }
                 }
+                empire.removeColony(colony)
                 empire.addColony(Country(newColony.map { it!! }.toMutableList()))
             }
         }
@@ -203,9 +204,11 @@ data class AICA(val config: AICAConfig) {
                         newRepresentation[pos2] = cacheJob
                         imperialistMod = Country(newRepresentation)
                     }
-                    val badestColony = empire.getColonies().sortedBy { it.getCost() }.last()
-                    empire.removeColony(badestColony)
-                    empire.addColony(imperialistMod!!)
+                    if(imperialistMod != null){
+                        val badestColony = empire.getColonies().sortedBy { it.getCost() }.last()
+                        empire.removeColony(badestColony)
+                        empire.addColony(imperialistMod)
+                    }
                 }
             }
         }

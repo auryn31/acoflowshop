@@ -8,6 +8,7 @@ data class AICAConfig(
         val P_r: Double,
         val P_ir: Double,
         val P_cr: Double,
+        val I_gw: Int,
         val dbLogging: Boolean,
         val fileLogging: Boolean) {
 }

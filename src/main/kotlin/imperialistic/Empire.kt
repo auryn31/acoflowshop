@@ -6,7 +6,7 @@ class Empire(var emperor: Country) {
 
     private var colonies = mutableListOf<Country>()
     private var costs = emperor.getCost()
-    private val zeta = 0.032
+    private val zeta = 0.48
 
     private fun calculateCost(zeta: Double) {
         this.costs = this.emperor.getCost() + zeta * colonies.map { x -> x.getCost() }.reduce { acc, d -> acc + d }

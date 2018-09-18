@@ -1,7 +1,7 @@
 {
-  "evaporation": 0.02,
+  "evaporation": 0.05,
   "maxIterations": 600,
-  "antFactor": 0.4,
+  "antFactor": 0.3,
   "dbLogging": false,
   "fileLogging": true
 }

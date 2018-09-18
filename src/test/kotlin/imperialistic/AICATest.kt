@@ -41,7 +41,7 @@ class AICATest {
                 empire
         )
         val newEmpires = aica!!.assimilate(empires)
-        assertEquals(2, newEmpires[0].getNumberOfColonies())
+        assertEquals(1, newEmpires[0].getNumberOfColonies())
     }
 
     @Test
@@ -78,7 +78,7 @@ class AICATest {
                 empire
         )
         val newEmpires = aica.assimilate(empires)
-        assertEquals(resultList, newEmpires[0].getColony(1).representation)
+        assertEquals(resultList, newEmpires[0].getColony(0).representation)
     }
 
 
