@@ -4,8 +4,8 @@ import acoflowshop.Job
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import global.AICAConfig
+import global.Helper
 import io.mockk.every
-import io.mockk.mockkClass
 import io.mockk.mockkObject
 import org.junit.Before
 import org.junit.Test
@@ -98,7 +98,7 @@ class AICATest {
         val empires = mutableListOf(
                 empire
         )
-        val newEmpires = aica!!.exchangePositions(empires)
+        val newEmpires = aica!!.exchangeEmperorPositionIfThereIsAnBetterCountry(empires)
         assertEquals(jobList, newEmpires[0].emperor.representation)
         assertNotEquals(empireList, newEmpires[0].emperor.representation)
         assertEquals(empireList, newEmpires[0].getColony(0).representation)
@@ -120,7 +120,7 @@ class AICATest {
         val empires = mutableListOf(
                 empire
         )
-        val newEmpires = aica!!.exchangePositions(empires)
+        val newEmpires = aica!!.exchangeEmperorPositionIfThereIsAnBetterCountry(empires)
         assertEquals(empireList, newEmpires[0].emperor.representation)
         assertNotEquals(jobList, newEmpires[0].emperor.representation)
         assertEquals(jobList, newEmpires[0].getColony(0).representation)
@@ -350,7 +350,7 @@ class AICATest {
 
     @Test
     fun optimizeForMCTTest(){
-        val jobList = createRandomJobList(50)
+        val jobList = Helper.createRandomJobList(50)
         aica!!.optimizeForMCT(jobList) // 1000, 100
     }
 }

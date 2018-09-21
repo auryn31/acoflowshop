@@ -2,13 +2,13 @@ package imperialistic
 
 import java.util.*
 
-object Helper {
+object ImperialisticHelper {
 
     fun distributeColonyWithRoulette(empires: List<Empire>, colony: Country): List<Empire> {
-        val empiresMap = Helper.createHashMap(empires)
+        val empiresMap = ImperialisticHelper.createHashMap(empires)
         val strengthList = empiresMap.keys.sorted().toList()
         val random = Random().nextDouble()
-        val key = Helper.findKey(random, strengthList)
+        val key = ImperialisticHelper.findKey(random, strengthList)
         val empireWithNewColony = empiresMap.getOrDefault(key, Empire(Country(mutableListOf())))
         empireWithNewColony.addColony(colony)
         return empires

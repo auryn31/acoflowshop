@@ -1,7 +1,7 @@
 package acoflowshop
 
 
-class Job(
+data class Job(
         val durationMachineOne: Int,
         val durationMachineTwo: Int,
         val storageSize: Int = 0,

@@ -2,6 +2,7 @@ package imperialistic
 
 import acoflowshop.Job
 import global.AICAConfig
+import global.Helper
 import global.LoggingParameter
 import logger_helper.CsvLogging
 import mu.KotlinLogging
@@ -20,8 +21,9 @@ data class AICA(val config: AICAConfig) {
         do {
             empires = eliminatingPowerlessEmpires(empires)
             empires = assimilate(empires)
+            empires = exchangeEmperorPositionIfThereIsAnBetterCountry(empires)
             revolution(empires)
-            empires = exchangePositions(empires)
+            empires = exchangeEmperorPositionIfThereIsAnBetterCountry(empires)
             empires = imperialisticCompetition(empires)
             empires = eliminatingPowerlessEmpires(empires)
 
@@ -45,7 +47,7 @@ data class AICA(val config: AICAConfig) {
     }
 
     internal fun createCountries(k: Int): MutableList<Country> {
-        val jobList = createRandomJobList(k)
+        val jobList = Helper.createRandomJobList(k)
         val countries = mutableListOf<Country>()
 
         for (i in 0 until k) {
@@ -130,7 +132,7 @@ data class AICA(val config: AICAConfig) {
         return candidatesArray
     }
 
-    fun exchangePositions(empires: List<Empire>): List<Empire> {
+    fun exchangeEmperorPositionIfThereIsAnBetterCountry(empires: List<Empire>): List<Empire> {
         for (empire in empires) {
             val colonies = empire.getColonies().sortedBy { it.getCost() }
             if (colonies[0].getCost() < empire.emperor.getCost()) {
@@ -148,14 +150,14 @@ data class AICA(val config: AICAConfig) {
         weakestEmpire.removeColony(weakestColony)
 
         //fight um die colony
-        return Helper.distributeColonyWithRoulette(empires, weakestColony)
+        return ImperialisticHelper.distributeColonyWithRoulette(empires, weakestColony)
     }
 
     fun eliminatingPowerlessEmpires(empires: List<Empire>): List<Empire> {
         var newEmpires = empires.filter { it.getColonies().isNotEmpty() }
         val powerlessEmpires = empires.filter { it.getColonies().isEmpty() }
         for (powerlessEmpire in powerlessEmpires) {
-            newEmpires = Helper.distributeColonyWithRoulette(newEmpires, powerlessEmpire.emperor)
+            newEmpires = ImperialisticHelper.distributeColonyWithRoulette(newEmpires, powerlessEmpire.emperor)
         }
         return newEmpires
     }
@@ -233,31 +235,4 @@ data class AICA(val config: AICAConfig) {
 
 fun generator(jobs: List<Job>): List<Job> {
     return jobs.shuffled()
-}
-
-
-fun createRandomJobList(length: Int): List<Job> {
-
-    val jobList = mutableListOf<Job>()
-
-    for (i in 0 until length) {
-        val durationM1 = Random().nextInt(30)
-        val durationM2 = Random().nextInt(30)
-        val setupM1 = Random().nextInt(30)
-        val setupM2 = Random().nextInt(30)
-        val reworkM1 = ((0.3 * Random().nextDouble() + 0.3) * durationM1).toInt()
-        val reworkM2 = ((0.3 * Random().nextDouble() + 0.3) * durationM2).toInt()
-        jobList.add(
-                Job(
-                        id = i,
-                        durationMachineOne = durationM1,
-                        durationMachineTwo = durationM2,
-                        setupTimeMachineOne = setupM1,
-                        setupTimeMachineTwo = setupM2,
-                        reworktimeMachineOne = reworkM1,
-                        reworktimeMachineTwo = reworkM2
-                )
-        )
-    }
-    return jobList
 }

@@ -3,9 +3,8 @@ package imperialistic
 import acoflowshop.Job
 import org.junit.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNotEquals
 
-class HelperTest {
+class ImperialisticHelperTest {
 
     @Test
     fun testDistributeColonyWithRoulette(){
@@ -24,7 +23,7 @@ class HelperTest {
         val empires = mutableListOf(
                 empire
         )
-        val newEmpires = Helper.distributeColonyWithRoulette(empires, newCountry)
+        val newEmpires = ImperialisticHelper.distributeColonyWithRoulette(empires, newCountry)
 
         assertEquals(jobList, newEmpires[0].getColony(0).representation)
     }
@@ -50,7 +49,7 @@ class HelperTest {
                 empire2,
                 empire3
         )
-        val newEmpires = Helper.distributeColonyWithRoulette(empires, newCountry)
+        val newEmpires = ImperialisticHelper.distributeColonyWithRoulette(empires, newCountry)
 
         assertEquals(jobList, newEmpires.filter { it.getColonies().isNotEmpty() }[0].getColony(0).representation)
         assertEquals(1, newEmpires.filter { it.getColonies().isNotEmpty() }.size)
@@ -67,7 +66,7 @@ class HelperTest {
         val empires = mutableListOf(
                 empire1
         )
-        assertEquals(hashMapOf(Pair(1.0, empire1)), Helper.createHashMap(empires))
+        assertEquals(hashMapOf(Pair(1.0, empire1)), ImperialisticHelper.createHashMap(empires))
     }
 
     @Test
@@ -83,6 +82,6 @@ class HelperTest {
                 empire1,
                 empire2
         )
-        assertEquals(hashMapOf(Pair(1.0, empire1), Pair(0.5, empire2)), Helper.createHashMap(empires))
+        assertEquals(hashMapOf(Pair(1.0, empire1), Pair(0.5, empire2)), ImperialisticHelper.createHashMap(empires))
     }
 }

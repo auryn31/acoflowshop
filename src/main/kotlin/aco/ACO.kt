@@ -2,6 +2,7 @@ package aco
 
 import acoflowshop.Job
 import acoflowshop.acoConfig
+import acoflowshop.calculateDurationForMCT
 import acoflowshop.findBestOrderForNextJob
 import global.LoggingParameter
 import mu.KotlinLogging
@@ -64,6 +65,8 @@ object ACO {
         for (job in jobs) {
             nehList = findBestOrderForNextJob(nehList, job).toMutableList()
         }
+        val nehDuration = calculateDurationForMCT(nehList, 0.1)
+        logger.warn { "NEH duration: $nehDuration" }
         var pheromone: MutableList<MutableList<Double>> = initWithSeed(jobList.size, nehList, acoConfig.evaporation)
         var solutionNumber = 0
         val bestGlobalAnt = Ant()

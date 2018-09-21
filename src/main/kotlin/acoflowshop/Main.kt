@@ -6,9 +6,9 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import global.ACOConfig
 import global.AICAConfig
+import global.Helper
 import global.LoggingParameter
 import imperialistic.AICA
-import imperialistic.createRandomJobList
 import logger_helper.CsvLogging
 import logger_helper.PheromonLogger
 import mu.KotlinLogging
@@ -18,7 +18,7 @@ import java.io.File
 private const val STORAGE_SIZE = 5
 private val logger = KotlinLogging.logger {}
 
-private val jobList: List<Job> = createRandomJobList(100)
+private val jobList: List<Job> = Helper.readJobListFromFile("src/main/resources/100Jobs")
 private val mapper = ObjectMapper().registerModule(KotlinModule())
 val acoConfig = mapper.readValue(File("src/main/resources/ACOConfig.json"), ACOConfig::class.java)!!
 private val aicaConfig = mapper.readValue(File("src/main/resources/AICAConfig.json"), AICAConfig::class.java)!!
