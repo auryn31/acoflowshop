@@ -5,7 +5,7 @@ import java.util.*
 object ImperialisticHelper {
 
     fun distributeColonyWithRoulette(empires: List<Empire>, colony: Country): List<Empire> {
-        val empiresMap = ImperialisticHelper.createHashMap(empires)
+        val empiresMap = ImperialisticHelper.createHashMap(empires.filter { it.getTotalCost() > 0.0 })
         val strengthList = empiresMap.keys.sorted().toList()
         val random = Random().nextDouble()
         val key = ImperialisticHelper.findKey(random, strengthList)

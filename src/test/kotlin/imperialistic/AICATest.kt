@@ -6,10 +6,12 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import global.AICAConfig
 import global.Helper
 import io.mockk.every
+import io.mockk.mockkClass
 import io.mockk.mockkObject
 import org.junit.Before
 import org.junit.Test
 import java.io.File
+import java.util.*
 import kotlin.test.*
 
 class AICATest {
@@ -183,7 +185,6 @@ class AICATest {
                 empire3
         )
         val newEmpires = aica!!.imperialisticCompetition(empires)
-
         assertEquals(0, newEmpires.filter { it == empire1 }[0].getColonies().size)
     }
 

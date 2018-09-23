@@ -15,18 +15,19 @@ class HelperTest {
 
     @Test
     fun testWriteJobListToFile(){
-        val jobList = Helper.createRandomJobList(10)
-        Helper.writeJobListToFile(jobList, "src/test/resources/jsonTest")
-        assertTrue(File("src/test/resources/100Jobs.json").isFile)
+        val jobList = Helper.createRandomJobList(100)
+        Helper.writeJobListToFile(jobList, "jsonJobTest")
+        val file = File("jsonJobTest.json")
+        assertTrue(file.delete())
     }
 
     @Test
     fun testReadJobListFromFile(){
         val jobList = Helper.createRandomJobList(10)
-        Helper.writeJobListToFile(jobList, "src/test/resources/jsonTest")
-        assertTrue(File("src/test/resources/100Jobs.json").isFile)
-        val newJobs = Helper.readJobListFromFile("src/test/resources/jsonTest")
+        Helper.writeJobListToFile(jobList, "jsonJobTest")
+        val newJobs = Helper.readJobListFromFile("jsonJobTest")
         assertEquals(jobList, newJobs)
+        assertTrue(File("jsonJobTest.json").delete())
     }
 
 }
