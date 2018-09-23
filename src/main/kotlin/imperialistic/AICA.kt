@@ -3,7 +3,7 @@ package imperialistic
 import acoflowshop.Job
 import global.AICAConfig
 import global.Helper
-import global.LoggingParameter
+import logger_helper.LoggingParameter
 import logger_helper.CsvLogging
 import mu.KotlinLogging
 import java.util.*

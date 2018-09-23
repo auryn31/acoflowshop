@@ -47,3 +47,11 @@ object Helper {
         return jobList
     }
 }
+
+fun fak(num: Int): Int {
+    var result = 1
+    for (n in 1 until num + 1) {
+        result *= n
+    }
+    return result
+}

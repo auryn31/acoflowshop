@@ -1,6 +1,6 @@
 package acoflowshop
 
-import global.LoggingParameter
+import logger_helper.LoggingParameter
 import java.util.*
 
 fun duration(jobsList: List<Job>, storageSize: Int): Int {

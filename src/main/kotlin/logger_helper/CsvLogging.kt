@@ -1,25 +1,23 @@
 package logger_helper
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.KotlinModule
-import global.ACOConfig
-import global.LoggingParameter
 import mu.KotlinLogging
 import java.io.File
 
-private const val FILE_NAME = "current"
+
 private val LOGGER = KotlinLogging.logger {}
-private val mapper = ObjectMapper().registerModule(KotlinModule())
-private val config = mapper.readValue(File("src/main/resources/ACOConfig.json"), ACOConfig::class.java)
 
 object CsvLogging {
+
+    var fileLogging = false
+    var fileName = "current"
+
     /**
      * löschen des Logs der letzten iteration und erstellen eines neuen Files
      */
     fun createLoggingFile() {
-        if (config !== null && config.fileLogging) {
-            File("$FILE_NAME.csv").delete()
-            File("$FILE_NAME.csv").createNewFile()
+        if (fileLogging) {
+            File("$fileName.csv").delete()
+            File("$fileName.csv").createNewFile()
         }
     }
 
@@ -28,15 +26,15 @@ object CsvLogging {
      */
     fun appendCSVEntry(iteration: Int, currentLength: Int, durationInMs: Long, evaluationIteration: Int) {
         LOGGER.info { "${iteration} - ${currentLength} - ${durationInMs}" }
-        if (config !== null && config.fileLogging) {
-            File("$FILE_NAME.csv").appendText("$iteration,$currentLength, $durationInMs,$evaluationIteration\n")
+        if (fileLogging) {
+            File("$fileName.csv").appendText("$iteration,$currentLength, $durationInMs,$evaluationIteration\n")
         }
     }
 
     fun writeNextEntry() {
         LOGGER.info { "${LoggingParameter.iteration} - ${LoggingParameter.bestDuration} - ${LoggingParameter.currentTime}" }
-        if (config !== null && config.fileLogging) {
-            File("$FILE_NAME.csv").appendText("${LoggingParameter.iteration},${LoggingParameter.bestDuration},${LoggingParameter.currentTime},${LoggingParameter.evaluationIteration},${LoggingParameter.reworkTimeInPercentage}\n")
+        if (fileLogging) {
+            File("$fileName.csv").appendText("${LoggingParameter.iteration},${LoggingParameter.bestDuration},${LoggingParameter.currentTime},${LoggingParameter.evaluationIteration},${LoggingParameter.reworkTimeInPercentage}\n")
         }
     }
 }

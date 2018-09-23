@@ -1,10 +1,10 @@
 package aco
 
 import acoflowshop.Job
-import acoflowshop.acoConfig
 import acoflowshop.calculateDurationForMCT
 import acoflowshop.findBestOrderForNextJob
-import global.LoggingParameter
+import global.ACOConfig
+import logger_helper.LoggingParameter
 import mu.KotlinLogging
 import logger_helper.*
 
@@ -58,8 +58,8 @@ object ACO {
     }
 
     // MTC = Mean Completion Time --> Durchschnittliche Fertigstellungszeit
-    fun optimizeForMCT(jobList: List<Job>): Ant {
-        val ants: MutableList<Ant> = (0..(acoConfig.antFactor * jobList.size).toInt()).map { Ant() }.toMutableList()
+    fun optimizeForMCT(jobList: List<Job>, config: ACOConfig): Ant {
+        val ants: MutableList<Ant> = (0..(config.antFactor * jobList.size).toInt()).map { Ant() }.toMutableList()
         val jobs = jobList.sortedBy { it.durationMachineOne + it.durationMachineTwo }
         var nehList = mutableListOf<Job>()
         for (job in jobs) {
@@ -67,12 +67,12 @@ object ACO {
         }
         val nehDuration = calculateDurationForMCT(nehList, 0.1)
         logger.warn { "NEH duration: $nehDuration" }
-        var pheromone: MutableList<MutableList<Double>> = initWithSeed(jobList.size, nehList, acoConfig.evaporation)
+        var pheromone: MutableList<MutableList<Double>> = initWithSeed(jobList.size, nehList, config.evaporation)
         var solutionNumber = 0
         val bestGlobalAnt = Ant()
         val start = System.currentTimeMillis()
 
-        while (solutionNumber < acoConfig.maxIterations) {
+        while (solutionNumber < config.maxIterations) {
 
             logger.info { "################### - iteration: ${solutionNumber} - ###################" }
             for (i in 0 until jobList.size) {
@@ -83,7 +83,7 @@ object ACO {
             ants.forEach { it.calculateDurationWithMCT() }
             val bestAnt = findBestAntForMCT(ants)
             if (bestAnt != null) {
-                pheromone = updateJobPosPheromoneForAnt(bestAnt, pheromone, acoConfig.evaporation)
+                pheromone = updateJobPosPheromoneForAnt(bestAnt, pheromone, config.evaporation)
 //                    bestGlobalAnt.calculateDurationWithMCT()
                 updateGlobalBestAntForACIS(bestGlobalAnt, bestAnt)
             }

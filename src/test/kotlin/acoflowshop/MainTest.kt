@@ -2,6 +2,7 @@ package acoflowshop
 
 import aco.ACO
 import aco.Ant
+import global.fak
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse

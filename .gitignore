@@ -2,6 +2,7 @@ current.csv
 current.jpg 
 *.jpg
 *.png
+results/**.csv
 
 # Eclipse
 .classpath

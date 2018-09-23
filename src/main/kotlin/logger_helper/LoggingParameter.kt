@@ -1,4 +1,4 @@
-package global
+package logger_helper
 
 object LoggingParameter {
 
@@ -10,9 +10,10 @@ object LoggingParameter {
 
 
     fun reset(){
-        this.iteration = 0
-        this.bestDuration = 0.0
-        this.currentTime = 0
-        this.reworkTimeInPercentage = 0.0
+        iteration = 0
+        bestDuration = 0.0
+        currentTime = 0L
+        reworkTimeInPercentage = 0.0
+        evaluationIteration = 0
     }
 }

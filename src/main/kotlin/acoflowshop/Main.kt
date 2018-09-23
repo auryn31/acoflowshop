@@ -4,12 +4,10 @@ import aco.ACO
 import aco.Ant
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import global.ACOConfig
-import global.AICAConfig
-import global.Helper
-import global.LoggingParameter
+import global.*
 import imperialistic.AICA
 import logger_helper.CsvLogging
+import logger_helper.LoggingParameter
 import logger_helper.PheromonLogger
 import mu.KotlinLogging
 import java.io.File
@@ -20,15 +18,21 @@ private val logger = KotlinLogging.logger {}
 
 private val jobList: List<Job> = Helper.readJobListFromFile("src/main/resources/100Jobs")
 private val mapper = ObjectMapper().registerModule(KotlinModule())
-val acoConfig = mapper.readValue(File("src/main/resources/ACOConfig.json"), ACOConfig::class.java)!!
+private val acoConfig = mapper.readValue(File("src/main/resources/ACOConfig.json"), ACOConfig::class.java)!!
 private val aicaConfig = mapper.readValue(File("src/main/resources/AICAConfig.json"), AICAConfig::class.java)!!
 
 fun main(args: Array<String>) {
 
-    calculateWithMeanCompletionTimeForACO()
+    CsvLogging.fileLogging = acoConfig.fileLogging
 
-    val aica = AICA(aicaConfig)
-    aica.optimizeForMCT(jobList)
+    for (i in 0 until 5) {
+        CsvLogging.fileName = "results/current_iteration_$i"
+        calculateWithMeanCompletionTimeForACO()
+        val aica = AICA(aicaConfig)
+        aica.optimizeForMCT(jobList)
+        LoggingParameter.reset()
+    }
+
 }
 
 fun calculateWithMakespan() {
@@ -52,20 +56,12 @@ fun calculateWithMakespan() {
     logger.warn { "NEH/ACO = ${length.toDouble() / bestACO.duration!!.toDouble()} " }
 }
 
-fun fak(num: Int): Int {
-    var result = 1
-    for (n in 1 until num + 1) {
-        result *= n
-    }
-    return result
-}
-
 fun calculateWithMeanCompletionTimeForACO() {
 
     CsvLogging.createLoggingFile()
     PheromonLogger.initDB()
     LoggingParameter.reset()
-    val bestACO = ACO.optimizeForMCT(jobList)
+    val bestACO = ACO.optimizeForMCT(jobList, acoConfig)
 
     logger.warn { " ACO: ${bestACO.getDurationForMCT()!!} with ${LoggingParameter.evaluationIteration} evaluations" }
     logger.info { bestACO.jobQue }
