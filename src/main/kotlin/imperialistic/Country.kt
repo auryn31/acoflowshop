@@ -18,7 +18,7 @@ data class Country(val representation: List<Job>) {
     }
 
     private fun calculateCost(): Pair<Double, Double> {
-        return calculateDurationForMCT(representation.toMutableList(), 0.1)
+        return calculateDurationForMCT(representation.toMutableList())
     }
 
 }

@@ -65,7 +65,7 @@ object ACO {
         for (job in jobs) {
             nehList = findBestOrderForNextJob(nehList, job).toMutableList()
         }
-        val nehDuration = calculateDurationForMCT(nehList, 0.1)
+        val nehDuration = calculateDurationForMCT(nehList)
         logger.warn { "NEH duration: $nehDuration" }
         var pheromone: MutableList<MutableList<Double>> = initWithSeed(jobList.size, nehList, config.evaporation)
         var solutionNumber = 0

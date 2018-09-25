@@ -9,7 +9,8 @@ data class Job(
         val setupTimeMachineOne: Int = 0,
         val setupTimeMachineTwo: Int = 0,
         val reworktimeMachineOne: Int = 0,
-        val reworktimeMachineTwo: Int = 0
+        val reworktimeMachineTwo: Int = 0,
+        val probabilityOfRework: Double = 0.0
 ) {
 
     override fun equals(other: Any?): Boolean {

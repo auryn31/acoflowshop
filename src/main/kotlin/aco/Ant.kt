@@ -90,7 +90,7 @@ class Ant {
     }
 
     fun calculateDurationWithMCT() {
-        val costPair = acoflowshop.calculateDurationForMCT(jobQue, 0.1)
+        val costPair = acoflowshop.calculateDurationForMCT(jobQue)
         this.durationForMCT = costPair.first
         this.reworkPercentage = costPair.second
     }

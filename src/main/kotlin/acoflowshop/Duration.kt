@@ -27,7 +27,7 @@ fun findBestOrderForNextJob(machineList: List<Job>, jobToAdd: Job): List<Job> {
     }
     var shortestList = machineList.toMutableList()
     shortestList.add(jobToAdd)
-    var shortestSum = calculateDurationForMCT(shortestList, 0.1).first
+    var shortestSum = calculateDurationForMCT(shortestList).first
 
     for (i in 0 until machineList.size) {
         val left = machineList.subList(0, i)
@@ -35,7 +35,7 @@ fun findBestOrderForNextJob(machineList: List<Job>, jobToAdd: Job): List<Job> {
         val currentList = left.toMutableList()
         currentList.add(jobToAdd)
         currentList.addAll(right)
-        val currentLength = calculateDurationForMCT(currentList, 0.1).first
+        val currentLength = calculateDurationForMCT(currentList).first
         if (currentLength < shortestSum) {
             shortestSum = currentLength
             shortestList = currentList
@@ -144,7 +144,7 @@ private fun addNextJobToMachineOne(machineOne: MutableList<Schedule>, machineOne
 /**
  * returns Pair of Double with Duration and Rework
  */
-fun calculateDurationForMCT(jobs: MutableList<Job>, randomFactor: Double): Pair<Double, Double> {
+fun calculateDurationForMCT(jobs: MutableList<Job>): Pair<Double, Double> {
     if (jobs.isEmpty()) {
         return Pair(0.0, 0.0)
     }
@@ -161,7 +161,7 @@ fun calculateDurationForMCT(jobs: MutableList<Job>, randomFactor: Double): Pair<
             if (jobs[i - 1].durationMachineOne - (t2 - t1) >= 0) {
                 t1 += jobs[i - 1].durationMachineOne
                 var random = Random().nextDouble() % 1
-                while (random <= randomFactor) { // Prel,j --> die wahrscheinlichkeit, dass der job auf maschine 1 wiederholt werden muss
+                while (random <= jobs[i - 1].probabilityOfRework) { // Prel,j --> die wahrscheinlichkeit, dass der job auf maschine 1 wiederholt werden muss
                     completeRework += jobs[i - 1].reworktimeMachineOne
                     t1 += jobs[i - 1].reworktimeMachineOne // die nacharbeitskosten hinzurechnen
                     random = Random().nextDouble() % 1
@@ -171,7 +171,7 @@ fun calculateDurationForMCT(jobs: MutableList<Job>, randomFactor: Double): Pair<
                 }
                 t2 = t1 + jobs[i - 1].durationMachineTwo
                 random = Random().nextDouble() % 1
-                while (random <= randomFactor) { // Prel,j --> die wahrscheinlichkeit, dass der job auf maschine 1 wiederholt werden muss
+                while (random <= jobs[i - 1].probabilityOfRework) { // Prel,j --> die wahrscheinlichkeit, dass der job auf maschine 1 wiederholt werden muss
                     completeRework += jobs[i - 1].reworktimeMachineTwo
                     t2 += jobs[i - 1].reworktimeMachineTwo // die nacharbeitskosten hinzurechnen
                     random = Random().nextDouble() % 1
@@ -183,7 +183,7 @@ fun calculateDurationForMCT(jobs: MutableList<Job>, randomFactor: Double): Pair<
             } else { // ist die pause lange genug (die zeiger weit genug auseinander) kann der job direkt ausgeführt werden
                 t1 = t2
                 var random = Random().nextDouble() % 1
-                while (random <= randomFactor) { // Prel,j --> die wahrscheinlichkeit, dass der job auf maschine 1 wiederholt werden muss
+                while (random <= jobs[i - 1].probabilityOfRework) { // Prel,j --> die wahrscheinlichkeit, dass der job auf maschine 1 wiederholt werden muss
                     completeRework += jobs[i - 1].reworktimeMachineOne
                     t1 += jobs[i - 1].reworktimeMachineOne // die nacharbeitskosten hinzurechnen
                     random = Random().nextDouble() % 1
@@ -192,7 +192,7 @@ fun calculateDurationForMCT(jobs: MutableList<Job>, randomFactor: Double): Pair<
                     t1 += jobs[i].setupTimeMachineOne // vorbereitungskosten für den nächsten job auf maschine 1
                 }
                 t2 = t1 + jobs[i - 1].durationMachineTwo
-                while (random <= randomFactor) { // Prel,j --> die wahrscheinlichkeit, dass der job auf maschine 1 wiederholt werden muss
+                while (random <= jobs[i - 1].probabilityOfRework) { // Prel,j --> die wahrscheinlichkeit, dass der job auf maschine 1 wiederholt werden muss
                     completeRework += jobs[i - 1].reworktimeMachineTwo
                     t2 += jobs[i - 1].reworktimeMachineTwo // die nacharbeitskosten hinzurechnen
                     random = Random().nextDouble() % 1

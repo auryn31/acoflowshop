@@ -42,7 +42,8 @@ object Helper {
                             setupTimeMachineOne = setupM1,
                             setupTimeMachineTwo = setupM2,
                             reworktimeMachineOne = reworkM1,
-                            reworktimeMachineTwo = reworkM2
+                            reworktimeMachineTwo = reworkM2,
+                            probabilityOfRework = this.getNextProbabilityOfRework()
                     )
             )
         }
@@ -50,9 +51,11 @@ object Helper {
     }
 
     fun getNextProbabilityOfRework(): Double {
-        return expHelper.sample()
-//        return -0.05* Math.log(Math.random())/Math.log(2.0)
-//        return Math.log(1 - Random().nextDouble()) / - 0.05
+        var returnValue = 1.0
+        do {
+            returnValue = expHelper.sample()
+        } while (returnValue >= 1.0 || returnValue <= 0.0)
+        return returnValue
     }
 }
 
