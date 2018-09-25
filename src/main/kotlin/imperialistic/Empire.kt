@@ -1,6 +1,5 @@
 package imperialistic
 
-import kotlin.math.cos
 
 class Empire(var emperor: Country) {
 

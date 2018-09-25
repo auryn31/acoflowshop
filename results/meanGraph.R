@@ -75,7 +75,7 @@ for( i in 1:length(bestSolutionAICA_0)) {
 }
 
 durationAICA <- c()
-for( i in 1:length(durationAICA_0)) {
+for( i in 1:length(durationAICA_0)) {    
     durationAICA[i] <- mean(c(durationAICA_0[i], durationAICA_1[i], durationAICA_2[i], durationAICA_3[i], durationAICA_4[i]))
 }
 
@@ -96,14 +96,16 @@ drawPlot <- function(name, title, xtitle, ytitle, x1, x2, y1, y2) {
     xrange
 
     plot(x1, y1, type="l", ylim=yrange, xlim=xrange, col="blue", ann=FALSE)
+    #lines(x1, y1, type="p", ylim=yrange, xlim=xrange, col="blue", ann=FALSE)
     lines(x2, y2, type="l", col="green")
     box()
 
     title(main=title, col.main="red", font.main=4)
     title(xlab=xtitle)
     title(ylab=ytitle)
+    legend("topright", legend=c("ACO", "AICA"), col=c("blue", "green"), lty=1:1, cex=0.8)
 }
 
-drawPlot('result_time_mean.jpg', 'ACO Flow Shop', 'Dauer in s', 'Länge', durationACO, durationAICA, bestSolutionACO, bestSolutionAICA)
-drawPlot('result_rework_mean.jpg', 'ACO Flow Shop Rework', 'Iteration', 'Rework in %', iteration[1:acoLength], iteration[(acoLength+1):length(iteration)], reworkPercentACO, reworkPercentAICA)
-drawPlot('result_simulation_mean.jpg', 'ACO Flow Shop Simulation', 'Simulation', 'Länge', simulationACO, simulationAICA, bestSolutionACO, bestSolutionAICA)
+drawPlot('result_time_mean.jpg', 'Flow Shop Dauer', 'Dauer in s', 'Länge', durationACO, durationAICA, bestSolutionACO, bestSolutionAICA)
+drawPlot('result_rework_mean.jpg', 'Flow Shop Rework', 'Iteration', 'Rework in %', iteration[1:acoLength], iteration[(acoLength+1):length(iteration)], reworkPercentACO, reworkPercentAICA)
+drawPlot('result_simulation_mean.jpg', 'Flow Shop Simulation', 'Simulation', 'Länge', simulationACO, simulationAICA, bestSolutionACO, bestSolutionAICA)

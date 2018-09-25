@@ -39,7 +39,9 @@ data class AICA(val config: AICAConfig) {
             CsvLogging.writeNextEntry()
 
             if (!stoppingCriteriaIsReached(empires, i, config.maxIterations) && i % config.I_gw == 0) {
-                empires = createEmpires(globalWar(empires, config.popSize))
+                for(i in 0 until config.N_GW) {
+                    empires = createEmpires(globalWar(empires, config.popSize))
+                }
             }
 
         } while (!stoppingCriteriaIsReached(empires, i, config.maxIterations))
@@ -59,13 +61,9 @@ data class AICA(val config: AICAConfig) {
     }
 
     internal fun createEmpires(countries: List<Country>): List<Empire> {
-        var numberOfEmpires = (countries.size * config.empirePercentage).toInt()
-        if (numberOfEmpires == 0) {
-            numberOfEmpires = 1
-        }
         val newCountries = countries.sortedBy { it.getCost() }
-        val candidateEmpires = newCountries.subList(0, numberOfEmpires)
-        val candidateColonies = newCountries.subList(numberOfEmpires, newCountries.size)
+        val candidateEmpires = newCountries.subList(0, config.numberOfEmpires)
+        val candidateColonies = newCountries.subList(config.numberOfEmpires, newCountries.size)
 
         // erzeugen der Empires
         val empires = mutableListOf<Empire>()
@@ -88,7 +86,7 @@ data class AICA(val config: AICAConfig) {
                 val colonyRepresentation = colony.representation
 //                val assimilationRate = 3.0 / 7.0
 
-                val numberOfTasks = (colonyRepresentation.size.toDouble() * config.assimilationRate).toInt()
+                val numberOfTasks = (colonyRepresentation.size.toDouble() * config.P_as).toInt()
                 val candidatesArray = createNewCandidateArray(colonyRepresentation, numberOfTasks)
 
 //                    val assimilationList = colonyRepresentation.toMutableList()

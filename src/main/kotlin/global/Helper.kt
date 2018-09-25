@@ -4,11 +4,13 @@ import acoflowshop.Job
 import com.fasterxml.jackson.databind.JavaType
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import org.apache.commons.math3.distribution.ExponentialDistribution
 import java.io.File
 import java.util.*
 
 object Helper {
 
+    private val expHelper = ExponentialDistribution(0.05)
     fun writeJobListToFile(jobList: List<Job>, fileName: String) {
         File("$fileName.json").createNewFile()
         val mapper = jacksonObjectMapper()
@@ -45,6 +47,12 @@ object Helper {
             )
         }
         return jobList
+    }
+
+    fun getNextProbabilityOfRework(): Double {
+        return expHelper.sample()
+//        return -0.05* Math.log(Math.random())/Math.log(2.0)
+//        return Math.log(1 - Random().nextDouble()) / - 0.05
     }
 }
 

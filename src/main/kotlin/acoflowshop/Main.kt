@@ -24,9 +24,12 @@ private val aicaConfig = mapper.readValue(File("src/main/resources/AICAConfig.js
 fun main(args: Array<String>) {
 
     CsvLogging.fileLogging = acoConfig.fileLogging
+    CsvLogging.createLoggingFile()
+    LoggingParameter.reset()
 
     for (i in 0 until 5) {
         CsvLogging.fileName = "results/current_iteration_$i"
+        CsvLogging.createLoggingFile()
         calculateWithMeanCompletionTimeForACO()
         val aica = AICA(aicaConfig)
         aica.optimizeForMCT(jobList)
@@ -58,7 +61,6 @@ fun calculateWithMakespan() {
 
 fun calculateWithMeanCompletionTimeForACO() {
 
-    CsvLogging.createLoggingFile()
     PheromonLogger.initDB()
     LoggingParameter.reset()
     val bestACO = ACO.optimizeForMCT(jobList, acoConfig)

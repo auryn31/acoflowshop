@@ -139,8 +139,8 @@ class AICATest {
         val country3 = Country(empireList)
 
         val empires = aica!!.createEmpires(listOf(country1, country2, country3))
-        assertEquals(1, empires.size)
-        assertEquals(1, empires.filter { it.getColonies().isNotEmpty() }.size)
+        assertEquals(3, empires.size)
+        assertEquals(0, empires.filter { it.getColonies().isNotEmpty() }.size)
     }
 
     @Test

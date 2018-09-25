@@ -30,4 +30,16 @@ class HelperTest {
         assertTrue(File("jsonJobTest.json").delete())
     }
 
+    @Test
+    fun testGetNextProbabilityOfRework(){
+        var rand = 0.0
+        val counter = 10000
+        for(i in 0 until counter) {
+            println(Helper.getNextProbabilityOfRework())
+            rand += Helper.getNextProbabilityOfRework()
+        }
+        assertTrue(rand/counter < 0.05)
+        assertTrue(rand/counter > 0.04)
+    }
+
 }
