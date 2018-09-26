@@ -77,9 +77,9 @@ class Ant {
         return acoflowshop.durationNEHASC(jobQue, storageSize)
     }
 
-    fun getDurationForMCT(): Double? {
+    fun getDurationForMCT(iteration: Int): Double? {
         if (this.durationForMCT == null && this.jobQue.isNotEmpty()) {
-            this.calculateDurationWithMCT()
+            this.calculateDurationWithMCT(iteration)
         }
         return this.durationForMCT
     }
@@ -89,9 +89,19 @@ class Ant {
         this.reworkPercentage = reworkPercentage
     }
 
-    fun calculateDurationWithMCT() {
-        val costPair = acoflowshop.calculateDurationForMCT(jobQue)
-        this.durationForMCT = costPair.first
-        this.reworkPercentage = costPair.second
+    internal fun calculateDurationWithMCT(iteration: Int) {
+        var costSum = 0.0
+        var reworkPercentageSum = 0.0
+        var calculationFrequency = iteration/10
+        if(calculationFrequency <= 0) {
+            calculationFrequency = 1
+        }
+        for (i in 0 until calculationFrequency) {
+            val costPair = acoflowshop.calculateDurationForMCT(jobQue)
+            costSum += costPair.first
+            reworkPercentageSum += costPair.second
+        }
+        this.durationForMCT = costSum/ ( calculationFrequency.toDouble() )
+        this.reworkPercentage = reworkPercentageSum / ( calculationFrequency.toDouble() )
     }
 }

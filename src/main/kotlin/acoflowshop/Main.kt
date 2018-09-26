@@ -65,6 +65,6 @@ fun calculateWithMeanCompletionTimeForACO() {
     LoggingParameter.reset()
     val bestACO = ACO.optimizeForMCT(jobList, acoConfig)
 
-    logger.warn { " ACO: ${bestACO.getDurationForMCT()!!} with ${LoggingParameter.evaluationIteration} evaluations" }
+    logger.warn { " ACO: ${bestACO.getDurationForMCT(1)!!} with ${LoggingParameter.evaluationIteration} evaluations" }
     logger.info { bestACO.jobQue }
 }

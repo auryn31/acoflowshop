@@ -101,13 +101,13 @@ class AntTest {
         )
         ant.jobQue = jobList.toMutableList()
 
-        val bestAnt = ACO.findBestAntForMCT(listOf(ant))
+        val bestAnt = ACO.findBestAntForMCT(listOf(ant), 1)
         assertEquals(ant, bestAnt)
     }
 
     @Test
     fun testFindNoBestAntForMCT() {
-        val bestAnt = ACO.findBestAntForMCT(listOf())
+        val bestAnt = ACO.findBestAntForMCT(listOf(), 1)
         assertNull(bestAnt)
     }
 }

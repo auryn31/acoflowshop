@@ -80,12 +80,12 @@ object ACO {
                     it.selectNextJobAndAddToJobQue(jobList, pheromone)
                 }
             }
-            ants.forEach { it.calculateDurationWithMCT() }
-            val bestAnt = findBestAntForMCT(ants)
+            ants.forEach { it.calculateDurationWithMCT(solutionNumber) }
+            val bestAnt = findBestAntForMCT(ants, solutionNumber)
             if (bestAnt != null) {
                 pheromone = updateJobPosPheromoneForAnt(bestAnt, pheromone, config.evaporation)
 //                    bestGlobalAnt.calculateDurationWithMCT()
-                updateGlobalBestAntForACIS(bestGlobalAnt, bestAnt)
+                updateGlobalBestAntForACIS(bestGlobalAnt, bestAnt, solutionNumber)
             }
             logger.info { pheromone }
 
@@ -94,7 +94,7 @@ object ACO {
             logger.info { "best ant: ${bestGlobalAnt.jobQue} with length: ${bestGlobalAnt.duration}" }
             logger.info { "TIME ${System.currentTimeMillis() - start}" }
             LoggingParameter.iteration = solutionNumber
-            LoggingParameter.bestDuration = bestGlobalAnt.getDurationForMCT()!!
+            LoggingParameter.bestDuration = bestGlobalAnt.getDurationForMCT(solutionNumber)!!
             LoggingParameter.currentTime = System.currentTimeMillis() - start
             LoggingParameter.reworkTimeInPercentage = bestGlobalAnt.reworkPercentage!!
             CsvLogging.writeNextEntry()
@@ -158,8 +158,8 @@ object ACO {
         return ants.sortedBy { it.duration }.firstOrNull()
     }
 
-    internal fun findBestAntForMCT(ants: List<Ant>): Ant? {
-        return ants.sortedBy { it.getDurationForMCT() }.firstOrNull()
+    internal fun findBestAntForMCT(ants: List<Ant>, iteration: Int): Ant? {
+        return ants.sortedBy { it.getDurationForMCT(iteration) }.firstOrNull()
     }
 
     /**
@@ -247,12 +247,12 @@ object ACO {
         }
     }
 
-    private fun updateGlobalBestAntForACIS(bestGlobalAnt: Ant, bestAnt: Ant) {
-        val currentDuration = bestAnt.getDurationForMCT()
-        val globalDuration = bestGlobalAnt.getDurationForMCT()
+    private fun updateGlobalBestAntForACIS(bestGlobalAnt: Ant, bestAnt: Ant, iteration: Int) {
+        val currentDuration = bestAnt.getDurationForMCT(iteration)
+        val globalDuration = bestGlobalAnt.getDurationForMCT(iteration)
         if (bestGlobalAnt.jobQue.size == 0) {
             bestGlobalAnt.jobQue = bestAnt.jobQue
-            bestGlobalAnt.getDurationForMCT()
+            bestGlobalAnt.getDurationForMCT(iteration)
         } else if (currentDuration != null && globalDuration != null && currentDuration < globalDuration) {
             bestGlobalAnt.jobQue = bestAnt.jobQue
             bestGlobalAnt.setDurationForMCT(currentDuration, bestAnt.reworkPercentage!!)
