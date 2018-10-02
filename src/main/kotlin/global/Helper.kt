@@ -51,7 +51,7 @@ object Helper {
     }
 
     fun getNextProbabilityOfRework(): Double {
-        var returnValue = 1.0
+        var returnValue: Double
         do {
             returnValue = expHelper.sample()
         } while (returnValue >= 1.0 || returnValue <= 0.0)
