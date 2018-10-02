@@ -4,9 +4,10 @@ import acoflowshop.Job
 import acoflowshop.calculateDurationForMCT
 import acoflowshop.findBestOrderForNextJob
 import global.ACOConfig
+import logger_helper.CsvLogging
 import logger_helper.LoggingParameter
+import logger_helper.PheromonLogger
 import mu.KotlinLogging
-import logger_helper.*
 
 private val logger = KotlinLogging.logger {}
 
@@ -60,32 +61,53 @@ object ACO {
     // MTC = Mean Completion Time --> Durchschnittliche Fertigstellungszeit
     fun optimizeForMCT(jobList: List<Job>, config: ACOConfig): Ant {
         val ants: MutableList<Ant> = (0..(config.antFactor * jobList.size).toInt()).map { Ant() }.toMutableList()
-        val jobs = jobList.sortedBy { it.durationMachineOne + it.durationMachineTwo }
-        var nehList = mutableListOf<Job>()
-        for (job in jobs) {
-            nehList = findBestOrderForNextJob(nehList, job).toMutableList()
-        }
-        val nehDuration = calculateDurationForMCT(nehList)
-        logger.warn { "NEH duration: $nehDuration" }
-        var pheromone: MutableList<MutableList<Double>> = initWithSeed(jobList.size, nehList, config.evaporation)
-        var solutionNumber = 0
-        val bestGlobalAnt = Ant()
+        var pheromone: MutableList<MutableList<Double>>? = null
+        var eliteAnt: Ant? = null
         val start = System.currentTimeMillis()
+        var solutionNumber = 0
+
+        if (config.initMatrixWithNEH || config.withEliteSolution) {
+
+            val nehSolution = calculateNEHSolution(jobList)
+            val nehList = nehSolution.first
+            val nehDuration = nehSolution.second
+
+            if (config.withEliteSolution) {
+                eliteAnt = Ant()
+                eliteAnt.jobQue = nehList
+                eliteAnt.setDurationForMCT(nehDuration.first, nehDuration.second)
+            }
+
+            if (config.initMatrixWithNEH) {
+                pheromone = initWithSeed(jobList.size, nehList, config.evaporation)
+            }
+        }
+        if (pheromone == null) {
+            pheromone = initEmptyPheromonMatrix(jobList.size)
+        }
+
+        val bestGlobalAnt = Ant()
 
         while (solutionNumber < config.maxIterations) {
 
             logger.info { "################### - iteration: ${solutionNumber} - ###################" }
             for (i in 0 until jobList.size) {
                 ants.forEach {
-                    it.selectNextJobAndAddToJobQue(jobList, pheromone)
+                    it.selectNextJobAndAddToJobQue(jobList, pheromone!!)
                 }
             }
             ants.forEach { it.calculateDurationWithMCT(solutionNumber) }
             val bestAnt = findBestAntForMCT(ants, solutionNumber)
             if (bestAnt != null) {
-                pheromone = updateJobPosPheromoneForAnt(bestAnt, pheromone, config.evaporation)
-//                    bestGlobalAnt.calculateDurationWithMCT()
+                pheromone = updateJobPosPheromoneForAnt(bestAnt, pheromone!!, config.evaporation)
+                if(config.withEliteSolution) {
+                    pheromone = updateJobPosPheromoneForAnt(eliteAnt!!, pheromone, config.evaporation)
+                }
                 updateGlobalBestAntForACIS(bestGlobalAnt, bestAnt, solutionNumber)
+
+                if (config.withEliteSolution && bestAnt.getDurationForMCT(solutionNumber)!! < eliteAnt!!.getDurationForMCT(solutionNumber)!!) {
+                    eliteAnt.setDurationForMCT(bestAnt.getDurationForMCT(solutionNumber)!!, bestAnt.reworkPercentage!!)
+                }
             }
             logger.info { pheromone }
 
@@ -97,10 +119,25 @@ object ACO {
             LoggingParameter.bestDuration = bestGlobalAnt.getDurationForMCT(solutionNumber)!!
             LoggingParameter.currentTime = System.currentTimeMillis() - start
             LoggingParameter.reworkTimeInPercentage = bestGlobalAnt.reworkPercentage!!
+//            LoggingParameter.iteration = solutionNumber
+//            LoggingParameter.bestDuration = eliteAnt.getDurationForMCT(solutionNumber)!!
+//            LoggingParameter.currentTime = System.currentTimeMillis() - start
+//            LoggingParameter.reworkTimeInPercentage = eliteAnt.reworkPercentage!!
             CsvLogging.writeNextEntry()
-            PheromonLogger.writeEntryIntoDB(solutionNumber, pheromone)
+            PheromonLogger.writeEntryIntoDB(solutionNumber, pheromone!!)
         }
         return bestGlobalAnt
+    }
+
+    private fun calculateNEHSolution(jobList: List<Job>): Pair<MutableList<Job>, Pair<Double, Double>> {
+        val jobs = jobList.sortedBy { it.durationMachineOne + it.durationMachineTwo }
+        var nehList = mutableListOf<Job>()
+        for (job in jobs) {
+            nehList = findBestOrderForNextJob(nehList, job).toMutableList()
+        }
+        val nehDuration = calculateDurationForMCT(nehList)
+        logger.warn { "NEH duration: $nehDuration" }
+        return Pair(nehList, nehDuration)
     }
 
     // update all ants

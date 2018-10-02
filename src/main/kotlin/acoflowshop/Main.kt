@@ -16,7 +16,7 @@ import java.io.File
 private const val STORAGE_SIZE = 5
 private val logger = KotlinLogging.logger {}
 
-private val jobList: List<Job> = Helper.readJobListFromFile("100Jobs")
+private val jobList: List<Job> = Helper.readJobListFromFile("100Jobs").subList(0, 20)
 private val mapper = ObjectMapper().registerModule(KotlinModule())
 private val acoConfig = mapper.readValue(File("src/main/resources/ACOConfig.json"), ACOConfig::class.java)!!
 private val aicaConfig = mapper.readValue(File("src/main/resources/AICAConfig.json"), AICAConfig::class.java)!!

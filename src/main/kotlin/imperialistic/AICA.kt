@@ -45,7 +45,7 @@ data class AICA(val config: AICAConfig) {
             }
 
         } while (!stoppingCriteriaIsReached(empires, i, config.maxIterations))
-        logger.warn { " AICA: ${empires.sortedBy { it.emperor.getCost() }.first().emperor.getCost()} with ${LoggingParameter.evaluationIteration} evaluations" }
+        logger.warn { " AICA: ${globalBestEmperor!!.getCost()} with ${LoggingParameter.evaluationIteration} evaluations" }
     }
 
     internal fun createCountries(k: Int): MutableList<Country> {

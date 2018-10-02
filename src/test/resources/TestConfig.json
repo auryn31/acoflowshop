@@ -2,4 +2,7 @@
   "maxIterations": 1000,
   "antFactor": 0.01,
   "dbLogging": false,
-  "fileLogging" : false}
+  "fileLogging" : false,
+  "initMatrixWithNEH": false,
+  "withEliteSolution": false
+}

@@ -92,7 +92,7 @@ class Ant {
     internal fun calculateDurationWithMCT(iteration: Int) {
         var costSum = 0.0
         var reworkPercentageSum = 0.0
-        var calculationFrequency = iteration/10
+        var calculationFrequency = iteration/50
         if(calculationFrequency <= 0) {
             calculationFrequency = 1
         }

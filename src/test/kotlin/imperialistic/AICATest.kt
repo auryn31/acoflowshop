@@ -6,6 +6,7 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import global.AICAConfig
 import global.Helper
 import io.mockk.every
+import io.mockk.mockk
 import io.mockk.mockkClass
 import io.mockk.mockkObject
 import org.junit.Before
@@ -160,6 +161,7 @@ class AICATest {
 
     @Test
     fun imperialisticCompetitionTest() {
+        //TODO: Random mocken, dass der Test nicht zufällig fehl schlägt
         val jobList1 = mutableListOf(
                 Job(1, 3, 1, 0),
                 Job(3, 1, 1, 1),
