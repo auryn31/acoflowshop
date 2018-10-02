@@ -3,6 +3,7 @@ package imperialistic
 import acoflowshop.Job
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.sun.javafx.scene.control.skin.Utils
 import global.AICAConfig
 import global.Helper
 import io.mockk.every
@@ -11,10 +12,16 @@ import io.mockk.mockkClass
 import io.mockk.mockkObject
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.mockito.Mockito
+import org.powermock.api.mockito.PowerMockito
+import org.powermock.core.MockRepository
+import org.powermock.modules.junit4.PowerMockRunner
 import java.io.File
 import java.util.*
 import kotlin.test.*
 
+@RunWith(PowerMockRunner::class)
 class AICATest {
 
     var config: AICAConfig? = null
@@ -161,7 +168,10 @@ class AICATest {
 
     @Test
     fun imperialisticCompetitionTest() {
-        //TODO: Random mocken, dass der Test nicht zufällig fehl schlägt
+        val rand = mockk<Random>()
+        every { rand.nextDouble() }.returns( 0.5)
+        PowerMockito.whenNew(Random::class.java).withNoArguments().thenReturn(rand)
+
         val jobList1 = mutableListOf(
                 Job(1, 3, 1, 0),
                 Job(3, 1, 1, 1),
@@ -187,6 +197,7 @@ class AICATest {
                 empire3
         )
         val newEmpires = aica!!.imperialisticCompetition(empires)
+        MockRepository.remove(Random::class)
         assertEquals(0, newEmpires.filter { it == empire1 }[0].getColonies().size)
     }
 
@@ -284,6 +295,9 @@ class AICATest {
 
     @Test
     fun empireRevolutionTest1() {
+        val rand = mockk<Random>()
+        every { rand.nextDouble() }.returns( 0.5).andThen(1.0)
+        PowerMockito.whenNew(Random::class.java).withNoArguments().thenReturn(rand)
         val jobList1 = mutableListOf(
                 Job(1, 3, 1, 0),
                 Job(3, 1, 1, 1),
@@ -302,11 +316,15 @@ class AICATest {
         empire.setColony(colonyList)
         val empires = listOf(empire)
         aica!!.empireRevolution(empires)
+        MockRepository.remove(Random::class)
         assertNotEquals(colonyList, empires[0].getColonies())
     }
 
     @Test
     fun colonyRevolutionTest(){
+        val rand = mockk<Random>()
+        every { rand.nextDouble() }.returns( 0.5).andThen(1.0)
+        PowerMockito.whenNew(Random::class.java).withNoArguments().thenReturn(rand)
         val jobList1 = mutableListOf(
                 Job(1, 3, 1, 0),
                 Job(3, 1, 1, 1),
@@ -325,6 +343,7 @@ class AICATest {
         empire.setColony(colonyList)
         val empires = listOf(empire)
         aica!!.colonyRevolution(empires)
+        MockRepository.remove(Random::class)
         assertNotEquals(colonyList, empires[0].getColonies())
     }
 
@@ -353,7 +372,7 @@ class AICATest {
 
     @Test
     fun optimizeForMCTTest(){
-        val jobList = Helper.createRandomJobList(50)
+        val jobList = Helper.createRandomJobList(10)
         aica!!.optimizeForMCT(jobList) // 1000, 100
     }
 }
