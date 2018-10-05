@@ -50,18 +50,6 @@ class AICA(val config: AICAConfig): Simulation<AICAConfig> {
         return Pair(globalBestEmperor!!.representation, globalBestEmperor.getCost())
     }
 
-    internal fun createCountries(k: Int): MutableList<Country> {
-        val jobList = Helper.createRandomJobList(k)
-        val countries = mutableListOf<Country>()
-
-        for (i in 0 until k) {
-            val candidate = Country(generator(jobList))
-            countries.add(candidate)
-        }
-
-        return countries
-    }
-
     internal fun createEmpires(countries: List<Country>): List<Empire> {
         val newCountries = countries.sortedBy { it.getCost() }
         val candidateEmpires = newCountries.subList(0, config.numberOfEmpires)
@@ -230,9 +218,16 @@ class AICA(val config: AICAConfig): Simulation<AICAConfig> {
 
         return newColonies.subList(0, popSize).toList()
     }
-}
 
+    internal fun createCountries(k: Int): MutableList<Country> {
+        val jobList = Helper.createRandomJobList(k)
+        val countries = mutableListOf<Country>()
 
-fun generator(jobs: List<Job>): List<Job> {
-    return jobs.shuffled()
+        for (i in 0 until k) {
+            val candidate = Country(jobList.shuffled())
+            countries.add(candidate)
+        }
+
+        return countries
+    }
 }

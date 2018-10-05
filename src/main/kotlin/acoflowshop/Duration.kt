@@ -12,15 +12,6 @@ fun duration(jobsList: List<Job>, storageSize: Int): Int {
     return calculatefastestScheduleWithOrder(jobOrder, storageSize)
 }
 
-fun durationNEHASC(jobsList: List<Job>, storageSize: Int): Int {
-    val jobs = jobsList.sortedBy { it.durationMachineOne + it.durationMachineTwo }
-    var jobOrder = mutableListOf<Job>()
-    for (job in jobs) {
-        jobOrder = findBestOrderForNextJob(jobOrder, job).toMutableList()
-    }
-    return calculatefastestScheduleWithOrder(jobOrder, storageSize)
-}
-
 fun findBestOrderForNextJob(machineList: List<Job>, jobToAdd: Job): List<Job> {
     if (machineList.isEmpty()) {
         return listOf(jobToAdd)

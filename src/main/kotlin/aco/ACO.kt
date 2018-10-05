@@ -70,7 +70,7 @@ object ACO: Simulation<ACOConfig> {
 
             ants.forEach { it.reset() }
             solutionNumber++
-            logger.info { "best ant: ${bestGlobalAnt.jobQue} with length: ${bestGlobalAnt.duration}" }
+            logger.info { "best ant: ${bestGlobalAnt.jobQue} with length: ${bestGlobalAnt.getDuationForMTCWithourRecalculation()}" }
             logger.info { "TIME ${System.currentTimeMillis() - start}" }
             LoggingParameter.iteration = solutionNumber
             LoggingParameter.bestDuration = bestGlobalAnt.getDurationForMCT(solutionNumber)!!
@@ -95,61 +95,6 @@ object ACO: Simulation<ACOConfig> {
         val nehDuration = calculateDurationForMCT(nehList)
         logger.warn { "NEH duration: $nehDuration" }
         return Pair(nehList, nehDuration)
-    }
-
-    // update all ants
-    private fun updateAllAnts(ants: MutableList<Ant>, bestAnt: Ant, pheromone: MutableList<MutableList<Double>>, evaporation: Double): MutableList<MutableList<Double>> {
-        var newPheromonList = pheromone
-        val bestAnts = ants.filter { it.duration == bestAnt.duration }
-        bestAnts.forEach {
-            newPheromonList = updateJobPosPheromoneForAnt(it, newPheromonList, evaporation)
-        }
-        return newPheromonList
-    }
-
-
-    fun optimizeJobJob(ants: MutableList<Ant>, jobList: List<Job>, storageSize: Int, evaporation: Double, iterations: Int): Ant {
-        var pheromone: MutableList<MutableList<Double>> = initEmptyPheromonMatrix(jobList.size)
-        var solutionNumber = 0
-        val bestGlobalAnt = Ant()
-        val start = System.currentTimeMillis()
-        var evaluationIteration = 0
-
-        while (solutionNumber < iterations) {
-            logger.info { "Iteration: ${solutionNumber}" }
-
-            for (i in 0 until jobList.size) {
-                ants.forEach {
-                    it.selectNextJobAndAddToJobQue(jobList, pheromone)
-                }
-            }
-            ants.forEach { it.calculateDuration(storageSize) }
-
-            val bestAnt = findBestAnt(ants)
-            if (bestAnt != null) {
-                pheromone = updateJobJobPheromoneForAnt(bestAnt, pheromone, evaporation * 0.75)
-                bestGlobalAnt.calculateDuration(storageSize)
-                evaluationIteration++
-                updateGlobalBestAnt(bestGlobalAnt, bestAnt, storageSize)
-                pheromone = updateJobJobPheromoneForAnt(bestGlobalAnt, pheromone, evaporation * 0.25)
-            }
-            logger.info { pheromone }
-
-            ants.forEach { it.reset() }
-            solutionNumber++
-            evaluationIteration += jobList.size
-            CsvLogging.appendCSVEntry(solutionNumber, bestGlobalAnt.duration!!, (System.currentTimeMillis() - start), evaluationIteration)
-        }
-        return bestGlobalAnt
-    }
-
-
-    /**
-     * die beste armeise der Liste suchen
-     */
-
-    fun findBestAnt(ants: List<Ant>): Ant? {
-        return ants.sortedBy { it.duration }.firstOrNull()
     }
 
     internal fun findBestAntForMCT(ants: List<Ant>, iteration: Int): Ant? {
@@ -228,17 +173,6 @@ object ACO: Simulation<ACOConfig> {
             }
         }
         return false
-    }
-
-    private fun updateGlobalBestAnt(bestGlobalAnt: Ant, bestAnt: Ant, storageSize: Int) {
-        val currentDuration = bestAnt.duration
-        val globalDuration = bestGlobalAnt.duration
-        if (bestGlobalAnt.jobQue.size == 0) {
-            bestGlobalAnt.jobQue = bestAnt.jobQue
-            bestGlobalAnt.calculateDuration(storageSize)
-        } else if (currentDuration != null && globalDuration != null && currentDuration < globalDuration) {
-            bestGlobalAnt.jobQue = bestAnt.jobQue
-        }
     }
 
     private fun updateGlobalBestAntForACIS(bestGlobalAnt: Ant, bestAnt: Ant, iteration: Int) {

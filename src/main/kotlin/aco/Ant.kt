@@ -7,14 +7,12 @@ class Ant {
 
     var jobQue: MutableList<Job> = mutableListOf()
 
-    var duration: Int? = null
     private var durationForMCT: Double? = null
     var reworkPercentage: Double? = null
 
 
     fun reset() {
         this.jobQue = mutableListOf()
-        this.duration = null
     }
 
     fun scheduled(job: Job): Boolean {
@@ -65,22 +63,14 @@ class Ant {
         return pheromonList.first()
     }
 
-    fun calculateDuration(storageSize: Int) {
-        duration = acoflowshop.calculatefastestScheduleWithOrder(jobQue, storageSize)
-    }
-
-    fun calculateDurationWithNEH(storageSize: Int): Int {
-        return acoflowshop.duration(jobQue, storageSize)
-    }
-
-    fun calculateDurationWithNEHASC(storageSize: Int): Int {
-        return acoflowshop.durationNEHASC(jobQue, storageSize)
-    }
-
     fun getDurationForMCT(iteration: Int): Double? {
         if (this.durationForMCT == null && this.jobQue.isNotEmpty()) {
             this.calculateDurationWithMCT(iteration)
         }
+        return this.durationForMCT
+    }
+
+    fun getDuationForMTCWithourRecalculation(): Double? {
         return this.durationForMCT
     }
 

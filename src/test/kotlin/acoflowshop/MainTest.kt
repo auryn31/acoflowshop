@@ -19,16 +19,16 @@ class MainTest {
     @Test
     fun findBestAntTest(){
         val ant1 = Ant()
-        ant1.duration = 5
+        ant1.setDurationForMCT(5.0, 0.05)
         val ant2 = Ant()
         ant2.jobQue = mutableListOf(
                 Job(1,2,1, 0),
                 Job(2,1,1, 1)
         )
-        ant2.calculateDuration(1)
+        ant2.calculateDurationWithMCT(1)
         val ants = listOf(ant1, ant2)
-        val best = ACO.findBestAnt(ants)
-        assertEquals(4, best!!.duration!!)
+        val best = ACO.findBestAntForMCT(ants, 1)
+        assertEquals(3.5, best!!.getDuationForMTCWithourRecalculation())
     }
 
     @Test

@@ -12,8 +12,6 @@ import logger_helper.PheromonLogger
 import mu.KotlinLogging
 import java.io.File
 
-
-private const val STORAGE_SIZE = 5
 private val logger = KotlinLogging.logger {}
 
 private val jobList: List<Job> = Helper.readJobListFromFile("100Jobs").subList(0, 20)
