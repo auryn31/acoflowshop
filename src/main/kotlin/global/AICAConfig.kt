@@ -12,5 +12,4 @@ data class AICAConfig(
         val N_GW: Int,
         val xi: Double,
         val dbLogging: Boolean,
-        val fileLogging: Boolean) {
-}
+        val fileLogging: Boolean): Config

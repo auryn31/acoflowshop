@@ -6,16 +6,17 @@ import global.Helper
 import logger_helper.LoggingParameter
 import logger_helper.CsvLogging
 import mu.KotlinLogging
+import simulation.Simulation
 import java.util.*
 
 private val logger = KotlinLogging.logger {}
 
-data class AICA(val config: AICAConfig) {
-    fun optimizeForMCT(jobList: List<Job>) {
+class AICA(val config: AICAConfig): Simulation<AICAConfig> {
+    override fun optimize(jobList: List<Job>, config: AICAConfig): Pair<List<Job>, Double> {
         LoggingParameter.reset()
         val startCountries = (0 until config.popSize).map { Country(jobList.shuffled()) }
         var empires = createEmpires(startCountries)
-        var i = 1
+        var currentIteration = 1
         val startTime = System.currentTimeMillis()
         var globalBestEmperor: Country? = null
         do {
@@ -31,21 +32,22 @@ data class AICA(val config: AICAConfig) {
             if(globalBestEmperor == null || bestEmpireForIteration.getCost() < globalBestEmperor.getCost()) {
                 globalBestEmperor = bestEmpireForIteration
             }
-            LoggingParameter.iteration = i
+            LoggingParameter.iteration = currentIteration
             LoggingParameter.currentTime = System.currentTimeMillis() - startTime
             LoggingParameter.bestDuration = globalBestEmperor.getCost()
             LoggingParameter.reworkTimeInPercentage = globalBestEmperor.getReworkTime()
-            i++
+            currentIteration++
             CsvLogging.writeNextEntry()
 
-            if (!stoppingCriteriaIsReached(empires, i, config.maxIterations) && i % config.I_gw == 0) {
-                for(i in 0 until config.N_GW) {
+            if (!stoppingCriteriaIsReached(empires, currentIteration, config.maxIterations) && currentIteration % config.I_gw == 0) {
+                for(j in 0 until config.N_GW) {
                     empires = createEmpires(globalWar(empires, config.popSize))
                 }
             }
 
-        } while (!stoppingCriteriaIsReached(empires, i, config.maxIterations))
+        } while (!stoppingCriteriaIsReached(empires, currentIteration, config.maxIterations))
         logger.warn { " AICA: ${globalBestEmperor!!.getCost()} with ${LoggingParameter.evaluationIteration} evaluations" }
+        return Pair(globalBestEmperor!!.representation, globalBestEmperor.getCost())
     }
 
     internal fun createCountries(k: Int): MutableList<Country> {

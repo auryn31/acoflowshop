@@ -4,62 +4,19 @@ import acoflowshop.Job
 import acoflowshop.calculateDurationForMCT
 import acoflowshop.findBestOrderForNextJob
 import global.ACOConfig
+import global.Config
 import logger_helper.CsvLogging
 import logger_helper.LoggingParameter
 import logger_helper.PheromonLogger
 import mu.KotlinLogging
+import simulation.Simulation
 
 private val logger = KotlinLogging.logger {}
 
-object ACO {
-
-    /**
-     * optimieren der ameisen
-     */
-    fun optimize(ants: MutableList<Ant>, jobList: List<Job>, storageSize: Int, evaporation: Double, iterations: Int, seedList: List<Job>? = null): Ant {
-        var pheromone: MutableList<MutableList<Double>> = initEmptyPheromonMatrix(jobList.size)
-        var solutionNumber = 0
-        var evaluationIteration = 0
-        val bestGlobalAnt = Ant()
-        val start = System.currentTimeMillis()
-
-        while (solutionNumber < iterations) {
-
-            logger.info { "################### - iteration: ${solutionNumber} - ###################" }
-            //linear --> ist schneller
-            for (i in 0 until jobList.size) {
-                ants.forEach {
-                    it.selectNextJobAndAddToJobQue(jobList, pheromone)
-                }
-            }
-            ants.forEach { it.calculateDuration(storageSize) }
-
-
-            val bestAnt = findBestAnt(ants)
-            if (bestAnt != null) {
-                pheromone = updateJobPosPheromoneForAnt(bestAnt, pheromone, evaporation)
-//                    pheromone = updateAllAnts(ants, bestAnt, pheromone, evaporation)
-                evaluationIteration++
-                bestGlobalAnt.calculateDuration(storageSize)
-                updateGlobalBestAnt(bestGlobalAnt, bestAnt, storageSize)
-//                    pheromone = updateJobPosPheromoneForAnt(bestGlobalAnt, pheromone, evaporation * 0.2)
-            }
-            logger.info { pheromone }
-
-            ants.forEach { it.reset() }
-            solutionNumber++
-            evaluationIteration += jobList.size
-            logger.info { "best ant: ${bestGlobalAnt.jobQue} with length: ${bestGlobalAnt.duration}" }
-            logger.info { "TIME ${System.currentTimeMillis() - start}" }
-
-            CsvLogging.appendCSVEntry(solutionNumber, bestGlobalAnt.duration!!, (System.currentTimeMillis() - start), evaluationIteration)
-            PheromonLogger.writeEntryIntoDB(solutionNumber, pheromone)
-        }
-        return bestGlobalAnt
-    }
+object ACO: Simulation<ACOConfig> {
 
     // MTC = Mean Completion Time --> Durchschnittliche Fertigstellungszeit
-    fun optimizeForMCT(jobList: List<Job>, config: ACOConfig): Ant {
+    override fun optimize(jobList: List<Job>, config: ACOConfig): Pair<List<Job>, Double> {
         val ants: MutableList<Ant> = (0..(config.antFactor * jobList.size).toInt()).map { Ant() }.toMutableList()
         var pheromone: MutableList<MutableList<Double>>? = null
         var eliteAnt: Ant? = null
@@ -126,7 +83,7 @@ object ACO {
             CsvLogging.writeNextEntry()
             PheromonLogger.writeEntryIntoDB(solutionNumber, pheromone!!)
         }
-        return bestGlobalAnt
+        return Pair(bestGlobalAnt.jobQue.toList(), bestGlobalAnt.getDurationForMCT(10)!!)
     }
 
     private fun calculateNEHSolution(jobList: List<Job>): Pair<MutableList<Job>, Pair<Double, Double>> {

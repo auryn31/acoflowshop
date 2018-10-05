@@ -370,6 +370,8 @@ class AICATest {
     @Test
     fun optimizeForMCTTest(){
         val jobList = Helper.createRandomJobList(10)
-        aica!!.optimizeForMCT(jobList) // 1000, 100
+        val mapper = ObjectMapper().registerModule(KotlinModule())
+        val config = mapper.readValue(File("src/test/resources/AICATestConfig.json"), AICAConfig::class.java)
+        aica!!.optimize(jobList, config) // 1000, 100
     }
 }
