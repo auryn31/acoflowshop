@@ -1,7 +1,12 @@
 package aco
 
 import acoflowshop.Job
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.KotlinModule
+import global.ACOConfig
+import global.Helper
 import org.junit.Test
+import java.io.File
 import kotlin.test.assertEquals
 
 class ACOTest {
@@ -15,6 +20,14 @@ class ACOTest {
         )
         val newMatrix = ACO.updateJobPosPheromoneForAnt(ant, mutableListOf(mutableListOf(0.5, 0.5), mutableListOf(0.5, 0.5)), 0.05)
         assertEquals(mutableListOf(mutableListOf(0.525, 0.475), mutableListOf(0.475, 0.525)), newMatrix)
+    }
+
+    @Test
+    fun testOptimize() {
+        val jobList: List<Job> = Helper.readJobListFromFile("100Jobs").subList(0, 40)
+        val mapper = ObjectMapper().registerModule(KotlinModule())
+        val acoConfig = mapper.readValue(File("src/main/resources/ACOConfig.json"), ACOConfig::class.java)!!
+        val bestAnt = ACO.optimize(jobList, acoConfig)
     }
 
     @Test

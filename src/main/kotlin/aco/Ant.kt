@@ -15,7 +15,7 @@ class Ant {
         this.jobQue = mutableListOf()
     }
 
-    fun scheduled(job: Job): Boolean {
+    internal fun scheduled(job: Job): Boolean {
         return jobQue.filter { it.id == job.id }.isNotEmpty()
     }
 
@@ -38,15 +38,16 @@ class Ant {
         var pheromonSum = 0.0
 
         // Summe der noch übrigen Gesamtmenge an Pheromonen für die noch zu wählenden Jobs berechnen
+        val jobsLeft = jobs.subtract(jobQue)
         for (i in 0 until jobs.size) {
-            if (!scheduled(jobs[i])) {
+            if (jobsLeft.contains(jobs[i])) {
                 pheromonSum += pheromonMatrix[i][nexPos]
             }
         }
 
         // hinzufügen der restlichen Jobs zur Hashmap mit Anteilen an ihren Pheromonen
         for (i in 0 until jobs.size) {
-            if (!scheduled(jobs[i])) {
+            if (jobsLeft.contains(jobs[i])) {
                 jobMap[pheromonValue] = jobs[i]
                 pheromonValue -= pheromonMatrix[i][nexPos] / pheromonSum
             }

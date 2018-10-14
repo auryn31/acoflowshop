@@ -4,7 +4,6 @@ import acoflowshop.Job
 import acoflowshop.calculateDurationForMCT
 import acoflowshop.findBestOrderForNextJob
 import global.ACOConfig
-import global.Config
 import logger_helper.CsvLogging
 import logger_helper.LoggingParameter
 import logger_helper.PheromonLogger
