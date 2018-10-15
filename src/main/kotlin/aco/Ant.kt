@@ -31,26 +31,25 @@ class Ant {
         return jobMap.getOrDefault(key, Job(1, 1, 1, 0))
     }
 
+
     fun createHashmap(jobs: List<Job>, pheromonMatrix: List<List<Double>>): HashMap<Double, Job> {
         val nexPos = jobQue.size
         val jobMap = hashMapOf<Double, Job>()
         var pheromonValue = 1.0
         var pheromonSum = 0.0
 
-        // Summe der noch übrigen Gesamtmenge an Pheromonen für die noch zu wählenden Jobs berechnen
-        val jobsLeft = jobs.subtract(jobQue)
-        for (i in 0 until jobs.size) {
-            if (jobsLeft.contains(jobs[i])) {
-                pheromonSum += pheromonMatrix[i][nexPos]
-            }
+        val jobPosMap = hashMapOf<Job, Int>()
+        for (i in jobs) {
+            jobPosMap.put(i, i.id)
         }
 
-        // hinzufügen der restlichen Jobs zur Hashmap mit Anteilen an ihren Pheromonen
-        for (i in 0 until jobs.size) {
-            if (jobsLeft.contains(jobs[i])) {
-                jobMap[pheromonValue] = jobs[i]
-                pheromonValue -= pheromonMatrix[i][nexPos] / pheromonSum
-            }
+        jobQue.forEach { jobPosMap.remove(it) }
+
+        pheromonSum = jobPosMap.map { pheromonMatrix[it.value][nexPos] }.reduce { acc, d ->  acc + d}
+
+        for (i in jobPosMap) {
+            jobMap[pheromonValue] = i.key
+            pheromonValue -= pheromonMatrix[i.value][nexPos] / pheromonSum
         }
         return jobMap
     }

@@ -29,7 +29,7 @@ class AntTest {
     fun createHashmap() {
         val ant = Ant()
         val jobList = listOf(
-                Job(1, 1, 1, 0),
+                Job(0, 0, 0, 0),
                 Job(1, 1, 1, 1)
         )
         val pheromonMatrix = listOf(
@@ -38,7 +38,7 @@ class AntTest {
         )
         val hashMap = ant.createHashmap(jobList, pheromonMatrix)
         val solutionMap = hashMapOf<Double, Job>(
-                Pair(1.0, Job(1, 1, 1, 0)),
+                Pair(1.0, Job(0, 0, 0, 0)),
                 Pair(0.30000000000000004, Job(1, 1, 1, 1))
         )
         assertEquals(solutionMap, hashMap)

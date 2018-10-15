@@ -1,7 +1,7 @@
 {
   "evaporation": 0.05,
   "maxIterations": 600,
-  "antFactor": 0.5,
+  "antFactor": 0.2,
   "dbLogging": false,
   "fileLogging": true,
   "initMatrixWithNEH": true,
