@@ -4,6 +4,7 @@ import acoflowshop.Job
 import acoflowshop.calculateDurationForMCT
 import acoflowshop.findBestOrderForNextJob
 import global.ACOConfig
+import global.Helper
 import logger_helper.CsvLogging
 import logger_helper.LoggingParameter
 import logger_helper.PheromonLogger
@@ -43,13 +44,14 @@ object ACO: Simulation<ACOConfig> {
         }
 
         val bestGlobalAnt = Ant()
+        val jobHashmap = Helper.createHashMapFromJobList(jobList)
 
         while (solutionNumber < config.maxIterations) {
 
             logger.info { "################### - iteration: ${solutionNumber} - ###################" }
             for (i in 0 until jobList.size) {
                 ants.forEach {
-                    it.selectNextJobAndAddToJobQue(jobList, pheromone!!)
+                    it.selectNextJobAndAddToJobQue(jobHashmap, pheromone!!)
                 }
             }
             ants.forEach { it.calculateDurationWithMCT(solutionNumber) }

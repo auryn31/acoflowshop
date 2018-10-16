@@ -2,6 +2,7 @@ package aco
 
 import acoflowshop.Job
 import java.util.*
+import kotlin.collections.HashMap
 
 class Ant {
 
@@ -19,11 +20,11 @@ class Ant {
         return jobQue.filter { it.id == job.id }.isNotEmpty()
     }
 
-    fun selectNextJobAndAddToJobQue(jobs: List<Job>, pheromonMatrix: List<List<Double>>) {
+    fun selectNextJobAndAddToJobQue(jobs: HashMap<Job, Int>, pheromonMatrix: List<List<Double>>) {
         this.jobQue.add(selectNextJob(jobs, pheromonMatrix))
     }
 
-    fun selectNextJob(jobs: List<Job>, pheromonMatrix: List<List<Double>>): Job {
+    fun selectNextJob(jobs: HashMap<Job, Int>, pheromonMatrix: List<List<Double>>): Job {
         val jobMap = createHashmap(jobs, pheromonMatrix)
         val pheromonList = jobMap.keys.sorted().toList()
         val random = Random().nextDouble()
@@ -32,22 +33,17 @@ class Ant {
     }
 
 
-    fun createHashmap(jobs: List<Job>, pheromonMatrix: List<List<Double>>): HashMap<Double, Job> {
+    fun createHashmap(jobsList: HashMap<Job, Int>, pheromonMatrix: List<List<Double>>): HashMap<Double, Job> {
+        val jobs = HashMap(jobsList)
         val nexPos = jobQue.size
         val jobMap = hashMapOf<Double, Job>()
         var pheromonValue = 1.0
-        var pheromonSum = 0.0
 
-        val jobPosMap = hashMapOf<Job, Int>()
+        jobQue.forEach { jobs.remove(it) }
+
+        val pheromonSum = jobs.map { pheromonMatrix[it.value][nexPos] }.reduce { acc, d ->  acc + d}
+
         for (i in jobs) {
-            jobPosMap.put(i, i.id)
-        }
-
-        jobQue.forEach { jobPosMap.remove(it) }
-
-        pheromonSum = jobPosMap.map { pheromonMatrix[it.value][nexPos] }.reduce { acc, d ->  acc + d}
-
-        for (i in jobPosMap) {
             jobMap[pheromonValue] = i.key
             pheromonValue -= pheromonMatrix[i.value][nexPos] / pheromonSum
         }

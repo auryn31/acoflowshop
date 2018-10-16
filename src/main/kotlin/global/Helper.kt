@@ -57,6 +57,14 @@ object Helper {
         } while (returnValue >= 1.0 || returnValue <= 0.0)
         return returnValue
     }
+
+    fun createHashMapFromJobList(jobs: List<Job>): HashMap<Job, Int>{
+        val jobPosMap = hashMapOf<Job, Int>()
+        for (i in jobs) {
+            jobPosMap.put(i, i.id)
+        }
+        return jobPosMap
+    }
 }
 
 fun fak(num: Int): Int {

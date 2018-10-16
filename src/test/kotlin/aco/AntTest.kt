@@ -1,6 +1,7 @@
 package aco
 
 import acoflowshop.Job
+import global.Helper
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -21,7 +22,8 @@ class AntTest {
                 listOf(1.0, 0.0),
                 listOf(0.0, 1.0)
         )
-        val nextJob = ant.selectNextJob(jobList, pheromonMatrix)
+        val jobs = Helper.createHashMapFromJobList(jobList)
+        val nextJob = ant.selectNextJob(jobs, pheromonMatrix)
         assertEquals(0, nextJob.id)
     }
 
@@ -36,7 +38,8 @@ class AntTest {
                 listOf(0.7, 0.3),
                 listOf(0.3, 0.7)
         )
-        val hashMap = ant.createHashmap(jobList, pheromonMatrix)
+        val jobs = Helper.createHashMapFromJobList(jobList)
+        val hashMap = ant.createHashmap(jobs, pheromonMatrix)
         val solutionMap = hashMapOf<Double, Job>(
                 Pair(1.0, Job(0, 0, 0, 0)),
                 Pair(0.30000000000000004, Job(1, 1, 1, 1))
