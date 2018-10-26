@@ -1,5 +1,5 @@
 {
-  "maxIterations": 300,
+  "maxIterations": 100,
   "popSize": 192,
   "numberOfEmpires": 3,
   "P_as": 0.42857,

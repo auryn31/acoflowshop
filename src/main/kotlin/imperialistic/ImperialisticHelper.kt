@@ -7,13 +7,16 @@ object ImperialisticHelper {
     fun distributeColonyWithRoulette(empires: List<Empire>, colony: Country): List<Empire> {
         val empiresMap = ImperialisticHelper.createHashMap(empires.filter { it.getTotalCost() > 0.0 })
         val strengthList = empiresMap.keys.sorted().toList()
-        val random = Random().nextDouble()
+        val random = getRandomDouble()
         val key = ImperialisticHelper.findKey(random, strengthList)
         val empireWithNewColony = empiresMap.getOrDefault(key, Empire(Country(mutableListOf())))
         empireWithNewColony.addColony(colony)
         return empires
     }
 
+    internal fun getRandomDouble(): Double {
+        return Random().nextDouble()
+    }
 
     internal fun createHashMap(empires: List<Empire>): HashMap<Double, Empire> {
         val empiresMap = hashMapOf<Double, Empire>()

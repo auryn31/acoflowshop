@@ -3,15 +3,15 @@ package imperialistic
 import acoflowshop.Job
 import global.AICAConfig
 import global.Helper
-import logger_helper.LoggingParameter
 import logger_helper.CsvLogging
+import logger_helper.LoggingParameter
 import mu.KotlinLogging
 import simulation.Simulation
 import java.util.*
 
 private val logger = KotlinLogging.logger {}
 
-class AICA(val config: AICAConfig): Simulation<AICAConfig> {
+class AICA(val config: AICAConfig) : Simulation<AICAConfig> {
     override fun optimize(jobList: List<Job>, config: AICAConfig): Pair<List<Job>, Double> {
         LoggingParameter.reset()
         val startCountries = (0 until config.popSize).map { Country(jobList.shuffled()) }
@@ -29,7 +29,7 @@ class AICA(val config: AICAConfig): Simulation<AICAConfig> {
             empires = eliminatingPowerlessEmpires(empires)
 
             val bestEmpireForIteration = empires.sortedBy { it.emperor.getCost() }.first().emperor
-            if(globalBestEmperor == null || bestEmpireForIteration.getCost() < globalBestEmperor.getCost()) {
+            if (globalBestEmperor == null || bestEmpireForIteration.getCost() < globalBestEmperor.getCost()) {
                 globalBestEmperor = bestEmpireForIteration
             }
             LoggingParameter.iteration = currentIteration
@@ -40,14 +40,14 @@ class AICA(val config: AICAConfig): Simulation<AICAConfig> {
             CsvLogging.writeNextEntry()
 
             if (!stoppingCriteriaIsReached(empires, currentIteration, config.maxIterations) && currentIteration % config.I_gw == 0) {
-                for(j in 0 until config.N_GW) {
+                for (j in 0 until config.N_GW) {
                     empires = createEmpires(globalWar(empires, config.popSize))
                 }
             }
 
         } while (!stoppingCriteriaIsReached(empires, currentIteration, config.maxIterations))
         logger.warn { " AICA: ${globalBestEmperor?.getCost()} with ${LoggingParameter.evaluationIteration} evaluations" }
-        if(globalBestEmperor == null) {
+        if (globalBestEmperor == null) {
             throw Exception("no global emperor")
         }
         return Pair(globalBestEmperor.representation, globalBestEmperor.getCost())
@@ -189,15 +189,15 @@ class AICA(val config: AICAConfig): Simulation<AICAConfig> {
                 for (j in 0 until empiresChange) {
                     var imperialistMod: Country? = null
                     for (i in 0 until changesInEmpires) {
-                        val pos1 = Random().nextInt(empire.emperor.representation.size)
-                        val pos2 = Random().nextInt(empire.emperor.representation.size)
+                        val pos1 = getRandomInteger(empire.emperor.representation.size)
+                        val pos2 = getRandomInteger(empire.emperor.representation.size)
                         val newRepresentation = empire.emperor.representation.toMutableList()
                         val cacheJob = newRepresentation[pos1]
                         newRepresentation[pos1] = newRepresentation[pos2]
                         newRepresentation[pos2] = cacheJob
                         imperialistMod = Country(newRepresentation)
                     }
-                    if(imperialistMod != null){
+                    if (imperialistMod != null) {
                         val badestColony = empire.getColonies().sortedBy { it.getCost() }.last()
                         empire.removeColony(badestColony)
                         empire.addColony(imperialistMod)
@@ -205,6 +205,10 @@ class AICA(val config: AICAConfig): Simulation<AICAConfig> {
                 }
             }
         }
+    }
+
+    internal fun getRandomInteger(limit: Int): Int {
+        return Random().nextInt(limit)
     }
 
     internal fun globalWar(empires: List<Empire>, popSize: Int): List<Country> {

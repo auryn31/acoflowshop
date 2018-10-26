@@ -76,9 +76,9 @@ object ACO : Simulation<ACOConfig> {
             logger.info { "best ant: ${bestGlobalAnt.jobQue} with length: ${bestGlobalAnt.getDuationForMTCWithourRecalculation()}" }
             logger.info { "TIME ${System.currentTimeMillis() - start}" }
             LoggingParameter.iteration = solutionNumber
-            LoggingParameter.bestDuration = bestGlobalAnt.getDurationForMCT(solutionNumber)!!
+            LoggingParameter.bestDuration = bestGlobalAnt.getDurationForMCT(solutionNumber) ?: 0.0
             LoggingParameter.currentTime = System.currentTimeMillis() - start
-            LoggingParameter.reworkTimeInPercentage = bestGlobalAnt.reworkPercentage!!
+            LoggingParameter.reworkTimeInPercentage = bestGlobalAnt.reworkPercentage ?: 0.0
 //            LoggingParameter.iteration = solutionNumber
 //            LoggingParameter.bestDuration = eliteAnt.getDurationForMCT(solutionNumber)!!
 //            LoggingParameter.currentTime = System.currentTimeMillis() - start
@@ -86,7 +86,7 @@ object ACO : Simulation<ACOConfig> {
             CsvLogging.writeNextEntry()
             PheromonLogger.writeEntryIntoDB(solutionNumber, pheromone)
         }
-        return Pair(bestGlobalAnt.jobQue.toList(), bestGlobalAnt.getDurationForMCT(10)?:0.0)
+        return Pair(bestGlobalAnt.jobQue.toList(), bestGlobalAnt.getDurationForMCT(10) ?: 0.0)
     }
 
 
@@ -189,7 +189,7 @@ object ACO : Simulation<ACOConfig> {
             bestGlobalAnt.getDurationForMCT(iteration)
         } else if (currentDuration != null && globalDuration != null && currentDuration < globalDuration) {
             bestGlobalAnt.jobQue = bestAnt.jobQue
-            bestGlobalAnt.setDurationForMCT(currentDuration, bestAnt.reworkPercentage?:0.0)
+            bestGlobalAnt.setDurationForMCT(currentDuration, bestAnt.reworkPercentage ?: 0.0)
         }
     }
 }

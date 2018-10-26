@@ -15,7 +15,7 @@ class HelperTest {
 
     @Test
     fun testWriteJobListToFile(){
-        val jobList = Helper.createRandomJobList(100)
+        val jobList = Helper.createRandomJobList(50)
         Helper.writeJobListToFile(jobList, "jsonJobTest")
         val file = File("jsonJobTest.json")
         assertTrue(file.delete())
