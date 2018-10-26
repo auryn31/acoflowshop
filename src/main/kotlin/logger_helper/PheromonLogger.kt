@@ -35,12 +35,12 @@ object PheromonLogger {
         }
     }
 
-    fun writeEntryIntoDB(iteration: Int, pheromonList: MutableList<MutableList<Double>>) {
+    fun writeEntryIntoDB(iteration: Int, pheromonList: List<List<Double>>) {
         if (config !== null && config.dbLogging) {
             val document = Document()
             document.put("_id", iteration)
             document.put("pheromon", pheromonList.map { it.map { (it * 100).toInt() } })
-            collection!!.insertOne(document)
+            collection?.insertOne(document)
         }
 
     }
@@ -48,9 +48,9 @@ object PheromonLogger {
     fun initDB() {
         if (config !== null && config.dbLogging) {
             mongo = MongoClient()
-            db = mongo!!.getDatabase("pheromon")
-            collection = db!!.getCollection("pheromonValues")
-            collection!!.drop()
+            db = mongo?.getDatabase("pheromon")
+            collection = db?.getCollection("pheromonValues")
+            collection?.drop()
         }
     }
 

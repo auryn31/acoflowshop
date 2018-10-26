@@ -46,8 +46,11 @@ class AICA(val config: AICAConfig): Simulation<AICAConfig> {
             }
 
         } while (!stoppingCriteriaIsReached(empires, currentIteration, config.maxIterations))
-        logger.warn { " AICA: ${globalBestEmperor!!.getCost()} with ${LoggingParameter.evaluationIteration} evaluations" }
-        return Pair(globalBestEmperor!!.representation, globalBestEmperor.getCost())
+        logger.warn { " AICA: ${globalBestEmperor?.getCost()} with ${LoggingParameter.evaluationIteration} evaluations" }
+        if(globalBestEmperor == null) {
+            throw Exception("no global emperor")
+        }
+        return Pair(globalBestEmperor.representation, globalBestEmperor.getCost())
     }
 
     internal fun createEmpires(countries: List<Country>): List<Empire> {
@@ -100,7 +103,7 @@ class AICA(val config: AICAConfig): Simulation<AICAConfig> {
                     }
                 }
                 empire.removeColony(colony)
-                empire.addColony(Country(newColony.map { it!! }.toMutableList()))
+                empire.addColony(Country(newColony.filterNotNull().map { it }.toMutableList()))
             }
         }
         return empires

@@ -79,7 +79,7 @@ class AntTest {
         )
         val pheromonList = listOf(1.0, 0.5)
         val nextJob = hashMap[ant.findKey(0.4, pheromonList)]
-        assertEquals(0, nextJob!!.id)
+        assertEquals(0, nextJob?.id)
     }
 
     @Test
@@ -92,7 +92,7 @@ class AntTest {
         )
         val pheromonList = hashMap.keys.sorted().toList()
         val nextJob = hashMap[ant.findKey(0.3111, pheromonList)]
-        assertEquals(1, nextJob!!.id)
+        assertEquals(1, nextJob?.id)
     }
 
     @Test

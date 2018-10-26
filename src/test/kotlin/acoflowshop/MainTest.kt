@@ -28,7 +28,7 @@ class MainTest {
         ant2.calculateDurationWithMCT(1)
         val ants = listOf(ant1, ant2)
         val best = ACO.findBestAntForMCT(ants, 1)
-        assertEquals(3.5, best!!.getDuationForMTCWithourRecalculation())
+        assertEquals(3.5, best?.getDuationForMTCWithourRecalculation())
     }
 
     @Test

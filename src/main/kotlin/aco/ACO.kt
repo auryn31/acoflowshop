@@ -13,12 +13,12 @@ import simulation.Simulation
 
 private val logger = KotlinLogging.logger {}
 
-object ACO: Simulation<ACOConfig> {
+object ACO : Simulation<ACOConfig> {
 
     // MTC = Mean Completion Time --> Durchschnittliche Fertigstellungszeit
     override fun optimize(jobList: List<Job>, config: ACOConfig): Pair<List<Job>, Double> {
         val ants: MutableList<Ant> = (0..(config.antFactor * jobList.size).toInt()).map { Ant() }.toMutableList()
-        var pheromone: MutableList<MutableList<Double>>? = null
+        var pheromone: List<List<Double>> = emptyList()
         var eliteAnt: Ant? = null
         val start = System.currentTimeMillis()
         var solutionNumber = 0
@@ -39,7 +39,7 @@ object ACO: Simulation<ACOConfig> {
                 pheromone = initWithSeed(jobList.size, nehList, config.evaporation)
             }
         }
-        if (pheromone == null) {
+        if (pheromone.isEmpty()) {
             pheromone = initEmptyPheromonMatrix(jobList.size)
         }
 
@@ -51,20 +51,22 @@ object ACO: Simulation<ACOConfig> {
             logger.info { "################### - iteration: ${solutionNumber} - ###################" }
             for (i in 0 until jobList.size) {
                 ants.forEach {
-                    it.selectNextJobAndAddToJobQue(jobHashmap, pheromone!!)
+                    it.selectNextJobAndAddToJobQue(jobHashmap, pheromone)
                 }
             }
             ants.forEach { it.calculateDurationWithMCT(solutionNumber) }
             val bestAnt = findBestAntForMCT(ants, solutionNumber)
             if (bestAnt != null) {
-                pheromone = updateJobPosPheromoneForAnt(bestAnt, pheromone!!, config.evaporation)
-                if(config.withEliteSolution) {
-                    pheromone = updateJobPosPheromoneForAnt(eliteAnt!!, pheromone, config.evaporation)
+                pheromone = updateJobPosPheromoneForAnt(bestAnt, pheromone, config.evaporation)
+                if (config.withEliteSolution && eliteAnt != null) {
+                    pheromone = updateJobPosPheromoneForAnt(eliteAnt, pheromone, config.evaporation)
                 }
                 updateGlobalBestAntForACIS(bestGlobalAnt, bestAnt, solutionNumber)
 
-                if (config.withEliteSolution && bestAnt.getDurationForMCT(solutionNumber)!! < eliteAnt!!.getDurationForMCT(solutionNumber)!!) {
-                    eliteAnt.setDurationForMCT(bestAnt.getDurationForMCT(solutionNumber)!!, bestAnt.reworkPercentage!!)
+                if (config.withEliteSolution && (bestAnt.getDurationForMCT(solutionNumber)
+                                ?: 0.0) < (eliteAnt?.getDurationForMCT(solutionNumber) ?: 0.0)) {
+                    eliteAnt?.setDurationForMCT(bestAnt.getDurationForMCT(solutionNumber)
+                            ?: 0.0, bestAnt.reworkPercentage ?: 0.0)
                 }
             }
             logger.info { pheromone }
@@ -82,10 +84,11 @@ object ACO: Simulation<ACOConfig> {
 //            LoggingParameter.currentTime = System.currentTimeMillis() - start
 //            LoggingParameter.reworkTimeInPercentage = eliteAnt.reworkPercentage!!
             CsvLogging.writeNextEntry()
-            PheromonLogger.writeEntryIntoDB(solutionNumber, pheromone!!)
+            PheromonLogger.writeEntryIntoDB(solutionNumber, pheromone)
         }
-        return Pair(bestGlobalAnt.jobQue.toList(), bestGlobalAnt.getDurationForMCT(10)!!)
+        return Pair(bestGlobalAnt.jobQue.toList(), bestGlobalAnt.getDurationForMCT(10)?:0.0)
     }
+
 
     private fun calculateNEHSolution(jobList: List<Job>): Pair<MutableList<Job>, Pair<Double, Double>> {
         val jobs = jobList.sortedBy { it.durationMachineOne + it.durationMachineTwo }
@@ -105,7 +108,7 @@ object ACO: Simulation<ACOConfig> {
     /**
      * leere pheromonmatrix erstellen
      */
-    fun initEmptyPheromonMatrix(size: Int): MutableList<MutableList<Double>> {
+    fun initEmptyPheromonMatrix(size: Int): List<List<Double>> {
         val pheromonValue = 1.0 / size.toDouble()
         return (0 until size).map { (0 until size).map { pheromonValue }.toMutableList() }.toMutableList()
     }
@@ -113,7 +116,7 @@ object ACO: Simulation<ACOConfig> {
     /**
      * start mit einer vorinitialisierten matrix die nicht überall gleich ist, sondern mit dem neh startete
      */
-    fun initWithSeed(size: Int, seedList: List<Job>, evaporation: Double): MutableList<MutableList<Double>> {
+    fun initWithSeed(size: Int, seedList: List<Job>, evaporation: Double): List<List<Double>> {
         var emptyList = initEmptyPheromonMatrix(size)
         val ant = Ant()
         ant.jobQue = seedList.toMutableList()
@@ -127,41 +130,43 @@ object ACO: Simulation<ACOConfig> {
      * Job x Position
      * Verdunsten der Pheromone und hinzufügen der Gesamtmenge an verdunsteten Pheromonen zum passenden Job
      */
-    fun updateJobPosPheromoneForAnt(ant: Ant, pheromonMatrix: MutableList<MutableList<Double>>, evaporation: Double): MutableList<MutableList<Double>> {
-        for (i in 0 until pheromonMatrix.size) {
+    fun updateJobPosPheromoneForAnt(ant: Ant, pheromonMatrix: List<List<Double>>, evaporation: Double): List<List<Double>> {
+        val mutablePheromonMatrix = pheromonMatrix.map { it.toMutableList() }.toMutableList()
+        for (i in 0 until mutablePheromonMatrix.size) {
             var evaporatedValue = 0.0
-            for (j in 0 until pheromonMatrix[i].size) {
-                val evaporationValue = pheromonMatrix[i][j] * evaporation
-                pheromonMatrix[i][j] -= evaporationValue
+            for (j in 0 until mutablePheromonMatrix[i].size) {
+                val evaporationValue = mutablePheromonMatrix[i][j] * evaporation
+                mutablePheromonMatrix[i][j] -= evaporationValue
                 evaporatedValue += evaporationValue
             }
-            pheromonMatrix[i][ant.jobQue[i].id] += evaporatedValue
+            mutablePheromonMatrix[i][ant.jobQue[i].id] += evaporatedValue
         }
-        return pheromonMatrix
+        return mutablePheromonMatrix
     }
 
     /**
      * Job x Job
      * Verdunsten der Pheromone und hinzufügen der Gesamtmenge an verdunsteten Pheromonen zum passenden Job
      */
-    fun updateJobJobPheromoneForAnt(ant: Ant, pheromonMatrix: MutableList<MutableList<Double>>, evaporation: Double): MutableList<MutableList<Double>> {
-        for (i in 0 until pheromonMatrix.size) {
+    fun updateJobJobPheromoneForAnt(ant: Ant, pheromonMatrix: List<List<Double>>, evaporation: Double): List<List<Double>> {
+        val mutablePheromonMatrix = pheromonMatrix.map { it.toMutableList() }.toMutableList()
+        for (i in 0 until mutablePheromonMatrix.size) {
             var evaporatedValue = 0.0
-            for (j in 0 until pheromonMatrix[i].size) {
-                val evaporationValue = pheromonMatrix[i][j] * evaporation
-                pheromonMatrix[i][j] -= evaporationValue
+            for (j in 0 until mutablePheromonMatrix[i].size) {
+                val evaporationValue = mutablePheromonMatrix[i][j] * evaporation
+                mutablePheromonMatrix[i][j] -= evaporationValue
                 evaporatedValue += evaporationValue
             }
             for (j in 0 until ant.jobQue.size) {
                 if (ant.jobQue[j].id == i) {
-                    if (j + 1 != pheromonMatrix.size)
-                        pheromonMatrix[i][ant.jobQue[j + 1].id] += evaporatedValue
+                    if (j + 1 != mutablePheromonMatrix.size)
+                        mutablePheromonMatrix[i][ant.jobQue[j + 1].id] += evaporatedValue
                     else
-                        pheromonMatrix[i][ant.jobQue[0].id] += evaporatedValue
+                        mutablePheromonMatrix[i][ant.jobQue[0].id] += evaporatedValue
                 }
             }
         }
-        return pheromonMatrix
+        return mutablePheromonMatrix
     }
 
     /**
@@ -184,7 +189,7 @@ object ACO: Simulation<ACOConfig> {
             bestGlobalAnt.getDurationForMCT(iteration)
         } else if (currentDuration != null && globalDuration != null && currentDuration < globalDuration) {
             bestGlobalAnt.jobQue = bestAnt.jobQue
-            bestGlobalAnt.setDurationForMCT(currentDuration, bestAnt.reworkPercentage!!)
+            bestGlobalAnt.setDurationForMCT(currentDuration, bestAnt.reworkPercentage?:0.0)
         }
     }
 }

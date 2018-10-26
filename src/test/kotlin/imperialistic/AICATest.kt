@@ -16,7 +16,10 @@ import org.powermock.core.MockRepository
 import org.powermock.modules.junit4.PowerMockRunner
 import java.io.File
 import java.util.*
-import kotlin.test.*
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertNotEquals
+import kotlin.test.assertTrue
 
 @RunWith(PowerMockRunner::class)
 class AICATest {
@@ -25,7 +28,7 @@ class AICATest {
     var aica: AICA? = null
 
     @Before
-    fun initTests(){
+    fun initTests() {
         val mapper = ObjectMapper().registerModule(KotlinModule())
         this.config = mapper.readValue(File("src/test/resources/AICATestConfig.json"), AICAConfig::class.java)
         this.aica = AICA(config!!)
@@ -105,7 +108,7 @@ class AICATest {
         val empires = mutableListOf(
                 empire
         )
-        val newEmpires = aica!!.exchangeEmperorPositionIfThereIsAnBetterCountry(empires)
+        val newEmpires = aica?.exchangeEmperorPositionIfThereIsAnBetterCountry(empires) ?: empires
         assertEquals(jobList, newEmpires[0].emperor.representation)
         assertNotEquals(empireList, newEmpires[0].emperor.representation)
         assertEquals(empireList, newEmpires[0].getColony(0).representation)
@@ -127,7 +130,7 @@ class AICATest {
         val empires = mutableListOf(
                 empire
         )
-        val newEmpires = aica!!.exchangeEmperorPositionIfThereIsAnBetterCountry(empires)
+        val newEmpires = aica?.exchangeEmperorPositionIfThereIsAnBetterCountry(empires) ?: empires
         assertEquals(empireList, newEmpires[0].emperor.representation)
         assertNotEquals(jobList, newEmpires[0].emperor.representation)
         assertEquals(jobList, newEmpires[0].getColony(0).representation)
@@ -143,9 +146,9 @@ class AICATest {
         val country2 = Country(empireList)
         val country3 = Country(empireList)
 
-        val empires = aica!!.createEmpires(listOf(country1, country2, country3))
-        assertEquals(3, empires.size)
-        assertEquals(0, empires.filter { it.getColonies().isNotEmpty() }.size)
+        val empires = aica?.createEmpires(listOf(country1, country2, country3))
+        assertEquals(3, empires?.size)
+        assertEquals(0, empires?.filter { it.getColonies().isNotEmpty() }?.size)
     }
 
     @Test
@@ -166,7 +169,7 @@ class AICATest {
     @Test
     fun imperialisticCompetitionTest() {
         val rand = mockk<Random>()
-        every { rand.nextDouble() }.returns( 0.5)
+        every { rand.nextDouble() }.returns(0.5)
         PowerMockito.whenNew(Random::class.java).withNoArguments().thenReturn(rand)
 
         val jobList1 = mutableListOf(
@@ -193,7 +196,7 @@ class AICATest {
                 empire2,
                 empire3
         )
-        val newEmpires = aica!!.imperialisticCompetition(empires)
+        val newEmpires = aica?.imperialisticCompetition(empires) ?: empires
         MockRepository.remove(Random::class)
         assertEquals(0, newEmpires.filter { it == empire1 }[0].getColonies().size)
     }
@@ -223,7 +226,7 @@ class AICATest {
                 empire2,
                 empire3
         )
-        val newEmpires = aica!!.eliminatingPowerlessEmpires(empires)
+        val newEmpires = aica?.eliminatingPowerlessEmpires(empires) ?: empires
 
         assertEquals(2, newEmpires.size)
         assertEquals(2, newEmpires.sortedByDescending { it.getNumberOfColonies() }[0].getNumberOfColonies())
@@ -286,14 +289,14 @@ class AICATest {
         val country = Country(jobListForEmpire)
         val empire = Empire(country)
         val empires = listOf(empire)
-        aica!!.empireRevolution(empires)
+        aica?.empireRevolution(empires)
         assertEquals(empires, empires)
     }
 
     @Test
     fun empireRevolutionTest1() {
         val rand = mockk<Random>()
-        every { rand.nextDouble() }.returns( 0.5).andThen(1.0)
+        every { rand.nextDouble() }.returns(0.5).andThen(1.0)
         PowerMockito.whenNew(Random::class.java).withNoArguments().thenReturn(rand)
         val jobList1 = mutableListOf(
                 Job(1, 3, 1, 0),
@@ -312,15 +315,15 @@ class AICATest {
         val colonyList = listOf(Country(jobList1), Country(jobList2))
         empire.setColony(colonyList)
         val empires = listOf(empire)
-        aica!!.empireRevolution(empires)
+        aica?.empireRevolution(empires)
         MockRepository.remove(Random::class)
         assertNotEquals(colonyList, empires[0].getColonies())
     }
 
     @Test
-    fun colonyRevolutionTest(){
+    fun colonyRevolutionTest() {
         val rand = mockk<Random>()
-        every { rand.nextDouble() }.returns( 0.5).andThen(1.0)
+        every { rand.nextDouble() }.returns(0.5).andThen(1.0)
         PowerMockito.whenNew(Random::class.java).withNoArguments().thenReturn(rand)
         val jobList1 = mutableListOf(
                 Job(1, 3, 1, 0),
@@ -339,13 +342,13 @@ class AICATest {
         val colonyList = listOf(Country(jobList1), Country(jobList2))
         empire.setColony(colonyList)
         val empires = listOf(empire)
-        aica!!.colonyRevolution(empires)
+        aica?.colonyRevolution(empires)
         MockRepository.remove(Random::class)
         assertNotEquals(colonyList, empires[0].getColonies())
     }
 
     @Test
-    fun resetTest(){
+    fun resetTest() {
         val jobList1 = mutableListOf(
                 Job(1, 3, 1, 0),
                 Job(3, 1, 1, 1),
@@ -363,15 +366,15 @@ class AICATest {
         val colonyList = listOf(Country(jobList1), Country(jobList2))
         empire.setColony(colonyList)
         val empires = listOf(empire)
-        val newColonies = aica!!.globalWar(empires, 3)
-        assertEquals(3, newColonies.size)
+        val newColonies = aica?.globalWar(empires, 3)
+        assertEquals(3, newColonies?.size)
     }
 
     @Test
-    fun optimizeForMCTTest(){
+    fun optimizeForMCTTest() {
         val jobList = Helper.createRandomJobList(10)
         val mapper = ObjectMapper().registerModule(KotlinModule())
         val config = mapper.readValue(File("src/test/resources/AICATestConfig.json"), AICAConfig::class.java)
-        aica!!.optimize(jobList, config) // 1000, 100
+        aica?.optimize(jobList, config) // 1000, 100
     }
 }
