@@ -6,6 +6,9 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.apache.commons.math3.distribution.ExponentialDistribution
 import java.io.File
+import java.math.RoundingMode
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
 import java.util.*
 
 object Helper {
@@ -28,12 +31,12 @@ object Helper {
         val jobList = mutableListOf<Job>()
 
         for (i in 0 until length) {
-            val durationM1 = Random().nextInt(30)
-            val durationM2 = Random().nextInt(30)
-            val setupM1 = Random().nextInt(30)
-            val setupM2 = Random().nextInt(30)
-            val reworkM1 = ((0.3 * Random().nextDouble() + 0.3) * durationM1).toInt()
-            val reworkM2 = ((0.3 * Random().nextDouble() + 0.3) * durationM2).toInt()
+            val durationM1 = Random().nextInt(30)+1
+            val durationM2 = Random().nextInt(30)+1
+            val setupM1 = Random().nextInt(30)+1
+            val setupM2 = Random().nextInt(30)+1
+            val reworkM1 = ((0.3 * Random().nextDouble() + 0.3) * durationM1).toInt()+1
+            val reworkM2 = ((0.3 * Random().nextDouble() + 0.3) * durationM2).toInt()+1
             jobList.add(
                     Job(
                             id = i,
@@ -55,7 +58,10 @@ object Helper {
         do {
             returnValue = expHelper.sample()
         } while (returnValue >= 1.0 || returnValue <= 0.0)
-        return returnValue
+        val df = DecimalFormat("#.####")
+        df.roundingMode = RoundingMode.CEILING
+        df.decimalFormatSymbols = DecimalFormatSymbols(Locale.ENGLISH)
+        return df.format(returnValue).toDouble()
     }
 
     fun createHashMapFromJobList(jobs: List<Job>): HashMap<Job, Int>{
