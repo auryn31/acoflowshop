@@ -4,6 +4,6 @@
   "antFactor": 0.05,
   "dbLogging": false,
   "fileLogging": true,
-  "initMatrixWithNEH": true,
-  "withEliteSolution": false
+  "initMatrixWithNEH": false,
+  "withEliteSolution": true
 }

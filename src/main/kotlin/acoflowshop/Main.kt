@@ -16,19 +16,21 @@ private val logger = KotlinLogging.logger {}
 
 private val jobList: List<Job> = Helper.readJobListFromFile("100Jobs")//.subList(0, 50)
 private val mapper = ObjectMapper().registerModule(KotlinModule())
-private val acoConfig = mapper.readValue(File("src/main/resources/ACOConfig.json"), ACOConfig::class.java)!!
-private val aicaConfig = mapper.readValue(File("src/main/resources/AICAConfig.json"), AICAConfig::class.java)!!
 
 fun main(args: Array<String>) {
+    val path = args[0]
+
+    val acoConfig = mapper.readValue(File("$path/ACOConfig.json"), ACOConfig::class.java)!!
+    val aicaConfig = mapper.readValue(File("$path/AICAConfig.json"), AICAConfig::class.java)!!
 
     CsvLogging.fileLogging = acoConfig.fileLogging
     CsvLogging.createLoggingFile()
     LoggingParameter.reset()
 
     for (i in 0 until 5) {
-        CsvLogging.fileName = "results/current_iteration_$i"
+        CsvLogging.fileName = "$path/current_iteration_$i"
         CsvLogging.createLoggingFile()
-        calculateWithMeanCompletionTimeForACO()
+        calculateWithMeanCompletionTimeForACO(acoConfig)
         val aica = AICA(aicaConfig)
         aica.optimize(jobList, aicaConfig)
         LoggingParameter.reset()
@@ -36,7 +38,7 @@ fun main(args: Array<String>) {
 
 }
 
-fun calculateWithMeanCompletionTimeForACO() {
+fun calculateWithMeanCompletionTimeForACO(acoConfig: ACOConfig) {
 
     PheromonLogger.initDB()
     LoggingParameter.reset()

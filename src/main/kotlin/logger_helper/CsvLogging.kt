@@ -34,7 +34,8 @@ object CsvLogging {
     fun writeNextEntry() {
         LOGGER.info { "${LoggingParameter.iteration} - ${LoggingParameter.bestDuration} - ${LoggingParameter.currentTime}" }
         if (fileLogging) {
-            File("$fileName.csv").appendText("${LoggingParameter.iteration},${LoggingParameter.bestDuration},${LoggingParameter.currentTime},${LoggingParameter.evaluationIteration},${LoggingParameter.reworkTimeInPercentage}\n")
+            File("$fileName.csv")
+                    .appendText("${LoggingParameter.iteration},${LoggingParameter.bestDuration},${LoggingParameter.currentTime},${LoggingParameter.evaluationIteration},${LoggingParameter.reworkTimeInPercentage}\n")
         }
     }
 }
