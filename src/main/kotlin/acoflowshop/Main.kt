@@ -23,7 +23,6 @@ private val mapper = ObjectMapper().registerModule(KotlinModule())
 fun main(args: Array<String>) {
     val path = args[0]
 
-//    evaluateACOforAntFactor(path)
     evaluateACOforEvaporation(path)
 /*
     val acoConfig = mapper.readValue(File("$path/ACOConfig.json"), ACOConfig::class.java)!!
@@ -43,8 +42,24 @@ fun main(args: Array<String>) {
     }*/
 }
 
-fun evaluateACOforEvaporation(path: String){
+fun evaluateACOforInitMatrixWithNEH(path: String){
     val configs = listOf("003", "004", "005", "006")
+    val acoConfigs = configs.map { mapper.readValue(File("$path/$it.json"), ACOConfig::class.java)!! }
+
+    for(i in 0 until acoConfigs.size){
+        CsvLogging.fileLogging = acoConfigs[i].fileLogging
+        for (j in 0 until 10) {
+            CsvLogging.fileName = "$path/config_${i}_iteration_$j"
+            CsvLogging.createLoggingFile()
+            calculateWithMeanCompletionTimeForACO(acoConfigs[i])
+            LoggingParameter.reset()
+        }
+    }
+    calculateMean(path, configs)
+}
+
+fun evaluateACOforEvaporation(path: String){
+    val configs = listOf("true", "false")
     val acoConfigs = configs.map { mapper.readValue(File("$path/$it.json"), ACOConfig::class.java)!! }
 
     for(i in 0 until acoConfigs.size){
