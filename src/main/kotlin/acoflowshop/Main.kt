@@ -24,7 +24,8 @@ fun main(args: Array<String>) {
     val path = args[0]
 
 //    evaluateACOforAntFactor(path)
-    
+    evaluateACOforEvaporation(path)
+/*
     val acoConfig = mapper.readValue(File("$path/ACOConfig.json"), ACOConfig::class.java)!!
     val aicaConfig = mapper.readValue(File("$path/AICAConfig.json"), AICAConfig::class.java)!!
 
@@ -39,7 +40,23 @@ fun main(args: Array<String>) {
         val aica = AICA(aicaConfig)
         aica.optimize(jobList, aicaConfig)
         LoggingParameter.reset()
+    }*/
+}
+
+fun evaluateACOforEvaporation(path: String){
+    val configs = listOf("003", "004", "005", "006")
+    val acoConfigs = configs.map { mapper.readValue(File("$path/$it.json"), ACOConfig::class.java)!! }
+
+    for(i in 0 until acoConfigs.size){
+        CsvLogging.fileLogging = acoConfigs[i].fileLogging
+        for (j in 0 until 10) {
+            CsvLogging.fileName = "$path/config_${i}_iteration_$j"
+            CsvLogging.createLoggingFile()
+            calculateWithMeanCompletionTimeForACO(acoConfigs[i])
+            LoggingParameter.reset()
+        }
     }
+    calculateMean(path, configs)
 }
 
 fun evaluateACOforAntFactor(path: String){
@@ -69,7 +86,7 @@ fun calculateMean(path:String, inputFiles: List<String>) {
         val listOfCalculationTime = mutableListOf(listOf<Int>())
         listOfRecords.removeAt(0)
         listOfCalculationTime.removeAt(0)
-        for(j in 0 until 9) {
+        for(j in 0 until 10) {
             try {
                 fileReader = BufferedReader(FileReader("$path/config_${i}_iteration_$j.csv"))
                 csvParser = CSVParser(fileReader,
