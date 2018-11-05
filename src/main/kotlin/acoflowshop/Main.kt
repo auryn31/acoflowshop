@@ -23,8 +23,6 @@ private val mapper = ObjectMapper().registerModule(KotlinModule())
 fun main(args: Array<String>) {
     val path = args[0]
 
-    evaluateACOforEvaporation(path)
-/*
     val acoConfig = mapper.readValue(File("$path/ACOConfig.json"), ACOConfig::class.java)!!
     val aicaConfig = mapper.readValue(File("$path/AICAConfig.json"), AICAConfig::class.java)!!
 
@@ -39,7 +37,7 @@ fun main(args: Array<String>) {
         val aica = AICA(aicaConfig)
         aica.optimize(jobList, aicaConfig)
         LoggingParameter.reset()
-    }*/
+    }
 }
 
 fun evaluateACOforInitMatrixWithNEH(path: String){
