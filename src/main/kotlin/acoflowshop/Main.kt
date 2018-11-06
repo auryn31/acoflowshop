@@ -1,7 +1,6 @@
 package acoflowshop
 
 import aco.ACO
-import aco.Ant
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import global.*
@@ -22,22 +21,23 @@ private val mapper = ObjectMapper().registerModule(KotlinModule())
 
 fun main(args: Array<String>) {
     val path = args[0]
+    evaluateACOforAntFactor(path)
 
-    val acoConfig = mapper.readValue(File("$path/ACOConfig.json"), ACOConfig::class.java)!!
-    val aicaConfig = mapper.readValue(File("$path/AICAConfig.json"), AICAConfig::class.java)!!
-
-    CsvLogging.fileLogging = acoConfig.fileLogging
-    CsvLogging.createLoggingFile()
-    LoggingParameter.reset()
-
-    for (i in 0 until 5) {
-        CsvLogging.fileName = "$path/current_iteration_$i"
-        CsvLogging.createLoggingFile()
-        calculateWithMeanCompletionTimeForACO(acoConfig)
-        val aica = AICA(aicaConfig)
-        aica.optimize(jobList, aicaConfig)
-        LoggingParameter.reset()
-    }
+//    val acoConfig = mapper.readValue(File("$path/ACOConfig.json"), ACOConfig::class.java)!!
+//    val aicaConfig = mapper.readValue(File("$path/AICAConfig.json"), AICAConfig::class.java)!!
+//
+//    CsvLogging.fileLogging = acoConfig.fileLogging
+//    CsvLogging.createLoggingFile()
+//    LoggingParameter.reset()
+//
+//    for (i in 0 until 5) {
+//        CsvLogging.fileName = "$path/current_iteration_$i"
+//        CsvLogging.createLoggingFile()
+//        calculateWithMeanCompletionTimeForACO(acoConfig)
+//        val aica = AICA(aicaConfig)
+//        aica.optimize(jobList, aicaConfig)
+//        LoggingParameter.reset()
+//    }
 }
 
 fun evaluateACOforInitMatrixWithNEH(path: String){

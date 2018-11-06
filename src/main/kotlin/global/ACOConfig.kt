@@ -6,4 +6,4 @@ data class ACOConfig(val evaporation: Double,
                      val dbLogging: Boolean,
                      val fileLogging: Boolean,
                      val initMatrixWithNEH: Boolean,
-                     val withEliteSolution: Boolean): Config
+                     val withEliteSolution: Double): Config

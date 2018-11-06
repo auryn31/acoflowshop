@@ -23,13 +23,13 @@ object ACO : Simulation<ACOConfig> {
         val start = System.currentTimeMillis()
         var solutionNumber = 0
 
-        if (config.initMatrixWithNEH || config.withEliteSolution) {
+        if (config.initMatrixWithNEH || config.withEliteSolution > 0.0) {
 
             val nehSolution = calculateNEHSolution(jobList)
             val nehList = nehSolution.first
             val nehDuration = nehSolution.second
 
-            if (config.withEliteSolution) {
+            if (config.withEliteSolution > 0.0) {
                 eliteAnt = Ant()
                 eliteAnt.jobQue = nehList
                 eliteAnt.setDurationForMCT(nehDuration.first, nehDuration.second)
@@ -57,13 +57,13 @@ object ACO : Simulation<ACOConfig> {
             ants.forEach { it.calculateDurationWithMCT(solutionNumber) }
             val bestAnt = findBestAntForMCT(ants, solutionNumber)
             if (bestAnt != null) {
-                pheromone = updateJobPosPheromoneForAnt(bestAnt, pheromone, config.evaporation)
-                if (config.withEliteSolution && eliteAnt != null) {
-                    pheromone = updateJobPosPheromoneForAnt(eliteAnt, pheromone, config.evaporation)
+                pheromone = updateJobPosPheromoneForAnt(bestAnt, pheromone, config.evaporation * (1.0 - config.withEliteSolution))
+                if (config.withEliteSolution > 0.0 && eliteAnt != null) {
+                    pheromone = updateJobPosPheromoneForAnt(eliteAnt, pheromone, config.evaporation * config.withEliteSolution)
                 }
                 updateGlobalBestAntForACIS(bestGlobalAnt, bestAnt, solutionNumber)
 
-                if (config.withEliteSolution && (bestAnt.getDurationForMCT(solutionNumber)
+                if (config.withEliteSolution > 0.0 && (bestAnt.getDurationForMCT(solutionNumber)
                                 ?: 0.0) < (eliteAnt?.getDurationForMCT(solutionNumber) ?: 0.0)) {
                     eliteAnt?.setDurationForMCT(bestAnt.getDurationForMCT(solutionNumber)
                             ?: 0.0, bestAnt.reworkPercentage ?: 0.0)

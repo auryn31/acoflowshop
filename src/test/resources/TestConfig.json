@@ -4,5 +4,5 @@
   "dbLogging": false,
   "fileLogging" : false,
   "initMatrixWithNEH": false,
-  "withEliteSolution": false
+  "withEliteSolution": 0.0
 }

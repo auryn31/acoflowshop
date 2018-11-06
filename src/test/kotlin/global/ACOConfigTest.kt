@@ -15,7 +15,7 @@ class ACOConfigTest {
         val mapper = ObjectMapper().registerModule(KotlinModule())
         try {
             val config = mapper.readValue(File("src/test/resources/TestConfig.json"), ACOConfig::class.java)
-            val expected = ACOConfig(0.05, 1000,0.01, false, false, false, false)
+            val expected = ACOConfig(0.05, 1000,0.01, false, false, false, 0.0)
             assertEquals(expected.toString(), config.toString())
         } catch (e: Exception) {
             e.printStackTrace()
