@@ -11,4 +11,9 @@ data class ACOConfig(val evaporation: Double,
                      val heuristic: Heuristik = Heuristik.NONE): Config
 
 
-enum class Heuristik {NONE, SAME_JOB_LENGTH}
+/*
+    SAME_JOB_LENGTH -> die selbe länge von Job n und Job n-1 auf maschine 1
+    SAME_LENGTH_ON_DIFFERENT_MACHINES -> die selbe länge von job n-1 auf maschine 2 und job n auf maschine 1
+ */
+enum class Heuristik {NONE, SAME_JOB_LENGTH, SAME_LENGTH_ON_DIFFERENT_MACHINES}
+

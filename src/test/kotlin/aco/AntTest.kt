@@ -3,6 +3,7 @@ package aco
 import acoflowshop.Job
 import global.ACOConfig
 import global.Helper
+import global.Heuristik
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -113,5 +114,125 @@ class AntTest {
     fun testFindNoBestAntForMCT() {
         val bestAnt = ACO.findBestAntForMCT(listOf(), 1)
         assertNull(bestAnt)
+    }
+
+    @Test
+    fun `heuristicForSameJobLength with some values` () {
+        val ant = Ant()
+        val jobList = listOf(
+                Job(1, 1, 1, 0),
+                Job(1, 1, 1, 1)
+        )
+        ant.jobQue = jobList.toMutableList()
+        val pheromonMatrix = mutableListOf(
+                mutableListOf(0.3, 0.3, 0.3),
+                mutableListOf(0.3, 0.3, 0.3),
+                mutableListOf(0.3, 0.3, 0.3)
+        )
+        val currentJob = Job(1, 1, 1, 2)
+        assertEquals(0.2152558101249671, ant.heuristicForSameJobLength(pheromonMatrix, 2, currentJob,0.3, 2.0))
+    }
+
+    @Test
+    fun `heuristicForSameJobLength with an empty beta` () {
+        val ant = Ant()
+        val jobList = listOf(
+                Job(1, 1, 1, 0),
+                Job(1, 1, 1, 1)
+        )
+        ant.jobQue = jobList.toMutableList()
+        val pheromonMatrix = mutableListOf(
+                mutableListOf(0.3, 0.3, 0.3),
+                mutableListOf(0.3, 0.3, 0.3),
+                mutableListOf(0.3, 0.3, 0.3)
+        )
+        val currentJob = Job(1, 1, 1, 2)
+        assertEquals(1.0, ant.heuristicForSameJobLength(pheromonMatrix, 2, currentJob,0.0, 0.3))
+    }
+
+    @Test
+    fun `heuristicForSameJobLengthSum with an empty beta` () {
+        val ant = Ant()
+        val jobList = listOf(
+                Job(1, 1, 1, 0),
+                Job(1, 1, 1, 1)
+        )
+        ant.jobQue = jobList.toMutableList()
+        val pheromonMatrix = mutableListOf(
+                mutableListOf(0.3, 0.3, 0.3),
+                mutableListOf(0.3, 0.3, 0.3),
+                mutableListOf(0.3, 0.3, 0.3)
+        )
+        val jobsToSchedule = hashMapOf<Job, Int>(
+                Pair(Job(1, 1, 1, 2), 2)
+        )
+        assertEquals(0.3, ant.heuristicForSameJobLengthSum(jobsToSchedule, pheromonMatrix, 2, 0.0))
+    }
+
+    @Test
+    fun `create an hashmap and evaluate without beta` () {
+        val ant = Ant()
+        val jobList = listOf(
+                Job(1, 1, 1, 0),
+                Job(1, 1, 1, 1)
+        )
+        ant.jobQue = jobList.toMutableList()
+        val pheromonMatrix = mutableListOf(
+                mutableListOf(0.3, 0.3, 0.3),
+                mutableListOf(0.3, 0.3, 0.3),
+                mutableListOf(0.3, 0.3, 0.3)
+        )
+        val jobsToSchedule = hashMapOf<Job, Int>(
+                Pair(Job(1, 1, 1, 2), 2)
+        )
+        val config = ACOConfig(0.03, 100, 0.4, heuristic = Heuristik.SAME_JOB_LENGTH)
+        assertEquals(hashMapOf(Pair(1.0, Job(1, 1, 1, 2))), ant.createHashmap(jobsToSchedule, pheromonMatrix, config))
+    }
+
+
+    @Test
+    fun `create an hashmap and evaluate with beta` () {
+        val ant = Ant()
+        val jobList = listOf(
+                Job(1, 1, 1, 0),
+                Job(1, 1, 1, 1)
+        )
+        ant.jobQue = jobList.toMutableList()
+        val pheromonMatrix = mutableListOf(
+                mutableListOf(0.3, 0.3, 0.3),
+                mutableListOf(0.3, 0.3, 0.3),
+                mutableListOf(0.3, 0.3, 0.3)
+        )
+        val jobsToSchedule = hashMapOf<Job, Int>(
+                Pair(Job(1, 1, 1, 2), 2)
+        )
+        val config = ACOConfig(0.03, 100, 0.4, heuristic = Heuristik.SAME_JOB_LENGTH, beta = 0.3)
+        assertEquals(hashMapOf(Pair(1.0, Job(1, 1, 1, 2))), ant.createHashmap(jobsToSchedule, pheromonMatrix, config))
+    }
+
+    @Test
+    fun `create an hashmap and evaluate with beta and different jobs` () {
+        val ant = Ant()
+        val jobList = listOf(
+                Job(1, 1, 1, 0),
+                Job(1, 1, 1, 1)
+        )
+        ant.jobQue = jobList.toMutableList()
+        val pheromonMatrix = mutableListOf(
+                mutableListOf(0.3, 0.3, 0.3, 0.1),
+                mutableListOf(0.3, 0.3, 0.3, 0.1),
+                mutableListOf(0.3, 0.3, 0.3, 0.1),
+                mutableListOf(0.3, 0.3, 0.2, 0.2)
+        )
+        val jobsToSchedule = hashMapOf<Job, Int>(
+                Pair(Job(1, 1, 1, 2), 2),
+                Pair(Job(1, 1, 1, 3), 3)
+        )
+        val config = ACOConfig(0.03, 100, 0.4, heuristic = Heuristik.SAME_JOB_LENGTH, beta = 0.3)
+        assertEquals(
+                hashMapOf(Pair(1.0, Job(1, 1, 1, 3)),
+                        Pair(0.5704838641764751, Job(1, 1, 1, 2))),
+                ant.createHashmap(jobsToSchedule, pheromonMatrix, config)
+        )
     }
 }

@@ -37,8 +37,6 @@ class Ant {
         return jobMap.get(key) ?: throw NullPointerException("Could not find next job in select next job!")
     }
 
-    //TODO: heuristische komponente hinzufügen
-    //TODO: heraus bekommen wie sich der parameter beta verhält
     fun createHashmap(jobsList: HashMap<Job, Int>, pheromonMatrix: List<List<Double>>, config: ACOConfig): HashMap<Double, Job> {
         val jobs = HashMap(jobsList)
         val nexPos = jobQue.size
@@ -49,31 +47,47 @@ class Ant {
 
         val pheromonSum =  when (config.heuristic){
             Heuristik.NONE -> jobs.map { pheromonMatrix[it.value][nexPos] }.reduce { acc, d ->  acc + d}
-            Heuristik.SAME_JOB_LENGTH -> heuristicForSameJobLengthSum(jobs, pheromonMatrix, nexPos, config)
+            Heuristik.SAME_JOB_LENGTH -> heuristicForSameJobLengthSum(jobs, pheromonMatrix, nexPos, config.beta)
+            Heuristik.SAME_LENGTH_ON_DIFFERENT_MACHINES -> heuristicForSameJobLengthOnDifferenMachinesSum(jobs, pheromonMatrix, nexPos, config.beta)
         }
 
         for (i in jobs) {
             jobMap[pheromonValue] = i.key
             pheromonValue -= when(config.heuristic) {
                 Heuristik.NONE -> pheromonMatrix[i.value][nexPos] / pheromonSum
-                Heuristik.SAME_JOB_LENGTH -> heuristicForSameJobLength(jobs, pheromonMatrix, nexPos, i, config,  pheromonSum)
+                Heuristik.SAME_JOB_LENGTH -> heuristicForSameJobLength(pheromonMatrix, nexPos, i.key, config.beta,  pheromonSum)
+                Heuristik.SAME_LENGTH_ON_DIFFERENT_MACHINES -> heuristicForSameJobLengthOnDifferenMachines(pheromonMatrix, nexPos, i, config.beta,  pheromonSum)
             }
         }
         return jobMap
     }
 
-    private fun heuristicForSameJobLengthSum(jobs: HashMap<Job, Int>, pheromonMatrix: List<List<Double>>, nexPos: Int, config: ACOConfig): Double {
+    private fun heuristicForSameJobLengthOnDifferenMachinesSum(jobs: HashMap<Job, Int>, pheromonMatrix: List<List<Double>>, nexPos: Int, beta: Double): Double {
         if(this.jobQue.isEmpty()) {
-            return jobs.map { Math.pow(pheromonMatrix[it.value][nexPos], (1 - config.beta)) }.reduce { acc, d -> acc + d }
+            return jobs.map { Math.pow(pheromonMatrix[it.value][nexPos], (1 - beta)) }.reduce { acc, d -> acc + d }
         }
-        return jobs.map { Math.pow(pheromonMatrix[it.value][nexPos], (1 - config.beta)) * Math.pow(getFracSmallerZero(this.jobQue.last().durationMachineOne.toDouble(), it.key.durationMachineOne.toDouble()), config.beta) }.reduce { acc, d -> acc + d }
+        return jobs.map { Math.pow(pheromonMatrix[it.value][nexPos], (1 - beta)) * Math.pow(getFracSmallerZero(this.jobQue.last().durationMachineTwo.toDouble(), it.key.durationMachineOne.toDouble()), beta) }.reduce { acc, d -> acc + d }
     }
 
-    private fun heuristicForSameJobLength(jobs: HashMap<Job, Int>, pheromonMatrix: List<List<Double>>,nextPos: Int, currentJob: MutableMap.MutableEntry<Job, Int>, config: ACOConfig, pheromonSum: Double): Double {
+    private fun heuristicForSameJobLengthOnDifferenMachines(pheromonMatrix: List<List<Double>>,nextPos: Int, currentJob: MutableMap.MutableEntry<Job, Int>, beta: Double, pheromonSum: Double): Double {
         if(this.jobQue.isEmpty()) {
-            return Math.pow(pheromonMatrix[currentJob.value][nextPos], (1-config.beta)) / pheromonSum
+            return Math.pow(pheromonMatrix[currentJob.value][nextPos], (1-beta)) / pheromonSum
         }
-        return Math.pow(pheromonMatrix[currentJob.value][nextPos], (1-config.beta)) *  Math.pow(getFracSmallerZero(this.jobQue.last().durationMachineOne.toDouble(), currentJob.key.durationMachineOne.toDouble()), config.beta) / pheromonSum
+        return Math.pow(pheromonMatrix[currentJob.value][nextPos], (1-beta)) *  Math.pow(getFracSmallerZero(this.jobQue.last().durationMachineTwo.toDouble(), currentJob.key.durationMachineOne.toDouble()), beta) / pheromonSum
+    }
+
+    internal fun heuristicForSameJobLengthSum(jobs: HashMap<Job, Int>, pheromonMatrix: List<List<Double>>, nexPos: Int, beta: Double): Double {
+        if(this.jobQue.isEmpty()) {
+            return jobs.map { Math.pow(pheromonMatrix[it.value][nexPos], (1 - beta)) }.reduce { acc, d -> acc + d }
+        }
+        return jobs.map { Math.pow(pheromonMatrix[it.value][nexPos], (1 - beta)) * Math.pow(getFracSmallerZero(this.jobQue.last().durationMachineOne.toDouble(), it.key.durationMachineOne.toDouble()), beta) }.reduce { acc, d -> acc + d }
+    }
+
+    internal fun heuristicForSameJobLength(pheromonMatrix: List<List<Double>>,nextPos: Int, currentJob: Job, beta: Double, pheromonSum: Double): Double {
+        if(this.jobQue.isEmpty()) {
+            return Math.pow(pheromonMatrix[currentJob.id][nextPos], (1-beta)) / pheromonSum
+        }
+        return Math.pow(pheromonMatrix[currentJob.id][nextPos], (1-beta)) *  Math.pow(getFracSmallerZero(this.jobQue.last().durationMachineOne.toDouble(), currentJob.durationMachineOne.toDouble()), beta) / pheromonSum
     }
 
     private fun getFracSmallerZero(val1: Double, val2: Double): Double {
