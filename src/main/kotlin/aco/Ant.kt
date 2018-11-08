@@ -29,10 +29,10 @@ class Ant {
         val pheromonList = jobMap.keys.sorted().toList()
         val random = Random().nextDouble()
         val key = findKey(random, pheromonList)
-        return jobMap.getOrDefault(key, Job(1, 1, 1, 0))
+        return jobMap.get(key) ?: throw NullPointerException("Could not find next job in select next job!")
     }
 
-
+    //TODO: heuristische komponente hinzufügen
     fun createHashmap(jobsList: HashMap<Job, Int>, pheromonMatrix: List<List<Double>>): HashMap<Double, Job> {
         val jobs = HashMap(jobsList)
         val nexPos = jobQue.size
