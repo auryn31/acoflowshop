@@ -1,0 +1,7 @@
+{"evaporation": 0.04,
+  "maxIterations": 1000,
+  "antFactor": 0.3,
+  "fileLogging" : true,
+  "beta": 0.5,
+  "heuristic": "SAME_JOB_LENGTH"
+}

@@ -1,8 +1,12 @@
 package aco
 
+
 import acoflowshop.Job
+import global.ACOConfig
+import global.Heuristik
 import java.util.*
 import kotlin.collections.HashMap
+
 
 class Ant {
 
@@ -20,12 +24,13 @@ class Ant {
         return jobQue.filter { it.id == job.id }.isNotEmpty()
     }
 
-    fun selectNextJobAndAddToJobQue(jobs: HashMap<Job, Int>, pheromonMatrix: List<List<Double>>) {
-        this.jobQue.add(selectNextJob(jobs, pheromonMatrix))
+    fun selectNextJobAndAddToJobQue(jobs: HashMap<Job, Int>, pheromonMatrix: List<List<Double>>, config: ACOConfig) {
+        val nextJob = selectNextJob(jobs, pheromonMatrix, config)
+        this.jobQue.add(nextJob)
     }
 
-    fun selectNextJob(jobs: HashMap<Job, Int>, pheromonMatrix: List<List<Double>>): Job {
-        val jobMap = createHashmap(jobs, pheromonMatrix)
+    fun selectNextJob(jobs: HashMap<Job, Int>, pheromonMatrix: List<List<Double>>, config: ACOConfig): Job {
+        val jobMap = createHashmap(jobs, pheromonMatrix, config)
         val pheromonList = jobMap.keys.sorted().toList()
         val random = Random().nextDouble()
         val key = findKey(random, pheromonList)
@@ -33,7 +38,8 @@ class Ant {
     }
 
     //TODO: heuristische komponente hinzufügen
-    fun createHashmap(jobsList: HashMap<Job, Int>, pheromonMatrix: List<List<Double>>): HashMap<Double, Job> {
+    //TODO: heraus bekommen wie sich der parameter beta verhält
+    fun createHashmap(jobsList: HashMap<Job, Int>, pheromonMatrix: List<List<Double>>, config: ACOConfig): HashMap<Double, Job> {
         val jobs = HashMap(jobsList)
         val nexPos = jobQue.size
         val jobMap = hashMapOf<Double, Job>()
@@ -41,13 +47,41 @@ class Ant {
 
         jobQue.forEach { jobs.remove(it) }
 
-        val pheromonSum = jobs.map { pheromonMatrix[it.value][nexPos] }.reduce { acc, d ->  acc + d}
+        val pheromonSum =  when (config.heuristic){
+            Heuristik.NONE -> jobs.map { pheromonMatrix[it.value][nexPos] }.reduce { acc, d ->  acc + d}
+            Heuristik.SAME_JOB_LENGTH -> heuristicForSameJobLengthSum(jobs, pheromonMatrix, nexPos, config)
+        }
 
         for (i in jobs) {
             jobMap[pheromonValue] = i.key
-            pheromonValue -= pheromonMatrix[i.value][nexPos] / pheromonSum
+            pheromonValue -= when(config.heuristic) {
+                Heuristik.NONE -> pheromonMatrix[i.value][nexPos] / pheromonSum
+                Heuristik.SAME_JOB_LENGTH -> heuristicForSameJobLength(jobs, pheromonMatrix, nexPos, i, config,  pheromonSum)
+            }
         }
         return jobMap
+    }
+
+    private fun heuristicForSameJobLengthSum(jobs: HashMap<Job, Int>, pheromonMatrix: List<List<Double>>, nexPos: Int, config: ACOConfig): Double {
+        if(this.jobQue.isEmpty()) {
+            return jobs.map { Math.pow(pheromonMatrix[it.value][nexPos], (1 - config.beta)) }.reduce { acc, d -> acc + d }
+        }
+        return jobs.map { Math.pow(pheromonMatrix[it.value][nexPos], (1 - config.beta)) * Math.pow(getFracSmallerZero(this.jobQue.last().durationMachineOne.toDouble(), it.key.durationMachineOne.toDouble()), config.beta) }.reduce { acc, d -> acc + d }
+    }
+
+    private fun heuristicForSameJobLength(jobs: HashMap<Job, Int>, pheromonMatrix: List<List<Double>>,nextPos: Int, currentJob: MutableMap.MutableEntry<Job, Int>, config: ACOConfig, pheromonSum: Double): Double {
+        if(this.jobQue.isEmpty()) {
+            return Math.pow(pheromonMatrix[currentJob.value][nextPos], (1-config.beta)) / pheromonSum
+        }
+        return Math.pow(pheromonMatrix[currentJob.value][nextPos], (1-config.beta)) *  Math.pow(getFracSmallerZero(this.jobQue.last().durationMachineOne.toDouble(), currentJob.key.durationMachineOne.toDouble()), config.beta) / pheromonSum
+    }
+
+    private fun getFracSmallerZero(val1: Double, val2: Double): Double {
+        if(val1 < val2) {
+            return Math.abs(val1/val2)
+        } else {
+            return Math.abs(val2/val1)
+        }
     }
 
     fun findKey(pheromon: Double, pheromonList: List<Double>): Double {

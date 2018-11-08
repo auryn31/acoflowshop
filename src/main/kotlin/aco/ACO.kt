@@ -51,7 +51,7 @@ object ACO : Simulation<ACOConfig> {
             logger.info { "################### - iteration: ${solutionNumber} - ###################" }
             for (i in 0 until jobList.size) {
                 ants.forEach {
-                    it.selectNextJobAndAddToJobQue(jobHashmap, pheromone)
+                    it.selectNextJobAndAddToJobQue(jobHashmap, pheromone, config)
                 }
             }
             ants.forEach { it.calculateDurationWithMCT(solutionNumber) }

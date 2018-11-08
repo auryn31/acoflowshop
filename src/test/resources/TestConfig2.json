@@ -1,0 +1,10 @@
+{"evaporation": 0.05,
+  "maxIterations": 1000,
+  "antFactor": 0.01,
+  "dbLogging": false,
+  "fileLogging" : false,
+  "initMatrixWithNEH": false,
+  "withEliteSolution": 0.0,
+  "beta": 0.3,
+  "heuristic": "SAME_JOB_LENGTH"
+}

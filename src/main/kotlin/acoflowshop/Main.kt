@@ -21,7 +21,8 @@ private val mapper = ObjectMapper().registerModule(KotlinModule())
 
 fun main(args: Array<String>) {
     val path = args[0]
-//    evaluateACOforAntFactor(path)
+//    evaluateParamsForACOWithConfiguration(path, listOf("003", "004", "005", "006"))
+//    evaluateParamsForACOWithConfiguration(path, listOf("00", "01", "03", "05", "07", "09"))
 
     val acoConfig = mapper.readValue(File("$path/ACOConfig.json"), ACOConfig::class.java)!!
     val aicaConfig = mapper.readValue(File("$path/AICAConfig.json"), AICAConfig::class.java)!!
@@ -40,10 +41,8 @@ fun main(args: Array<String>) {
     }
 }
 
-fun evaluateACOforInitMatrixWithNEH(path: String){
-    val configs = listOf("003", "004", "005", "006")
+fun evaluateParamsForACOWithConfiguration(path: String, configs: List<String>){
     val acoConfigs = configs.map { mapper.readValue(File("$path/$it.json"), ACOConfig::class.java)!! }
-
     for(i in 0 until acoConfigs.size){
         CsvLogging.fileLogging = acoConfigs[i].fileLogging
         for (j in 0 until 10) {
@@ -58,34 +57,12 @@ fun evaluateACOforInitMatrixWithNEH(path: String){
 
 fun evaluateACOforEvaporation(path: String){
     val configs = listOf("true", "false")
-    val acoConfigs = configs.map { mapper.readValue(File("$path/$it.json"), ACOConfig::class.java)!! }
-
-    for(i in 0 until acoConfigs.size){
-        CsvLogging.fileLogging = acoConfigs[i].fileLogging
-        for (j in 0 until 10) {
-            CsvLogging.fileName = "$path/config_${i}_iteration_$j"
-            CsvLogging.createLoggingFile()
-            calculateWithMeanCompletionTimeForACO(acoConfigs[i])
-            LoggingParameter.reset()
-        }
-    }
-    calculateMean(path, configs)
+    evaluateParamsForACOWithConfiguration(path, configs)
 }
 
 fun evaluateACOforAntFactor(path: String){
     val configs = listOf("01", "02", "03", "04", "05", "06", "07", "08", "09", "10")
-    val acoConfigs = configs.map { mapper.readValue(File("$path/$it.json"), ACOConfig::class.java)!! }
-
-    for(i in 0 until acoConfigs.size){
-        CsvLogging.fileLogging = acoConfigs[i].fileLogging
-        for (j in 0 until 10) {
-            CsvLogging.fileName = "$path/config_${i}_iteration_$j"
-            CsvLogging.createLoggingFile()
-            calculateWithMeanCompletionTimeForACO(acoConfigs[i])
-            LoggingParameter.reset()
-        }
-    }
-    calculateMean(path, configs)
+    evaluateParamsForACOWithConfiguration(path, configs)
 }
 
 fun calculateMean(path:String, inputFiles: List<String>) {

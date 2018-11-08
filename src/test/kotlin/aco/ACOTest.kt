@@ -5,9 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import global.ACOConfig
 import global.Helper
+import global.Heuristik
+import javassist.NotFoundException
 import org.junit.Test
 import java.io.File
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 class ACOTest {
 
@@ -27,7 +30,15 @@ class ACOTest {
         val jobList: List<Job> = Helper.readJobListFromFile("100Jobs").subList(0, 40)
         val mapper = ObjectMapper().registerModule(KotlinModule())
         val acoConfig = mapper.readValue(File("src/main/resources/ACOConfig.json"), ACOConfig::class.java)!!
-        val bestAnt = ACO.optimize(jobList, acoConfig)
+        ACO.optimize(jobList, acoConfig)
+    }
+
+    @Test
+    fun `test optimization for heuristic`() {
+        val jobList: List<Job> = Helper.readJobListFromFile("100Jobs").subList(0, 20)
+        val mapper = ObjectMapper().registerModule(KotlinModule())
+        val acoConfig = mapper.readValue(File("src/test/resources/TestConfig2.json"), ACOConfig::class.java) ?: throw NotFoundException("Could not found config")
+        ACO.optimize(jobList, acoConfig)
     }
 
     @Test

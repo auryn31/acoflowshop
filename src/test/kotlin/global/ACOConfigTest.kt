@@ -31,6 +31,26 @@ class ACOConfigTest {
             assertEquals(0.05, config.evaporation)
             assertEquals(1000, config.maxIterations)
             assertEquals(0.01, config.antFactor)
+            assertEquals(0.0, config.beta)
+            assertEquals(Heuristik.NONE, config.heuristic)
+            assertFalse(config.dbLogging)
+            assertFalse(config.fileLogging)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            assertTrue(false)
+        }
+    }
+
+    @Test
+    fun `if there is an beta in config json`() {
+        val mapper = ObjectMapper().registerModule(KotlinModule())
+        try {
+            val config = mapper.readValue(File("src/test/resources/TestConfig2.json"), ACOConfig::class.java)
+            assertEquals(0.05, config.evaporation)
+            assertEquals(1000, config.maxIterations)
+            assertEquals(0.01, config.antFactor)
+            assertEquals(0.3, config.beta)
+            assertEquals(Heuristik.SAME_JOB_LENGTH, config.heuristic)
             assertFalse(config.dbLogging)
             assertFalse(config.fileLogging)
         } catch (e: Exception) {
