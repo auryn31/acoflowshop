@@ -13,7 +13,7 @@ xrange <- range(initMatrixWithNEHTrue[3]$V3,
 plot(iteration, initMatrixWithNEHTrue[2]$V2, type="l", ylim=yrange, col="blue", ann=FALSE)
 lines(iteration, initMatrixWithNEHFalse[2]$V2, type="l", col="green")
 
-title(main='Initialisierung mit NEH 50 Jobs', col.main="red", font.main=4)
+title(main='Initialisierung mit NEH 50 Jobs', font.main=4)
 title(xlab='Iteration')
 title(ylab='durchschnittliche Fertigstellungszeit')
 legend("topright", legend=c("true", "false"), 
@@ -26,7 +26,7 @@ lines(initMatrixWithNEHFalse[3]$V3, initMatrixWithNEHFalse[2]$V2, type="l", col=
 
 box()
 
-title(main='Initialisierung mit NEH 50 Jobs', col.main="red", font.main=4)
+title(main='Initialisierung mit NEH 50 Jobs', font.main=4)
 title(xlab='Laufzeit in s')
 title(ylab='durchschnittliche Fertigstellungszeit')
 legend("topright", legend=c("true", "false"), 

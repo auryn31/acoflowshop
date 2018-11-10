@@ -21,7 +21,7 @@ lines(iteration, evaporation004[2]$V2, type="l", col="green")
 lines(iteration, evaporation005[2]$V2, type="l", col="chocolate1")
 lines(iteration, evaporation006[2]$V2, type="l", col="burlywood3")
 
-title(main='Verdunstungsfaktor 50 Jobs', col.main="red", font.main=4)
+title(main='Verdunstungsfaktor 50 Jobs', font.main=4)
 title(xlab='Iteration')
 title(ylab='durchschnittliche Fertigstellungszeit')
 legend("topright", legend=c("0.03", "0.04", "0.05", "0.06"), 
@@ -36,7 +36,7 @@ lines(evaporation006[3]$V3, evaporation006[2]$V2, type="l", col="burlywood3")
 
 box()
 
-title(main='Verdunstungsfaktor 50 Jobs', col.main="red", font.main=4)
+title(main='Verdunstungsfaktor 50 Jobs', font.main=4)
 title(xlab='Laufzeit in s')
 title(ylab='durchschnittliche Fertigstellungszeit')
 legend("topright", legend=c("0.03", "0.04", "0.05", "0.06"), 

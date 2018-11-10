@@ -45,7 +45,7 @@ lines(iteration, antFactor08[2]$V2, type="l", col="olivedrab1")
 lines(iteration, antFactor09[2]$V2, type="l", col="purple2")
 lines(iteration, antFactor10[2]$V2, type="l", col="yellow2")
 
-title(main='Ameisenfaktor 50 Jobs', col.main="red", font.main=4)
+title(main='Ameisenfaktor 50 Jobs', font.main=4)
 title(xlab='Iteration')
 title(ylab='durchschnittliche Fertigstellungszeit')
 legend("topright", legend=c("0.01", "0.1", "0.3", "0.4", "0.5", "0.6", "0.7", "0.8", "0.9", "1.0"), 
@@ -66,7 +66,7 @@ lines(antFactor10[3]$V3, antFactor10[2]$V2, type="l", col="yellow2")
 
 box()
 
-title(main='Ameisenfaktor 50 Jobs', col.main="red", font.main=4)
+title(main='Ameisenfaktor 50 Jobs', font.main=4)
 title(xlab='Laufzeit in s')
 title(ylab='durchschnittliche Fertigstellungszeit')
 legend("topright", legend=c("0.01", "0.1", "0.3", "0.4", "0.5", "0.6", "0.7", "0.8", "0.9", "1.0"), 
