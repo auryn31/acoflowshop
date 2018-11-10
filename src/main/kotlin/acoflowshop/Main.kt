@@ -22,23 +22,23 @@ private val mapper = ObjectMapper().registerModule(KotlinModule())
 fun main(args: Array<String>) {
     val path = args[0]
 //    evaluateParamsForACOWithConfiguration(path, listOf("003", "004", "005", "006"))
-    evaluateParamsForACOWithConfiguration(path, listOf("00", "01", "03", "05", "07", "09"))
+//    evaluateParamsForACOWithConfiguration(path, listOf("00", "01", "03", "05", "07", "09"))
 
-//    val acoConfig = mapper.readValue(File("$path/ACOConfig.json"), ACOConfig::class.java)!!
-//    val aicaConfig = mapper.readValue(File("$path/AICAConfig.json"), AICAConfig::class.java)!!
-//
-//    CsvLogging.fileLogging = acoConfig.fileLogging
-//    CsvLogging.createLoggingFile()
-//    LoggingParameter.reset()
-//
-//    for (i in 0 until 5) {
-//        CsvLogging.fileName = "$path/current_iteration_$i"
-//        CsvLogging.createLoggingFile()
-//        calculateWithMeanCompletionTimeForACO(acoConfig)
-//        val aica = AICA(aicaConfig)
-//        aica.optimize(jobList, aicaConfig)
-//        LoggingParameter.reset()
-//    }
+    val acoConfig = mapper.readValue(File("$path/ACOConfig.json"), ACOConfig::class.java)!!
+    val aicaConfig = mapper.readValue(File("$path/AICAConfig.json"), AICAConfig::class.java)!!
+
+    CsvLogging.fileLogging = acoConfig.fileLogging
+    CsvLogging.createLoggingFile()
+    LoggingParameter.reset()
+
+    for (i in 0 until 5) {
+        CsvLogging.fileName = "$path/current_iteration_$i"
+        CsvLogging.createLoggingFile()
+        calculateWithMeanCompletionTimeForACO(acoConfig)
+        val aica = AICA(aicaConfig)
+        aica.optimize(jobList, aicaConfig)
+        LoggingParameter.reset()
+    }
 }
 
 fun evaluateParamsForACOWithConfiguration(path: String, configs: List<String>){
