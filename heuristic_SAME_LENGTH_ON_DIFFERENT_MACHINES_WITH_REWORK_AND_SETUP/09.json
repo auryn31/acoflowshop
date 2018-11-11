@@ -1,0 +1,7 @@
+{"evaporation": 0.04,
+  "maxIterations": 1000,
+  "antFactor": 0.3,
+  "fileLogging" : true,
+  "beta": 0.9,
+  "heuristic": "SAME_LENGTH_ON_DIFFERENT_MACHINES_WITH_REWORK_AND_SETUP"
+}

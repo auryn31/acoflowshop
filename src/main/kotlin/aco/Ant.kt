@@ -45,56 +45,88 @@ class Ant {
 
         jobQue.forEach { jobs.remove(it) }
 
-        val pheromonSum =  when (config.heuristic){
-            Heuristik.NONE -> jobs.map { pheromonMatrix[it.value][nexPos] }.reduce { acc, d ->  acc + d}
+        val pheromonSum = when (config.heuristic) {
+            Heuristik.NONE -> jobs.map { pheromonMatrix[it.value][nexPos] }.reduce { acc, d -> acc + d }
             Heuristik.SAME_JOB_LENGTH -> heuristicForSameJobLengthSum(jobs, pheromonMatrix, nexPos, config.beta)
             Heuristik.SAME_LENGTH_ON_DIFFERENT_MACHINES -> heuristicForSameJobLengthOnDifferenMachinesSum(jobs, pheromonMatrix, nexPos, config.beta)
+            Heuristik.SAME_LENGTH_ON_DIFFERENT_MACHINES_WITH_REWORK_AND_SETUP -> heuristicForSameJobLengthOnDifferenMachinesWithReworkAndSetupSum(jobs, pheromonMatrix, nexPos, config.beta)
         }
 
         for (i in jobs) {
             jobMap[pheromonValue] = i.key
-            pheromonValue -= when(config.heuristic) {
+            pheromonValue -= when (config.heuristic) {
                 Heuristik.NONE -> pheromonMatrix[i.value][nexPos] / pheromonSum
-                Heuristik.SAME_JOB_LENGTH -> heuristicForSameJobLength(pheromonMatrix, nexPos, i.key, config.beta,  pheromonSum)
-                Heuristik.SAME_LENGTH_ON_DIFFERENT_MACHINES -> heuristicForSameJobLengthOnDifferenMachines(pheromonMatrix, nexPos, i, config.beta,  pheromonSum)
+                Heuristik.SAME_JOB_LENGTH -> heuristicForSameJobLength(pheromonMatrix, nexPos, i.key, config.beta, pheromonSum)
+                Heuristik.SAME_LENGTH_ON_DIFFERENT_MACHINES -> heuristicForSameJobLengthOnDifferenMachines(pheromonMatrix, nexPos, i, config.beta, pheromonSum)
+                Heuristik.SAME_LENGTH_ON_DIFFERENT_MACHINES_WITH_REWORK_AND_SETUP -> heuristicForSameJobLengthOnDifferenMachines(pheromonMatrix, nexPos, i, config.beta, pheromonSum)
             }
         }
         return jobMap
     }
 
     private fun heuristicForSameJobLengthOnDifferenMachinesSum(jobs: HashMap<Job, Int>, pheromonMatrix: List<List<Double>>, nexPos: Int, beta: Double): Double {
-        if(this.jobQue.isEmpty()) {
+        if (this.jobQue.isEmpty()) {
             return jobs.map { Math.pow(pheromonMatrix[it.value][nexPos], (1 - beta)) }.reduce { acc, d -> acc + d }
         }
         return jobs.map { Math.pow(pheromonMatrix[it.value][nexPos], (1 - beta)) * Math.pow(getFracSmallerZero(this.jobQue.last().durationMachineTwo.toDouble(), it.key.durationMachineOne.toDouble()), beta) }.reduce { acc, d -> acc + d }
     }
 
-    private fun heuristicForSameJobLengthOnDifferenMachines(pheromonMatrix: List<List<Double>>,nextPos: Int, currentJob: MutableMap.MutableEntry<Job, Int>, beta: Double, pheromonSum: Double): Double {
-        if(this.jobQue.isEmpty()) {
-            return Math.pow(pheromonMatrix[currentJob.value][nextPos], (1-beta)) / pheromonSum
+    private fun heuristicForSameJobLengthOnDifferenMachinesWithReworkAndSetupSum(jobs: HashMap<Job, Int>, pheromonMatrix: List<List<Double>>, nexPos: Int, beta: Double): Double {
+        if (this.jobQue.isEmpty()) {
+            return jobs.map { Math.pow(pheromonMatrix[it.value][nexPos], (1 - beta)) }.reduce { acc, d -> acc + d }
         }
-        return Math.pow(pheromonMatrix[currentJob.value][nextPos], (1-beta)) *  Math.pow(getFracSmallerZero(this.jobQue.last().durationMachineTwo.toDouble(), currentJob.key.durationMachineOne.toDouble()), beta) / pheromonSum
+        val lastJob = this.jobQue.last()
+        return jobs.map {
+            Math.pow(pheromonMatrix[it.value][nexPos], (1 - beta)) * Math.pow(
+                    getFracSmallerZero((lastJob.durationMachineTwo.toDouble()
+                            + lastJob.reworktimeMachineTwo.toDouble()
+                            + lastJob.setupTimeMachineTwo.toDouble())
+                            , (it.key.durationMachineOne.toDouble()
+                            + it.key.reworktimeMachineTwo.toDouble()
+                            + it.key.setupTimeMachineTwo.toDouble())), beta)
+            }
+                .reduce { acc, d -> acc + d }
+    }
+
+    private fun heuristicForSameJobLengthOnDifferenMachines(pheromonMatrix: List<List<Double>>, nextPos: Int, currentJob: MutableMap.MutableEntry<Job, Int>, beta: Double, pheromonSum: Double): Double {
+        if (this.jobQue.isEmpty()) {
+            return Math.pow(pheromonMatrix[currentJob.value][nextPos], (1 - beta)) / pheromonSum
+        }
+        return Math.pow(pheromonMatrix[currentJob.value][nextPos], (1 - beta)) * Math.pow(getFracSmallerZero(this.jobQue.last().durationMachineTwo.toDouble(), currentJob.key.durationMachineOne.toDouble()), beta) / pheromonSum
+    }
+
+    private fun heuristicForSameJobLengthOnDifferenMachinesWithReworkAndSetup(pheromonMatrix: List<List<Double>>, nextPos: Int, currentJob: MutableMap.MutableEntry<Job, Int>, beta: Double, pheromonSum: Double): Double {
+        if (this.jobQue.isEmpty()) {
+            return Math.pow(pheromonMatrix[currentJob.value][nextPos], (1 - beta)) / pheromonSum
+        }
+        return Math.pow(pheromonMatrix[currentJob.value][nextPos], (1 - beta)) * Math.pow(
+                getFracSmallerZero((this.jobQue.last().durationMachineTwo.toDouble()
+                        + this.jobQue.last().reworktimeMachineTwo.toDouble()
+                        + this.jobQue.last().setupTimeMachineTwo.toDouble())
+                        , (currentJob.key.durationMachineOne.toDouble()
+                        + currentJob.key.reworktimeMachineTwo.toDouble()
+                        + currentJob.key.setupTimeMachineTwo.toDouble())), beta) / pheromonSum
     }
 
     internal fun heuristicForSameJobLengthSum(jobs: HashMap<Job, Int>, pheromonMatrix: List<List<Double>>, nexPos: Int, beta: Double): Double {
-        if(this.jobQue.isEmpty()) {
+        if (this.jobQue.isEmpty()) {
             return jobs.map { Math.pow(pheromonMatrix[it.value][nexPos], (1 - beta)) }.reduce { acc, d -> acc + d }
         }
         return jobs.map { Math.pow(pheromonMatrix[it.value][nexPos], (1 - beta)) * Math.pow(getFracSmallerZero(this.jobQue.last().durationMachineOne.toDouble(), it.key.durationMachineOne.toDouble()), beta) }.reduce { acc, d -> acc + d }
     }
 
-    internal fun heuristicForSameJobLength(pheromonMatrix: List<List<Double>>,nextPos: Int, currentJob: Job, beta: Double, pheromonSum: Double): Double {
-        if(this.jobQue.isEmpty()) {
-            return Math.pow(pheromonMatrix[currentJob.id][nextPos], (1-beta)) / pheromonSum
+    internal fun heuristicForSameJobLength(pheromonMatrix: List<List<Double>>, nextPos: Int, currentJob: Job, beta: Double, pheromonSum: Double): Double {
+        if (this.jobQue.isEmpty()) {
+            return Math.pow(pheromonMatrix[currentJob.id][nextPos], (1 - beta)) / pheromonSum
         }
-        return Math.pow(pheromonMatrix[currentJob.id][nextPos], (1-beta)) *  Math.pow(getFracSmallerZero(this.jobQue.last().durationMachineOne.toDouble(), currentJob.durationMachineOne.toDouble()), beta) / pheromonSum
+        return Math.pow(pheromonMatrix[currentJob.id][nextPos], (1 - beta)) * Math.pow(getFracSmallerZero(this.jobQue.last().durationMachineOne.toDouble(), currentJob.durationMachineOne.toDouble()), beta) / pheromonSum
     }
 
     private fun getFracSmallerZero(val1: Double, val2: Double): Double {
-        if(val1 < val2) {
-            return Math.abs(val1/val2)
+        if (val1 < val2) {
+            return Math.abs(val1 / val2)
         } else {
-            return Math.abs(val2/val1)
+            return Math.abs(val2 / val1)
         }
     }
 
@@ -126,8 +158,8 @@ class Ant {
     internal fun calculateDurationWithMCT(iteration: Int) {
         var costSum = 0.0
         var reworkPercentageSum = 0.0
-        var calculationFrequency = iteration/50
-        if(calculationFrequency <= 0) {
+        var calculationFrequency = iteration / 50
+        if (calculationFrequency <= 0) {
             calculationFrequency = 1
         }
         for (i in 0 until calculationFrequency) {
@@ -135,7 +167,7 @@ class Ant {
             costSum += costPair.first
             reworkPercentageSum += costPair.second
         }
-        this.durationForMCT = costSum/ ( calculationFrequency.toDouble() )
-        this.reworkPercentage = reworkPercentageSum / ( calculationFrequency.toDouble() )
+        this.durationForMCT = costSum / (calculationFrequency.toDouble())
+        this.reworkPercentage = reworkPercentageSum / (calculationFrequency.toDouble())
     }
 }
