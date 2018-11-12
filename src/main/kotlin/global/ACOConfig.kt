@@ -2,7 +2,7 @@ package global
 
 data class ACOConfig(val evaporation: Double,
                      val maxIterations: Int,
-                     val antFactor: Double,
+                     val ants: Int,
                      val dbLogging: Boolean = false,
                      val fileLogging: Boolean = true,
                      val initMatrixWithNEH: Boolean = false,

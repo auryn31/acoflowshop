@@ -29,7 +29,7 @@ lines(iteration, heuristic05[2]$V2, type="l", col="burlywood3")
 lines(iteration, heuristic07[2]$V2, type="l", col="aquamarine4")
 lines(iteration, heuristic09[2]$V2, type="l", col="lightblue2")
 
-title(main='Minimierung von Leerlauf auf Maschine 1 mit Rüstzeit und Nacharbeitszeit Heuristik 50 Jobs', font.main=4)
+title(main='Minimierung von Leerlauf auf Maschine 1', font.main=4)
 title(xlab='Iteration')
 title(ylab='durchschnittliche Fertigstellungszeit')
 legend("topright", legend=c("0.0", "0.1", "0.3", "0.5", "0.7", "0.9"), 
@@ -46,7 +46,7 @@ lines(heuristic09[3]$V3, heuristic09[2]$V2, type="l", col="lightblue2")
 
 box()
 
-title(main='Minimierung von Leerlauf auf Maschine 1 mit Rüstzeit und Nacharbeitszeit Heuristik 50 Jobs', font.main=4)
+title(main='Minimierung von Leerlauf auf Maschine 1', font.main=4)
 title(xlab='Laufzeit in s')
 title(ylab='durchschnittliche Fertigstellungszeit')
 legend("topright", legend=c("0.0", "0.1", "0.3", "0.5", "0.7", "0.9"), 

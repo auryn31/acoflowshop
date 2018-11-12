@@ -17,7 +17,7 @@ object ACO : Simulation<ACOConfig> {
 
     // MTC = Mean Completion Time --> Durchschnittliche Fertigstellungszeit
     override fun optimize(jobList: List<Job>, config: ACOConfig): Pair<List<Job>, Double> {
-        val ants: MutableList<Ant> = (0..(config.antFactor * jobList.size).toInt()).map { Ant() }.toMutableList()
+        val ants: MutableList<Ant> = (0..config.ants).map { Ant() }.toMutableList()
         var pheromone: List<List<Double>> = emptyList()
         var eliteAnt: Ant? = null
         val start = System.currentTimeMillis()

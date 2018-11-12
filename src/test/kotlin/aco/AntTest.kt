@@ -25,7 +25,7 @@ class AntTest {
                 listOf(0.0, 1.0)
         )
         val jobs = Helper.createHashMapFromJobList(jobList)
-        val nextJob = ant.selectNextJob(jobs, pheromonMatrix, ACOConfig(0.0, 0, 0.0, false, false, false, 0.0))
+        val nextJob = ant.selectNextJob(jobs, pheromonMatrix, ACOConfig(0.0, 0, 0, false, false, false, 0.0))
         assertEquals(0, nextJob.id)
     }
 
@@ -41,7 +41,7 @@ class AntTest {
                 listOf(0.3, 0.7)
         )
         val jobs = Helper.createHashMapFromJobList(jobList)
-        val hashMap = ant.createHashmap(jobs, pheromonMatrix, ACOConfig(0.0, 0, 0.0, false, false, false, 0.0))
+        val hashMap = ant.createHashmap(jobs, pheromonMatrix, ACOConfig(0.0, 0, 0, false, false, false, 0.0))
         val solutionMap = hashMapOf<Double, Job>(
                 Pair(1.0, Job(0, 0, 0, 0)),
                 Pair(0.30000000000000004, Job(1, 1, 1, 1))
@@ -185,7 +185,7 @@ class AntTest {
         val jobsToSchedule = hashMapOf<Job, Int>(
                 Pair(Job(1, 1, 1, 2), 2)
         )
-        val config = ACOConfig(0.03, 100, 0.4, heuristic = Heuristik.SAME_JOB_LENGTH)
+        val config = ACOConfig(0.03, 100, 3, heuristic = Heuristik.SAME_JOB_LENGTH)
         assertEquals(hashMapOf(Pair(1.0, Job(1, 1, 1, 2))), ant.createHashmap(jobsToSchedule, pheromonMatrix, config))
     }
 
@@ -206,7 +206,7 @@ class AntTest {
         val jobsToSchedule = hashMapOf<Job, Int>(
                 Pair(Job(1, 1, 1, 2), 2)
         )
-        val config = ACOConfig(0.03, 100, 0.4, heuristic = Heuristik.SAME_JOB_LENGTH, beta = 0.3)
+        val config = ACOConfig(0.03, 100, 3, heuristic = Heuristik.SAME_JOB_LENGTH, beta = 0.3)
         assertEquals(hashMapOf(Pair(1.0, Job(1, 1, 1, 2))), ant.createHashmap(jobsToSchedule, pheromonMatrix, config))
     }
 
@@ -228,7 +228,7 @@ class AntTest {
                 Pair(Job(1, 1, 1, 2), 2),
                 Pair(Job(1, 1, 1, 3), 3)
         )
-        val config = ACOConfig(0.03, 100, 0.4, heuristic = Heuristik.SAME_JOB_LENGTH, beta = 0.3)
+        val config = ACOConfig(0.03, 100, 3, heuristic = Heuristik.SAME_JOB_LENGTH, beta = 0.3)
         assertEquals(
                 hashMapOf(Pair(1.0, Job(1, 1, 1, 3)),
                         Pair(0.5704838641764751, Job(1, 1, 1, 2))),

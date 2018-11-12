@@ -15,7 +15,7 @@ class ACOConfigTest {
         val mapper = ObjectMapper().registerModule(KotlinModule())
         try {
             val config = mapper.readValue(File("src/test/resources/TestConfig.json"), ACOConfig::class.java)
-            val expected = ACOConfig(0.05, 1000,0.01, false, false, false, 0.0)
+            val expected = ACOConfig(0.05, 1000,10, false, false, false, 0.0)
             assertEquals(expected.toString(), config.toString())
         } catch (e: Exception) {
             e.printStackTrace()
@@ -30,7 +30,7 @@ class ACOConfigTest {
             val config = mapper.readValue(File("src/test/resources/TestConfig.json"), ACOConfig::class.java)
             assertEquals(0.05, config.evaporation)
             assertEquals(1000, config.maxIterations)
-            assertEquals(0.01, config.antFactor)
+            assertEquals(10, config.ants)
             assertEquals(0.0, config.beta)
             assertEquals(Heuristik.NONE, config.heuristic)
             assertFalse(config.dbLogging)
@@ -48,7 +48,7 @@ class ACOConfigTest {
             val config = mapper.readValue(File("src/test/resources/TestConfig2.json"), ACOConfig::class.java)
             assertEquals(0.05, config.evaporation)
             assertEquals(1000, config.maxIterations)
-            assertEquals(0.01, config.antFactor)
+            assertEquals(10, config.ants)
             assertEquals(0.3, config.beta)
             assertEquals(Heuristik.SAME_JOB_LENGTH, config.heuristic)
             assertFalse(config.dbLogging)

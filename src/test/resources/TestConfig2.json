@@ -1,6 +1,6 @@
 {"evaporation": 0.05,
   "maxIterations": 1000,
-  "antFactor": 0.01,
+  "ants": 10,
   "dbLogging": false,
   "fileLogging" : false,
   "initMatrixWithNEH": false,
