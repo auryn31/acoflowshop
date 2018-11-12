@@ -8,7 +8,8 @@ data class ACOConfig(val evaporation: Double,
                      val initMatrixWithNEH: Boolean = false,
                      val withEliteSolution: Double = 0.0,
                      val beta: Double = 0.0,
-                     val heuristic: Heuristik = Heuristik.NONE): Config
+                     val heuristic: Heuristik = Heuristik.NONE,
+                     val numberOfJobs: Int = 50): Config
 
 
 /*

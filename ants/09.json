@@ -1,0 +1,6 @@
+{
+  "evaporation": 0.04,
+  "maxIterations": 1000,
+  "ants": 50,
+  "fileLogging": true
+}

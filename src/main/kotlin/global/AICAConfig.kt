@@ -12,4 +12,5 @@ data class AICAConfig(
         val N_GW: Int,
         val xi: Double,
         val dbLogging: Boolean,
-        val fileLogging: Boolean): Config
+        val fileLogging: Boolean,
+        val numberOfJobs: Int = 50): Config
