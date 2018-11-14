@@ -3,7 +3,9 @@ package acoflowshop
 import aco.ACO
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import global.*
+import global.ACOConfig
+import global.AICAConfig
+import global.Helper
 import imperialistic.AICA
 import logger_helper.CsvLogging
 import logger_helper.LoggingParameter
@@ -21,28 +23,34 @@ private val mapper = ObjectMapper().registerModule(KotlinModule())
 
 fun main(args: Array<String>) {
     val path = args[0]
+    val jobsPath = if (args.isNotEmpty()) {
+        "$path/jobs"
+    } else {
+        "100Jobs"
+    }
 
     val acoConfig = mapper.readValue(File("$path/ACOConfig.json"), ACOConfig::class.java)!!
     val aicaConfig = mapper.readValue(File("$path/AICAConfig.json"), AICAConfig::class.java)!!
-    val jobList: List<Job> = Helper.readJobListFromFile("100Jobs")
+    val jobList: List<Job> = Helper.readJobListFromFile(jobsPath)
 
     CsvLogging.fileLogging = acoConfig.fileLogging
     CsvLogging.createLoggingFile()
     LoggingParameter.reset()
+    val numberOfJobs = if(acoConfig.numberOfJobs > jobList.size) { jobList.size } else { acoConfig.numberOfJobs}
 
-    for (i in 0 until 5) {
+    for (i in 0 until 10) {
         CsvLogging.fileName = "$path/current_iteration_$i"
         CsvLogging.createLoggingFile()
-        calculateWithMeanCompletionTimeForACO(jobList.subList(0, acoConfig.numberOfJobs), acoConfig)
+        calculateWithMeanCompletionTimeForACO(jobList.subList(0, numberOfJobs), acoConfig)
         val aica = AICA(aicaConfig)
-        aica.optimize(jobList.subList(0, aicaConfig.numberOfJobs), aicaConfig)
+        aica.optimize(jobList.subList(0, numberOfJobs), aicaConfig)
         LoggingParameter.reset()
     }
 }
 
-fun evaluateParamsForACOWithConfiguration(path: String, configs: List<String>, jobList: List<Job>){
+fun evaluateParamsForACOWithConfiguration(path: String, configs: List<String>, jobList: List<Job>) {
     val acoConfigs = configs.map { mapper.readValue(File("$path/$it.json"), ACOConfig::class.java)!! }
-    for(i in 0 until acoConfigs.size){
+    for (i in 0 until acoConfigs.size) {
         CsvLogging.fileLogging = acoConfigs[i].fileLogging
         for (j in 0 until 10) {
             CsvLogging.fileName = "$path/config_${i}_iteration_$j"
@@ -54,18 +62,18 @@ fun evaluateParamsForACOWithConfiguration(path: String, configs: List<String>, j
     calculateMean(path, configs)
 }
 
-fun calculateMean(path:String, inputFiles: List<String>) {
+fun calculateMean(path: String, inputFiles: List<String>) {
     var fileReader: BufferedReader? = null
     var csvParser: CSVParser? = null
     var fileWriter: FileWriter? = null
     var csvPrinter: CSVPrinter? = null
 
-    for(i in 0 until inputFiles.size) {
+    for (i in 0 until inputFiles.size) {
         val listOfRecords = mutableListOf(listOf<Double>())
         val listOfCalculationTime = mutableListOf(listOf<Int>())
         listOfRecords.removeAt(0)
         listOfCalculationTime.removeAt(0)
-        for(j in 0 until 10) {
+        for (j in 0 until 10) {
             try {
                 fileReader = BufferedReader(FileReader("$path/config_${i}_iteration_$j.csv"))
                 csvParser = CSVParser(fileReader,
@@ -92,10 +100,10 @@ fun calculateMean(path:String, inputFiles: List<String>) {
 
         val meanList = mutableListOf<Double>()
         val meanTimeList = mutableListOf<Double>()
-        for(j in 0 until listOfRecords[0].size) {
+        for (j in 0 until listOfRecords[0].size) {
             var mean = 0.0
             var meanTime = 0.0
-            for(k in 0 until 9) {
+            for (k in 0 until 9) {
                 mean += listOfRecords[k][j]
                 meanTime += listOfCalculationTime[k][j]
             }

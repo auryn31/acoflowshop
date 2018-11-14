@@ -21,6 +21,13 @@ class HelperTest {
         assertTrue(file.delete())
     }
 
+//    @Test
+//    fun generateJobs(){
+//        val jobList = Helper.createRandomJobList(40)
+//        Helper.writeJobListToFile(jobList, "5/jsonJobTest")
+//    }
+
+
     @Test
     fun testReadJobListFromFile(){
         val jobList = Helper.createRandomJobList(10)

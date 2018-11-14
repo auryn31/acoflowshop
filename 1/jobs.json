@@ -1,0 +1,51 @@
+[{
+    "durationMachineOne": 9,
+    "durationMachineTwo": 28,
+    "storageSize": 0,
+    "id": 0,
+    "setupTimeMachineOne": 24,
+    "setupTimeMachineTwo": 14,
+    "reworktimeMachineOne": 5,
+    "reworktimeMachineTwo": 16,
+    "probabilityOfRework": 0.0072
+}, {
+    "durationMachineOne": 17,
+    "durationMachineTwo": 2,
+    "storageSize": 0,
+    "id": 1,
+    "setupTimeMachineOne": 30,
+    "setupTimeMachineTwo": 8,
+    "reworktimeMachineOne": 8,
+    "reworktimeMachineTwo": 1,
+    "probabilityOfRework": 0.136
+}, {
+    "durationMachineOne": 27,
+    "durationMachineTwo": 29,
+    "storageSize": 0,
+    "id": 2,
+    "setupTimeMachineOne": 1,
+    "setupTimeMachineTwo": 27,
+    "reworktimeMachineOne": 12,
+    "reworktimeMachineTwo": 10,
+    "probabilityOfRework": 0.0076
+}, {
+    "durationMachineOne": 23,
+    "durationMachineTwo": 14,
+    "storageSize": 0,
+    "id": 3,
+    "setupTimeMachineOne": 9,
+    "setupTimeMachineTwo": 21,
+    "reworktimeMachineOne": 11,
+    "reworktimeMachineTwo": 7,
+    "probabilityOfRework": 0.0707
+}, {
+    "durationMachineOne": 9,
+    "durationMachineTwo": 20,
+    "storageSize": 0,
+    "id": 4,
+    "setupTimeMachineOne": 9,
+    "setupTimeMachineTwo": 1,
+    "reworktimeMachineOne": 4,
+    "reworktimeMachineTwo": 8,
+    "probabilityOfRework": 0.0364
+}]

@@ -5,7 +5,7 @@ iteration_3 <- read.csv(file="current_iteration_3.csv", header=FALSE, sep=",")
 iteration_4 <- read.csv(file="current_iteration_4.csv", header=FALSE, sep=",")
 
 iteration <- c(iteration_0[1]$V1)
-acoLength <- 600
+acoLength <- 1000
 
 bestSolutionACO_0 <- c(iteration_0[2]$V2[1:acoLength])
 bestSolutionACO_1 <- c(iteration_1[2]$V2[1:acoLength])
