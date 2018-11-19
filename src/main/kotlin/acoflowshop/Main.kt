@@ -134,8 +134,6 @@ fun calculateMean(path: String, inputFiles: List<String>) {
             }
         }
     }
-
-
 }
 
 fun calculateWithMeanCompletionTimeForACO(jobList: List<Job>, acoConfig: ACOConfig) {

@@ -23,8 +23,8 @@ class HelperTest {
 
 //    @Test
 //    fun generateJobs(){
-//        val jobList = Helper.createRandomJobList(40)
-//        Helper.writeJobListToFile(jobList, "5/jsonJobTest")
+//        val jobList = Helper.createRandomJobList(50)
+//        Helper.writeJobListToFile(jobList, "6/jobs")
 //    }
 
 

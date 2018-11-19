@@ -46,6 +46,8 @@ object ACO : Simulation<ACOConfig> {
         val bestGlobalAnt = Ant()
         val jobHashmap = Helper.createHashMapFromJobList(jobList)
 
+        var nothingNewCounter = 0
+
         while (solutionNumber < config.maxIterations) {
 
             logger.info { "################### - iteration: ${solutionNumber} - ###################" }
@@ -61,7 +63,12 @@ object ACO : Simulation<ACOConfig> {
                 if (config.withEliteSolution > 0.0 && eliteAnt != null) {
                     pheromone = updateJobPosPheromoneForAnt(eliteAnt, pheromone, config.evaporation * config.withEliteSolution)
                 }
-                updateGlobalBestAntForACIS(bestGlobalAnt, bestAnt, solutionNumber)
+                val updated = updateGlobalBestAntForACIS(bestGlobalAnt, bestAnt, solutionNumber)
+                if (!updated) {
+                    nothingNewCounter++
+                } else {
+                    nothingNewCounter = 0
+                }
 
                 if (config.withEliteSolution > 0.0 && (bestAnt.getDurationForMCT(solutionNumber)
                                 ?: 0.0) < (eliteAnt?.getDurationForMCT(solutionNumber) ?: 0.0)) {
@@ -181,15 +188,18 @@ object ACO : Simulation<ACOConfig> {
         return false
     }
 
-    private fun updateGlobalBestAntForACIS(bestGlobalAnt: Ant, bestAnt: Ant, iteration: Int) {
+    private fun updateGlobalBestAntForACIS(bestGlobalAnt: Ant, bestAnt: Ant, iteration: Int): Boolean {
         val currentDuration = bestAnt.getDurationForMCT(iteration)
         val globalDuration = bestGlobalAnt.getDurationForMCT(iteration)
         if (bestGlobalAnt.jobQue.size == 0) {
             bestGlobalAnt.jobQue = bestAnt.jobQue
             bestGlobalAnt.getDurationForMCT(iteration)
+            return true
         } else if (currentDuration != null && globalDuration != null && currentDuration < globalDuration) {
             bestGlobalAnt.jobQue = bestAnt.jobQue
             bestGlobalAnt.setDurationForMCT(currentDuration, bestAnt.reworkPercentage ?: 0.0)
+            return true
         }
+        return false
     }
 }

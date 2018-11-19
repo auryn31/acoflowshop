@@ -45,12 +45,10 @@ lines(iteration, antFactor08[2]$V2, type="l", col="olivedrab1")
 lines(iteration, antFactor09[2]$V2, type="l", col="purple2")
 lines(iteration, antFactor10[2]$V2, type="l", col="yellow2")
 
-title(main='Anteil der NEH Lösung durch Masterlösung 50 Jobs', font.main=4)
-title(xlab='Iteration')
-title(ylab='durchschnittliche Fertigstellungszeit')
+title(main='Anteil der NEH Lösung durch Masterlösung 50 Jobs', xlab='Iteration', ylab='durchschnittliche Fertigstellungszeit', font.main=4, cex.lab=1.4, cex.axis=1.4, cex.main=1.2, cex.sub=1.4)
 legend("topright", legend=c("0.0", "0.1", "0.3", "0.4", "0.5", "0.6", "0.7", "0.8", "0.9", "1.0"), 
     col=c("blue", "green", "chocolate1", "burlywood3", "aquamarine4", "lightblue2", "magenta1", "olivedrab1", "purple2", "yellow2"),
-    lty=1:1, cex=0.8)
+    lty=1:1, cex=0.9)
 
 jpeg('result_time_mean_calculationtime.jpg')
 plot(antFactor01[3]$V3, antFactor01[2]$V2, type="l", ylim=yrange, xlim=xrange, col="blue", ann=FALSE)
@@ -66,9 +64,7 @@ lines(antFactor10[3]$V3, antFactor10[2]$V2, type="l", col="yellow2")
 
 box()
 
-title(main='Anteil der NEH Lösung durch Masterlösung 50 Jobs', font.main=4)
-title(xlab='Laufzeit in s')
-title(ylab='durchschnittliche Fertigstellungszeit')
+title(main='Anteil der NEH Lösung durch Masterlösung 50 Jobs', xlab='Laufzeit in s', ylab='durchschnittliche Fertigstellungszeit', font.main=4, cex.lab=1.4, cex.axis=1.4, cex.main=1.2, cex.sub=1.4)
 legend("topright", legend=c("0.0", "0.1", "0.3", "0.4", "0.5", "0.6", "0.7", "0.8", "0.9", "1.0"), 
     col=c("blue", "green", "chocolate1", "burlywood3", "aquamarine4", "lightblue2", "magenta1", "olivedrab1", "purple2", "yellow2"),
-    lty=1:1, cex=0.8)
+    lty=1:1, cex=0.9)

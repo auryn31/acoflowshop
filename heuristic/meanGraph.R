@@ -29,12 +29,10 @@ lines(iteration, heuristic05[2]$V2, type="l", col="burlywood3")
 lines(iteration, heuristic07[2]$V2, type="l", col="aquamarine4")
 lines(iteration, heuristic09[2]$V2, type="l", col="lightblue2")
 
-title(main='Gleiche Joblänge auf Maschine 1 Heuristik 50 Jobs', col.main="red", font.main=4)
-title(xlab='Iteration')
-title(ylab='durchschnittliche Fertigstellungszeit')
+title(main='Gleiche Joblänge auf Maschine 1 Heuristik 50 Jobs', xlab='Iteration', ylab='durchschnittliche Fertigstellungszeit', font.main=4, cex.lab=1.4, cex.axis=1.4, cex.main=1.4, cex.sub=1.4)
 legend("topright", legend=c("0.0", "0.1", "0.3", "0.5", "0.7", "0.9"), 
     col=c("blue", "green", "chocolate1", "burlywood3", "aquamarine4", "lightblue2"),
-    lty=1:1, cex=0.8)
+    lty=1:1, cex=0.9)
 
 jpeg('result_time_mean_calculationtime.jpg')
 plot(heuristic00[3]$V3, heuristic00[2]$V2, type="l", ylim=yrange, xlim=xrange, col="blue", ann=FALSE)
@@ -46,9 +44,7 @@ lines(heuristic09[3]$V3, heuristic09[2]$V2, type="l", col="lightblue2")
 
 box()
 
-title(main='Gleiche Joblänge auf Maschine 1 Heuristik 50 Jobs', col.main="red", font.main=4)
-title(xlab='Laufzeit in s')
-title(ylab='durchschnittliche Fertigstellungszeit')
+title(main='Gleiche Joblänge auf Maschine 1 Heuristik 50 Jobs', xlab='Laufzeit in s', ylab='durchschnittliche Fertigstellungszeit', font.main=4, cex.lab=1.4, cex.axis=1.4, cex.main=1.4, cex.sub=1.4)
 legend("topright", legend=c("0.0", "0.1", "0.3", "0.5", "0.7", "0.9"), 
     col=c("blue", "green", "chocolate1", "burlywood3", "aquamarine4", "lightblue2"),
-    lty=1:1, cex=0.8)
+    lty=1:1, cex=0.9)
