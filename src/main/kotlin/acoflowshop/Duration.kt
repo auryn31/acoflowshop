@@ -151,48 +151,29 @@ fun calculateDurationForMCT(jobs: MutableList<Job>): Pair<Double, Double> {
         } else {
             if (jobs[i - 1].durationMachineOne - (t2 - t1) >= 0) {
                 t1 += jobs[i - 1].durationMachineOne
-                var random = Random().nextDouble() % 1
-                while (random <= jobs[i - 1].probabilityOfRework) { // Prel,j --> die wahrscheinlichkeit, dass der job auf maschine 1 wiederholt werden muss
-                    completeRework += jobs[i - 1].reworktimeMachineOne
-                    t1 += jobs[i - 1].reworktimeMachineOne // die nacharbeitskosten hinzurechnen
-                    random = Random().nextDouble() % 1
-                }
-                if (i < jobs.size) {
-                    t1 += jobs[i].setupTimeMachineOne // vorbereitungskosten für den nächsten job auf maschine 1
-                }
-                t2 = t1 + jobs[i - 1].durationMachineTwo
-                random = Random().nextDouble() % 1
-                while (random <= jobs[i - 1].probabilityOfRework) { // Prel,j --> die wahrscheinlichkeit, dass der job auf maschine 1 wiederholt werden muss
-                    completeRework += jobs[i - 1].reworktimeMachineTwo
-                    t2 += jobs[i - 1].reworktimeMachineTwo // die nacharbeitskosten hinzurechnen
-                    random = Random().nextDouble() % 1
-                }
-                if (i < jobs.size) {
-                    t2 += jobs[i].setupTimeMachineOne // vorbereitungskosten für den nächsten job auf maschine 2
-                }
-                currentAverage += t2
-            } else { // ist die pause lange genug (die zeiger weit genug auseinander) kann der job direkt ausgeführt werden
+            } else {
                 t1 = t2
-                var random = Random().nextDouble() % 1
-                while (random <= jobs[i - 1].probabilityOfRework) { // Prel,j --> die wahrscheinlichkeit, dass der job auf maschine 1 wiederholt werden muss
-                    completeRework += jobs[i - 1].reworktimeMachineOne
-                    t1 += jobs[i - 1].reworktimeMachineOne // die nacharbeitskosten hinzurechnen
-                    random = Random().nextDouble() % 1
-                }
-                if (i < jobs.size) {
-                    t1 += jobs[i].setupTimeMachineOne // vorbereitungskosten für den nächsten job auf maschine 1
-                }
-                t2 = t1 + jobs[i - 1].durationMachineTwo
-                while (random <= jobs[i - 1].probabilityOfRework) { // Prel,j --> die wahrscheinlichkeit, dass der job auf maschine 1 wiederholt werden muss
-                    completeRework += jobs[i - 1].reworktimeMachineTwo
-                    t2 += jobs[i - 1].reworktimeMachineTwo // die nacharbeitskosten hinzurechnen
-                    random = Random().nextDouble() % 1
-                }
-                if (i < jobs.size) {
-                    t2 += jobs[i].setupTimeMachineTwo // vorbereitungskosten für den nächsten job auf maschine 2
-                }
-                currentAverage += t2
             }
+            var random = Random().nextDouble() % 1
+            while (random <= jobs[i - 1].probabilityOfRework) { // Prel,j --> die wahrscheinlichkeit, dass der job auf maschine 1 wiederholt werden muss
+                completeRework += jobs[i - 1].reworktimeMachineOne
+                t1 += jobs[i - 1].reworktimeMachineOne // die nacharbeitskosten hinzurechnen
+                random = Random().nextDouble() % 1
+            }
+            if (i < jobs.size) {
+                t1 += jobs[i].setupTimeMachineOne // vorbereitungskosten für den nächsten job auf maschine 1
+            }
+            t2 = t1 + jobs[i - 1].durationMachineTwo
+            random = Random().nextDouble() % 1
+            while (random <= jobs[i - 1].probabilityOfRework) { // Prel,j --> die wahrscheinlichkeit, dass der job auf maschine 1 wiederholt werden muss
+                completeRework += jobs[i - 1].reworktimeMachineTwo
+                t2 += jobs[i - 1].reworktimeMachineTwo // die nacharbeitskosten hinzurechnen
+                random = Random().nextDouble() % 1
+            }
+            if (i < jobs.size) {
+                t2 += jobs[i].setupTimeMachineTwo // vorbereitungskosten für den nächsten job auf maschine 2
+            }
+            currentAverage += t2
         }
     }
     LoggingParameter.evaluationIteration++
