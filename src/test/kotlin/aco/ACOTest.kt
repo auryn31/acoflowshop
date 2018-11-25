@@ -7,6 +7,7 @@ import global.ACOConfig
 import global.Helper
 import global.Heuristik
 import javassist.NotFoundException
+import logger_helper.LoggingParameter
 import org.junit.Test
 import java.io.File
 import kotlin.test.assertEquals
@@ -94,5 +95,29 @@ class ACOTest {
         )
         val newMatrix = ACO.updateJobJobPheromoneForAnt(ant, mutableListOf(mutableListOf(0.5, 0.5), mutableListOf(0.5, 0.5)), 0.05)
         assertEquals(mutableListOf(mutableListOf(0.475, 0.525), mutableListOf(0.525, 0.475)), newMatrix)
+    }
+
+    @Test
+    fun calculateNEHSolutionTest() {
+        val jobList = Helper.readJobListFromFile("200/jobs")
+        val results = mutableListOf<Double>()
+        val reworks = mutableListOf<Double>()
+        val durations = mutableListOf<Double>()
+        val simulations = mutableListOf<Int>()
+        for (i in 0 until 10) {
+            val start = System.currentTimeMillis()
+            val duration = ACO.calculateNEHSolution(jobList).second
+            val end = System.currentTimeMillis() - start
+            results.add(duration.first)
+            reworks.add(duration.second)
+            durations.add(end.toDouble()/1000)
+            simulations.add(LoggingParameter.evaluationIteration)
+            LoggingParameter.reset()
+        }
+        println("duration " + results.reduce { acc, d ->  acc+d}/10)
+        println("rework " + reworks.reduce { acc, d ->  acc+d}/10)
+        println("duration " + durations.reduce { acc, d ->  acc+d}/10)
+        println("simulations " + simulations.reduce { acc, d ->  acc+d}/10)
+
     }
 }

@@ -97,7 +97,7 @@ object ACO : Simulation<ACOConfig> {
     }
 
 
-    private fun calculateNEHSolution(jobList: List<Job>): Pair<MutableList<Job>, Pair<Double, Double>> {
+    internal fun calculateNEHSolution(jobList: List<Job>): Pair<MutableList<Job>, Pair<Double, Double>> {
         val jobs = jobList.sortedBy { it.durationMachineOne + it.durationMachineTwo }
         var nehList = mutableListOf<Job>()
         for (job in jobs) {
