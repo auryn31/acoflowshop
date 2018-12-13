@@ -22,10 +22,11 @@ object ImperialisticHelper {
         val empiresMap = hashMapOf<Double, Empire>()
         var restStrength = 1.0
         val strengthSum = empires.map { it.getTotalCost() }.reduce { acc, d -> acc + d }
+        val factor = 1.0 / strengthSum
 
         for (empire in empires) {
             empiresMap[restStrength] = empire
-            restStrength -= empire.getTotalCost() / strengthSum
+            restStrength -= (strengthSum / empire.getTotalCost()) * factor
         }
         return empiresMap
     }
