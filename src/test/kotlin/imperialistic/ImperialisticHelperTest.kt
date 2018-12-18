@@ -82,6 +82,6 @@ class ImperialisticHelperTest {
                 empire1,
                 empire2
         )
-        assertEquals(hashMapOf(Pair(1.0, empire1), Pair(0.5, empire2)), ImperialisticHelper.createHashMap(empires))
+        assertEquals(hashMapOf(Pair(1.0, empire1), Pair(0.8125, empire2)), ImperialisticHelper.createHashMap(empires))
     }
 }
