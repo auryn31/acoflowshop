@@ -12,6 +12,7 @@ data class Job(
         val reworktimeMachineTwo: Int = 0,
         val probabilityOfRework: Double = 0.0
 ) {
+    private val hashCode = super.hashCode()
 
     override fun equals(other: Any?): Boolean {
         var returnValue = false
@@ -23,5 +24,9 @@ data class Job(
 
     override fun toString(): String {
         return "Job(${durationMachineOne}, ${durationMachineTwo}, ${storageSize}, ${this.id})"
+    }
+
+    override fun hashCode(): Int {
+        return this.hashCode
     }
 }

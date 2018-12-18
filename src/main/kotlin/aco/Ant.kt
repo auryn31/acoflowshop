@@ -43,7 +43,11 @@ class Ant {
         val jobMap = hashMapOf<Double, Job>()
         var pheromonValue = 1.0
 
+
+//        val jobsToRemove = jobQue.toSet()
+//        val jobs = Maps.filterKeys(jobsList, Predicates.not(Predicates.`in`(jobsToRemove)))
         jobQue.forEach { jobs.remove(it) }
+
 
         val pheromonSum = when (config.heuristic) {
             Heuristik.NONE -> jobs.map { pheromonMatrix[it.value][nexPos] }.reduce { acc, d -> acc + d }
@@ -64,14 +68,14 @@ class Ant {
         return jobMap
     }
 
-    private fun heuristicForSameJobLengthOnDifferenMachinesSum(jobs: HashMap<Job, Int>, pheromonMatrix: List<List<Double>>, nexPos: Int, beta: Double): Double {
+    private fun heuristicForSameJobLengthOnDifferenMachinesSum(jobs: Map<Job, Int>, pheromonMatrix: List<List<Double>>, nexPos: Int, beta: Double): Double {
         if (this.jobQue.isEmpty()) {
             return jobs.map { Math.pow(pheromonMatrix[it.value][nexPos], (1 - beta)) }.reduce { acc, d -> acc + d }
         }
         return jobs.map { Math.pow(pheromonMatrix[it.value][nexPos], (1 - beta)) * Math.pow(getFracSmallerZero(this.jobQue.last().durationMachineTwo.toDouble(), it.key.durationMachineOne.toDouble()), beta) }.reduce { acc, d -> acc + d }
     }
 
-    private fun heuristicForSameJobLengthOnDifferenMachinesWithReworkAndSetupSum(jobs: HashMap<Job, Int>, pheromonMatrix: List<List<Double>>, nexPos: Int, beta: Double): Double {
+    private fun heuristicForSameJobLengthOnDifferenMachinesWithReworkAndSetupSum(jobs: Map<Job, Int>, pheromonMatrix: List<List<Double>>, nexPos: Int, beta: Double): Double {
         if (this.jobQue.isEmpty()) {
             return jobs.map { Math.pow(pheromonMatrix[it.value][nexPos], (1 - beta)) }.reduce { acc, d -> acc + d }
         }
@@ -108,7 +112,7 @@ class Ant {
                         + currentJob.key.setupTimeMachineTwo.toDouble())), beta) / pheromonSum
     }
 
-    internal fun heuristicForSameJobLengthSum(jobs: HashMap<Job, Int>, pheromonMatrix: List<List<Double>>, nexPos: Int, beta: Double): Double {
+    internal fun heuristicForSameJobLengthSum(jobs: Map<Job, Int>, pheromonMatrix: List<List<Double>>, nexPos: Int, beta: Double): Double {
         if (this.jobQue.isEmpty()) {
             return jobs.map { Math.pow(pheromonMatrix[it.value][nexPos], (1 - beta)) }.reduce { acc, d -> acc + d }
         }
