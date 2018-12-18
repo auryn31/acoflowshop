@@ -148,6 +148,6 @@ drawPlot <- function(name, title, xtitle, ytitle, x1, x2, y1, y2) {
     legend("topright", legend=c("ACO", "AICA"), col=c("blue", "green"), lty=1:1, cex=1.5)
 }
 
-drawPlot('result_time_mean.jpg', 'Flow Shop Dauer', 'Dauer in s', 'durchschnittliche Fertigstellungszeit', durationACO, durationAICA, bestSolutionACO, bestSolutionAICA)
+drawPlot('result_time_mean.jpg', 'Flow Shop Dauer', 'Laufzeit in s', 'durchschnittliche Fertigstellungszeit', durationACO, durationAICA, bestSolutionACO, bestSolutionAICA)
 drawPlot('result_rework_mean.jpg', 'Flow Shop Rework', 'Iteration', 'Rework in %', iteration[1:acoLength], iteration[(acoLength+1):length(iteration)], reworkPercentACO, reworkPercentAICA)
 drawPlot('result_simulation_mean.jpg', 'Flow Shop Simulation', 'Simulation', 'durchschnittliche Fertigstellungszeit', simulationACO, simulationAICA, bestSolutionACO, bestSolutionAICA)
