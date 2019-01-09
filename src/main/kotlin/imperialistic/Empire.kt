@@ -1,14 +1,14 @@
 package imperialistic
 
 
-class Empire(var emperor: Country) {
+class Empire(var emperor: Country, var xi: Double) {
 
     private var colonies = mutableListOf<Country>()
     private var costs = emperor.getCost()
-    private val zeta = 0.48
+//    private val zeta = 0.48
 
-    private fun calculateCost(zeta: Double) {
-        this.costs = this.emperor.getCost() + zeta * colonies.map { x -> x.getCost() }.reduce { acc, d -> acc + d }
+    private fun calculateCost() {
+        this.costs = this.emperor.getCost() + xi * colonies.map { x -> x.getCost() }.reduce { acc, d -> acc + d }
     }
 
 //    fun replaceColony(index: Int, colony: Country) {
@@ -23,29 +23,29 @@ class Empire(var emperor: Country) {
 
     fun getTotalCost(): Double {
         val a = this.emperor.getCost()
-        val b = if (this.colonies.size > 0) zeta * this.colonies.map { it.getCost() }.reduce { acc, d -> acc + d }.toDouble() / this.colonies.size.toDouble() else 0.0
+        val b = if (this.colonies.size > 0) this.colonies.map { it.getCost() }.reduce { acc, d -> acc + d }.toDouble() / this.colonies.size.toDouble() else 0.0
         return a + b
     }
 
     fun setColony(colonies: List<Country>) {
         this.colonies = colonies.toMutableList()
-        this.calculateCost(this.zeta)
+        this.calculateCost()
     }
 
     fun exchangeColonies(countyToRemove: Country, countyToAdd: Country) {
         this.colonies.remove(countyToRemove)
         this.colonies.add(countyToAdd)
-        this.calculateCost(this.zeta)
+        this.calculateCost()
     }
 
     fun addColony(county: Country) {
         this.colonies.add(county)
-        this.calculateCost(this.zeta)
+        this.calculateCost()
     }
 
     fun removeColony(index: Int) {
         this.colonies.removeAt(index)
-        this.calculateCost(this.zeta)
+        this.calculateCost()
     }
 
     fun removeColony(colony: Country) {
@@ -53,7 +53,7 @@ class Empire(var emperor: Country) {
         if (this.colonies.isEmpty()) {
             this.costs = 0.0
         } else {
-            this.calculateCost(this.zeta)
+            this.calculateCost()
         }
     }
 

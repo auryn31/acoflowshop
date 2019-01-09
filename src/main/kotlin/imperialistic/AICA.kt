@@ -60,7 +60,7 @@ class AICA(val config: AICAConfig) : Simulation<AICAConfig> {
 
         // erzeugen der Empires
         val empires = mutableListOf<Empire>()
-        candidateEmpires.forEach { empires.add(Empire(it)) }
+        candidateEmpires.forEach { empires.add(Empire(it, config.xi)) }
 
         // hinzufügen der Länder als Colonien
         candidateColonies.forEach {

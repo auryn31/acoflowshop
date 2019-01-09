@@ -9,7 +9,7 @@ object ImperialisticHelper {
         val strengthList = empiresMap.keys.sorted().toList()
         val random = getRandomDouble()
         val key = ImperialisticHelper.findKey(random, strengthList)
-        val empireWithNewColony = empiresMap.getOrDefault(key, Empire(Country(mutableListOf())))
+        val empireWithNewColony = empiresMap.getOrDefault(key, Empire(Country(mutableListOf()), 0.48))
         empireWithNewColony.addColony(colony)
         return empires
     }

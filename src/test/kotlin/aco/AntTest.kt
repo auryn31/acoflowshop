@@ -229,10 +229,13 @@ class AntTest {
                 Pair(Job(1, 1, 1, 3), 3)
         )
         val config = ACOConfig(0.03, 100, 3, heuristic = Heuristik.SAME_JOB_LENGTH, beta = 0.3)
-        assertEquals(
+        assert(listOf<HashMap<Double, Job>>(
                 hashMapOf(Pair(1.0, Job(1, 1, 1, 3)),
-                        Pair(0.5704838641764751, Job(1, 1, 1, 2))),
+                Pair(0.5704838641764751, Job(1, 1, 1, 2))),
+                hashMapOf(Pair(1.0, Job(1, 1, 1, 2)),
+                        Pair(0.4295161358235249, Job(1, 1, 1, 3)))
+        ).contains(
                 ant.createHashmap(jobsToSchedule, pheromonMatrix, config)
-        )
+        ))
     }
 }

@@ -17,7 +17,7 @@ class ImperialisticHelperTest {
                 Job(3,1,1,0),
                 Job(2,1,1,2))
         val country = Country(empireList)
-        val empire = Empire(country)
+        val empire = Empire(country, 0.48)
         val newCountry = Country(jobList)
 //        empire.setColony(listOf(Country(jobList)))
         val empires = mutableListOf(
@@ -40,9 +40,9 @@ class ImperialisticHelperTest {
                 Job(3,1,1,0),
                 Job(2,1,1,2))
         val country = Country(empireList)
-        val empire1 = Empire(country)
-        val empire2 = Empire(country)
-        val empire3 = Empire(country)
+        val empire1 = Empire(country, 0.48)
+        val empire2 = Empire(country, 0.48)
+        val empire3 = Empire(country, 0.48)
         val newCountry = Country(jobList)
         val empires = mutableListOf(
                 empire1,
@@ -62,7 +62,7 @@ class ImperialisticHelperTest {
                 Job(3,1,1,0),
                 Job(2,1,1,2))
         val country = Country(empireList)
-        val empire1 = Empire(country)
+        val empire1 = Empire(country, 0.48)
         val empires = mutableListOf(
                 empire1
         )
@@ -76,8 +76,8 @@ class ImperialisticHelperTest {
                 Job(3,1,1,0),
                 Job(2,1,1,2))
         val country = Country(empireList)
-        val empire1 = Empire(country)
-        val empire2 = Empire(country)
+        val empire1 = Empire(country, 0.48)
+        val empire2 = Empire(country, 0.48)
         val empires = mutableListOf(
                 empire1,
                 empire2

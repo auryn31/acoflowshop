@@ -11,7 +11,7 @@ class EmpireTest {
         val empireList = mutableListOf(
                 Job(1, 1, 1, 0))
         val country = Country(empireList)
-        val empire = Empire(country)
+        val empire = Empire(country, 0.48)
         assertEquals(2.0, empire.getTotalCost())
     }
 
@@ -21,9 +21,9 @@ class EmpireTest {
                 Job(1, 1, 1, 0))
         val coloniesList = mutableListOf(Country(mutableListOf(Job(1, 1, 1, 0))))
         val country = Country(empireList)
-        val empire = Empire(country)
+        val empire = Empire(country, 0.48)
         empire.setColony(coloniesList)
-        assertEquals(2.96, empire.getTotalCost())
+        assertEquals(4.0, empire.getTotalCost())
     }
 
     @Test
@@ -34,7 +34,7 @@ class EmpireTest {
                 Country(mutableListOf(Job(1, 1, 1, 0))),
                 Country(mutableListOf(Job(1, 1, 1, 1))))
         val country = Country(empireList)
-        val empire = Empire(country)
+        val empire = Empire(country, 0.48)
         empire.setColony(coloniesList)
         val weakestCountry = empire.getColonies().sortedBy { it.getCost() }[0]
 
@@ -58,7 +58,7 @@ class EmpireTest {
         val coloniesList = mutableListOf(
                 weakerColony, strongerColony)
         val country = Country(empireList)
-        val empire = Empire(country)
+        val empire = Empire(country, 0.48)
         empire.setColony(coloniesList)
         val weakestCountry = empire.getColonies().sortedByDescending { it.getCost() }[0]
 
