@@ -151,3 +151,4 @@ drawPlot <- function(name, title, xtitle, ytitle, x1, x2, y1, y2) {
 drawPlot('result_time_mean.jpg', 'Flow Shop Dauer', 'Dauer in s', 'Länge', durationACO, durationAICA, bestSolutionACO, bestSolutionAICA)
 drawPlot('result_rework_mean.jpg', 'Flow Shop Rework', 'Iteration', 'Rework in %', iteration[1:acoLength], iteration[(acoLength+1):length(iteration)], reworkPercentACO, reworkPercentAICA)
 drawPlot('result_simulation_mean.jpg', 'Flow Shop Simulation', 'Simulation', 'Länge', simulationACO, simulationAICA, bestSolutionACO, bestSolutionAICA)
+drawPlot('result_iteration_mean.jpg', 'Flow Shop', 'Iteration', 'Länge', iteration[1:acoLength], iteration[(acoLength+1):length(iteration)], bestSolutionACO, bestSolutionAICA)
