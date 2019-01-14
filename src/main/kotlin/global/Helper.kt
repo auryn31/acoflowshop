@@ -1,7 +1,6 @@
 package global
 
 import acoflowshop.Job
-import com.fasterxml.jackson.databind.JavaType
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.apache.commons.math3.distribution.ExponentialDistribution
